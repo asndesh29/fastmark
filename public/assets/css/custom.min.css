@@ -1,0 +1,45 @@
+
+/*# sourceMappingURL=custom.min.css.map */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #405189 !important;
+    border: 1px solid #405189 !important;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-left: 5px;
+    margin-top: 5px;
+    padding: 0;
+    padding-left: 20px;
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+    color: #fff;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__choice {
+    background-color: #405189 !important;
+    border: 1px solid #405189 !important;
+    color: #fff;
+    border-radius: 3px;
+    padding: 3px;
+    margin-top: 6px;
+}
+
+/* Style for the required label */
+label.required::after {
+    content: '*';
+    color: rgb(239 68 68);
+    margin-left: 0.25rem;
+    vertical-align: top;
+}
+
+/*  Booked Event */
+.event-day {
+    background-color: #fff7e6 !important;
+    position: relative;
+    border-radius: 5px;
+}
+
