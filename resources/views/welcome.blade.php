@@ -77,15 +77,15 @@
                                     <div class="p-lg-5 p-4">
                                         <div>
                                             <h5 class="text-primary">Welcome Back !</h5>
-                                            <p class="text-muted">Sign in to continue to Velzon.</p>
+                                            <p class="text-muted">Sign in to continue to Fast Mark.</p>
                                         </div>
 
                                         <div class="mt-4">
-                                            <form action="https://themesbrand.com/velzon/html/master/index.html">
-
+                                            <form method="POST" action="{{ route('login') }}">
+                                                @csrf
                                                 <div class="mb-3">
                                                     <label for="username" class="form-label">Username</label>
-                                                    <input type="text" class="form-control" id="username" placeholder="Enter username">
+                                                    <input type="email" class="form-control" id="email" placeholder="Enter username" value="{{ old('email') }}" required autofocus>
                                                 </div>
 
                                                 <div class="mb-3">
@@ -94,7 +94,7 @@
                                                     </div>
                                                     <label class="form-label" for="password-input">Password</label>
                                                     <div class="position-relative auth-pass-inputgroup mb-3">
-                                                        <input type="password" class="form-control pe-5 password-input" placeholder="Enter password" id="password-input">
+                                                        <input type="password" class="form-control pe-5 password-input" placeholder="Enter password" id="password" name="password" required autocomplete="current-password">
                                                         <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon material-shadow-none" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
                                                     </div>
                                                 </div>
@@ -125,7 +125,7 @@
                                         </div>
 
                                         <div class="mt-5 text-center">
-                                            <p class="mb-0">Don't have an account ? <a href="auth-signup-cover.html" class="fw-semibold text-primary text-decoration-underline"> Signup</a> </p>
+                                            <p class="mb-0">Don't have an account ? <a href="{{ route('register') }}" class="fw-semibold text-primary text-decoration-underline"> Signup</a> </p>
                                         </div>
                                     </div>
                                 </div>

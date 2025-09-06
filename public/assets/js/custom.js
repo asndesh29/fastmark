@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Image preview functionality
-    const productImageInput = document.getElementById('product-image-input');
+    const productImageInput = document.getElementById('product-image-viewer');
     if (productImageInput) {
         productImageInput.addEventListener('change', function (event) {
             const file = event.target.files[0];
@@ -38,55 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Set Limit for Packages
-    const orderUnlimitedRadio = document.getElementById('orderUnlimitedRadio');
-    const orderUseLimitRadio = document.getElementById('orderUseLimitRadio');
-    const orderLimitInputWrapper = document.getElementById('orderLimitInputWrapper');
-
-    const itemUnlimitedRadio = document.getElementById('itemUnlimitedRadio');
-    const itemUseLimitRadio = document.getElementById('itemUseLimitRadio');
-    const itemLimitInputWrapper = document.getElementById('itemLimitInputWrapper');
-
-    function toggleLimitInput(wrapper, useLimitRadio) {
-        wrapper.style.display = useLimitRadio.checked ? 'block' : 'none';
-    }
-
-    if (orderUnlimitedRadio && orderUseLimitRadio && orderLimitInputWrapper) {
-        orderUnlimitedRadio.addEventListener('change', () => toggleLimitInput(orderLimitInputWrapper, orderUseLimitRadio));
-        orderUseLimitRadio.addEventListener('change', () => toggleLimitInput(orderLimitInputWrapper, orderUseLimitRadio));
-    }
-
-    if (itemUnlimitedRadio && itemUseLimitRadio && itemLimitInputWrapper) {
-        itemUnlimitedRadio.addEventListener('change', () => toggleLimitInput(itemLimitInputWrapper, itemUseLimitRadio));
-        itemUseLimitRadio.addEventListener('change', () => toggleLimitInput(itemLimitInputWrapper, itemUseLimitRadio));
-    }
-
-
-    // Allergy Multi Select
-    $('#selectAllergy').select2({
-        placeholder: "Type your content and press enter",
-        allowClear: true,
-        tags: true,
-        createTag: function (params) {
-            var term = $.trim(params.term);
-            if (term === '') {
-                return null;
-            }
-            return {
-                id: term.toLowerCase().replace(/\s+/g, '-'),
-                text: term,
-                newTag: true
-            };
-        },
-        language: {
-            noResults: function () {
-                return "No results found";
-            }
-        }
-    });
-
-
-    // Status Change Alert
+    // Status Change Alert (Sweet Alert)
     $('.status_change_alert').on('change', function (event) {
         let url = $(this).data('url');
         let message = $(this).data('message');
@@ -95,6 +47,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function status_change_alert(url, message, e) {
         e.preventDefault();
+        let $target = $(e.target);
+        $target.prop('disabled', true);
+
         Swal.fire({
             title: 'Are you sure?',
             text: message,
@@ -109,11 +64,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (result.isConfirmed) {
                 window.location.href = url;
             } else {
-                // Revert checkbox state if user cancels
-                $(e.target).prop('checked', !$(e.target).prop('checked'));
+                $target.prop('checked', !$target.prop('checked'));
             }
+            $target.prop('disabled', false); // Re-enable
         });
     }
-
-
 });

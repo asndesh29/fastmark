@@ -1,21 +1,71 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\RenewalController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+
+
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+
+        Route::group(['prefix' => 'module', 'as' => 'module.'], function () {
+            Route::get('/', [ModuleController::class, 'index'])->name('index');
+            Route::get('add-new', [ModuleController::class, 'create'])->name('create');
+            Route::post('store', [ModuleController::class, 'store'])->name('store');        
+            Route::get('/edit/{id}', [ModuleController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [ModuleController::class, 'update'])->name('update');
+            Route::delete('/renewal/{id}', [ModuleController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('customer')->name('customer.')->group(function () {
+            Route::get('/', [CustomerController::class, 'index'])->name('index');
+            Route::get('add-new', [CustomerController::class, 'create'])->name('create');
+            Route::post('store', [CustomerController::class, 'store'])->name('store');
+            Route::get('edit/{customer}', [CustomerController::class, 'edit'])->name('edit');
+            Route::post('update/{customer}', [CustomerController::class, 'update'])->name('update');
+            Route::get('show/{customer}', [CustomerController::class, 'show'])->name('show');
+            Route::delete('delete/{customer}', [CustomerController::class, 'destroy'])->name('destroy');
+            Route::get('status/{customer}/{status}', [CustomerController::class, 'status'])->name('status');
+        });
+
+        Route::group(['prefix' => 'vehicle', 'as' => 'vehicle.'], function () {
+            Route::get('/', [VehicleController::class, 'index'])->name('index');
+            Route::get('add-new', [VehicleController::class, 'create'])->name('create');
+            Route::post('store', [VehicleController::class, 'store'])->name('store');        
+            Route::get('/edit/{id}', [VehicleController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [VehicleController::class, 'update'])->name('update');
+            Route::delete('/renewal/{id}', [VehicleController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::group(['prefix' => 'renewal', 'as' => 'renewal.'], function () {
+            Route::get('/', [RenewalController::class, 'index'])->name('index');
+            Route::get('add-new', [RenewalController::class, 'create'])->name('create');
+            Route::post('store', [RenewalController::class, 'store'])->name('store');        
+            Route::get('/edit/{id}', [RenewalController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [RenewalController::class, 'update'])->name('update');
+            Route::delete('/renewal/{id}', [RenewalController::class, 'destroy'])->name('destroy');
+        });
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
