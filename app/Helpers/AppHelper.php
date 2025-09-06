@@ -43,88 +43,89 @@ class AppHelper
 
     public static function getDisk()
     {
-        $config = self::get_business_settings('local_storage');
-        return isset($config) && $config == 0 ? 's3' : 'public';
+        $config=self::get_business_settings('local_storage');
+
+        return isset($config)?($config==0?'s3':'public'):'public';
     }
 
     public static function upload(string $dir, string $format, $image = null)
     {
         try {
-            if ($image !== null) {
-                $extension = $image->getClientOriginalExtension() ?? $format;
-                $imageName = Carbon::now()->toDateString() . '-' . uniqid() . '.' . $extension;
-                $path = rtrim($dir, '/') . '/';
-
-                if (!Storage::disk(self::getDisk())->exists($path)) {
-                    Storage::disk(self::getDisk())->makeDirectory($path);
+            if ($image != null) {
+                $imageName = \Carbon\Carbon::now()->toDateString() . "-" . uniqid() . "." . $format;
+                if (!Storage::disk(self::getDisk())->exists($dir)) {
+                    Storage::disk(self::getDisk())->makeDirectory($dir);
                 }
-
-                Storage::disk(self::getDisk())->putFileAs($path, $image, $imageName);
+                Storage::disk(self::getDisk())->putFileAs($dir, $image, $imageName);
             } else {
                 $imageName = 'def.png';
             }
-        } catch (Exception $e) {
-            Log::error('Image upload failed: ' . $e->getMessage());
-            $imageName = 'def.png';
+        } catch (\Exception $e) {
         }
-
         return $imageName;
     }
 
     public static function update(string $dir, $old_image, string $format, $image = null)
     {
-        if ($image === null) {
+        if ($image == null) {
             return $old_image;
         }
-
         try {
-            $oldPath = rtrim($dir, '/') . '/' . ltrim($old_image, '/');
-            if (Storage::disk(self::getDisk())->exists($oldPath)) {
-                Storage::disk(self::getDisk())->delete($oldPath);
+            if (Storage::disk(self::getDisk())->exists($dir . $old_image)) {
+                Storage::disk(self::getDisk())->delete($dir . $old_image);
             }
-        } catch (Exception $e) {
-            Log::error('Failed to delete old image: ' . $e->getMessage());
+        } catch (\Exception $e) {
         }
-
-        return self::upload($dir, $format, $image);
+        $imageName = AppHelper::upload($dir, $format, $image);
+        return $imageName;
     }
 
     public static function check_and_delete(string $dir, $old_image)
     {
-        $relativePath = rtrim($dir, '/') . '/' . ltrim($old_image, '/');
 
-        foreach (['public', 's3'] as $disk) {
-            try {
-                if (Storage::disk($disk)->exists($relativePath)) {
-                    Storage::disk($disk)->delete($relativePath);
-                }
-            } catch (Exception $e) {
-                Log::error("Deletion failed on disk [$disk]: " . $e->getMessage());
+        try {
+            if (Storage::disk('public')->exists($dir . $old_image)) {
+                Storage::disk('public')->delete($dir . $old_image);
             }
+            if (Storage::disk('s3')->exists($dir . $old_image)) {
+                Storage::disk('s3')->delete($dir . $old_image);
+            }
+        } catch (\Exception $e) {
         }
 
         return true;
     }
 
-    public static function get_full_url($path, $data, $placeholder = null)
-    {
-        $placeholders = [
-            'default' => dynamicAsset('public/assets/images/product-img.png'),
-            'admin' => dynamicAsset('public/assets/images/product-img.png'),
-            'restaurant' => dynamicAsset('public/assets/images/product-img.png'),
+    public static function get_full_url($path,$data,$type,$placeholder = null){
+        $place_holders = [
+            'default' => dynamicAsset('assets/admin/img/100x100/no-image-found.png'),
+            'admin' => dynamicAsset('assets/admin/img/160x160/img1.jpg'),
         ];
 
-        $fullPath = rtrim($path, '/') . '/' . ltrim($data, '/');
+        try {
+            if ($data && $type == 's3' && Storage::disk('s3')->exists($path .'/'. $data)) {
+                return Storage::disk('s3')->url($path .'/'. $data);
+            }
+        } catch (\Exception $e){
+        }
 
-        if ($data && Storage::disk('public')->exists($fullPath)) {
-            return dynamicStorage('storage/app/public') . '/' . $fullPath;
+        if ($data && Storage::disk('public')->exists($path .'/'. $data)) {
+            return dynamicStorage('storage/app/public') . '/' . $path . '/' . $data;
         }
 
         if (request()->is('api/*')) {
             return null;
         }
 
-        return $placeholders[$placeholder] ?? $placeholders[$path] ?? $placeholders['default'];
+        if(isset($placeholder) && array_key_exists($placeholder, $place_holders)){
+            return $place_holders[$placeholder];
+        }elseif(array_key_exists($path, $place_holders)){
+            return $place_holders[$path];
+        }else{
+            return $place_holders['default'];
+        }
+
+        return 'def.png';
     }
 
     public static function time_date_format($data)
