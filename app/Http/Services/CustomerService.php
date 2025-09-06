@@ -33,16 +33,9 @@ class CustomerService
         return Customer::findOrFail($id);
     }
 
-    public function update($id, $data) 
+    public function update(Customer $customer, $data) 
     {
-        dd($data);
-        $customer = $this->getById($id);
-
-        if (!$customer) {
-            return false;
-        }
-
-         if (isset($data['image'])) {
+        if (isset($data['image'])) {
             $data['image'] = AppHelper::update('customer', $customer->image, 'png', $data['image']);
         }
 
