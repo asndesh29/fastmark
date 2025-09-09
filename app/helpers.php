@@ -11,6 +11,7 @@ if (!function_exists('dynamicAsset')) {
         return asset($result);
     }
 }
+
 if (!function_exists('dynamicStorage')) {
     function dynamicStorage(string $directory): string
     {
