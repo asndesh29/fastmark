@@ -14,11 +14,19 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('vehicle_id')->constrained('vehicles')->cascadeOnDelete();
             $table->foreignId(column: 'renewal_type_id')->constrained('renewal_types')->cascadeOnDelete();
+
+            // Polymorphic columns: renewable_type = class name, renewable_id = primary key
+            $table->string('renewable_type');  // e.g., App\Models\RoadPermit
+            $table->unsignedBigInteger('renewable_id');
+
             $table->enum('status', ['pending', 'approved', 'rejected', 'expired']);
             $table->string('start_date');
             $table->string('expiry_date');
             $table->date('reminder_date');
             $table->text('remarks')->nullable();
+
+            // Index for polymorphic lookup optimization
+            $table->index(['renewable_type', 'renewable_id']);
             $table->timestamps();
         });
     }

@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VehicleType extends Model
+class VehicleCategory extends Model
 {
-    protected $table = 'vehicle_types';
-
+    protected $table = 'vehicle_categories';
     protected $fillable = [
         'name',
-        'service_charge',
         'is_active'
     ];
 
     protected $casts = [
         'name' => 'string',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 }
