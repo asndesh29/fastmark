@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,12 +12,13 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('renewal_id')->constrained()->cascadeOnDelete();
-            $table->enum('gateway', ['esewa','khalti','manual']);
-            $table->enum('status', ['pending','success','failed','refunded'])->default('pending');
-            $table->string('reference')->nullable();
-            $table->decimal('amount', 12, 2);
-            $table->json('payload')->nullable();
+            $table->string('transaction_id')->unique();
+            $table->decimal('amount', 12, 2)->default(0);
+            $table->enum('status', ['paid', 'unpaid', 'overdue']);
+            $table->enum('method', ['cash', 'online', 'bank_transfer']);
+            $table->date('paid_at')->nullable();
             $table->timestamps();
         });
     }

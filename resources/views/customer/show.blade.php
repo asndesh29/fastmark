@@ -6,169 +6,151 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Forms Validation</h4>
-
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
-                        <li class="breadcrumb-item active">Forms Validation</li>
-                    </ol>
-                </div>
-
+                <h4 class="mb-sm-0">Customer Detail</h4>
             </div>
         </div>
     </div>
     <!-- end page title -->
 
 
-    
+    <!-- row -->
     <div class="row">
-        <div class="col-lg-12">
-            <form action="{{ route('admin.renewal.store') }}" method="POST">
-                @csrf
-                <!-- customer -->
-                <div class="card">
-                    <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Customer</h4>
-                        <div class="flex-shrink-0">
-                            <div class="form-check form-switch form-switch-right form-switch-md">
-                                <label for="FormValidationDefault" class="form-label text-muted">Show Code</label>
-                                <input class="form-check-input code-switcher" type="checkbox" id="FormValidationDefault">
+        <!-- col -->
+        <div class="col-lg-3">
+            <!-- customer details -->
+            <div class="card">
+                <div class="card-body p-4">
+                    <div>
+                        <div class="flex-shrink-0 avatar-md mx-auto">
+                            <div class="avatar-title bg-light rounded">
+                                <img src="{{ $customer->image_full_url ?? dynamicAsset('assets/images/companies/img-2.png') }}" alt="" height="50">
                             </div>
                         </div>
-                    </div>
-                    <!-- end card header -->
-
-                    <div class="card-body">
-                        <div class="live-preview">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="validationDefault01" class="form-label">First name</label>
-                                        <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" placeholder="Ex: Sandesh">
-                                        
-                                        @error('first_name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="validationDefault02" class="form-label">Last name</label>
-                                        <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name') }}" placeholder="Ex: Sandesh">
-                                        
-                                        @error('last_name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="phone" class="form-label">Phone Number</label>
-                                        <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="Ex: +977-">
-                                        
-                                        @error('phone')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Ex: john@ex.com">
-                                        
-                                        @error('email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="mt-4 text-center">
+                            <h5 class="mb-1">{{ $customer->first_name }} {{ $customer->last_name }}</h5>
+                            <p class="text-muted">#00{{ $customer->id }}</p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table mb-0 table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th><span class="fw-medium">Email</span></th>
+                                        <td>{{ $customer->email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th><span class="fw-medium">Contact No.</span></th>
+                                        <td>+(977) {{ $customer->phone }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th><span class="fw-medium">Location</span></th>
+                                        <td>{{ $customer->address }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <!-- customer -->
-
-                <!-- vehicle -->
-                <div class="card">
-                    <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Vehicle</h4>
-                        <div class="flex-shrink-0">
-                            <!-- Button -->
-                            <button type="button" class="btn btn-primary btn-sm" id="add-vehicle-btn">Add New Vehicle</button>
-                        </div>
-                    </div>
-                    <!-- end card header -->
-
-                    <div class="card-body">
-                        <div class="live-preview">
-                            <div id="vehicle-container" style="padding: 16px;">
-                                <div class="row vehicle-row mb-4 border rounded p-3" style="background-color: #f8f9fc">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label for="vehicle_type" class="form-label">Vehicle Type</label>
-                                            <select class="form-select mb-3" name="vehicle_type[]" required>
-                                                <option value="two_wheeler">Two Wheeler</option>
-                                                <option value="four_wheeler">Four Wheeler</option>
-                                                <option value="heavy">Heavy</option>
-                                                <option value="other">Other</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label for="registration_no" class="form-label">Registration No</label>
-                                            <input type="text" name="registration_no[]" class="form-control" placeholder="Ex: Ba 83 Pa 8297">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label for="chassis_no" class="form-label">Chassis No</label>
-                                            <input type="text" name="chassis_no[]" class="form-control" placeholder="Ex:">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label for="engine_no" class="form-label">Engine Number</label>
-                                            <input type="text" name="engine_no[]" class="form-control" placeholder="Ex: +977-">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label for="engine_cc" class="form-label">Engine CC</label>
-                                            <input type="text" name="engine_cc[]" class="form-control" placeholder="Ex: 1500">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label for="renewed_date" class="form-label">Last Renewed Date</label>
-                                            <input type="date" name="renewed_date[]" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- vehicle -->
-
-                <!-- button -->
-                <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                    <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Save</button>
-                </div>
-                <!-- button -->
-            </form>
+                <!--end card-body-->
+            </div>
+            <!-- customer details -->
         </div> 
+
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Vehicle Info</h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="listjs-table" id="customerList">
+                        <div class="row g-4 mb-3">
+                            <div class="col-sm">
+                                <div class="d-flex justify-content-sm-end">
+                                    <div class="search-box ms-2">
+                                        <input type="text" class="form-control search" placeholder="Search...">
+                                        <i class="ri-search-line search-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-card mt-3 mb-1">
+                            <table class="table align-middle table-nowrap" id="customerTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" style="width: 50px;">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                            </div>
+                                        </th>
+                                        <th class="sort" data-sort="vehicle_type">Type</th>
+                                        <th class="sort" data-sort="registration_no">Registration No</th>
+                                        <th class="sort" data-sort="chassis_no">Chassis No</th>
+                                        <th class="sort" data-sort="engine_cc">Engine CC</th>
+                                        <th class="sort" data-sort="last_renewed_at">Last Renewed At</th>
+                                        <th class="sort" data-sort="expiry_date">Expirty Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="list form-check-all">
+                                    @foreach ($customer->vehicles as $key => $cv )
+                                        <tr>
+                                            <th scope="row">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="chk_child" value="option1">
+                                                </div>
+                                            </th>
+                                            <td class="id" style="display:none;">
+                                                <a href="javascript:void(0);" class="fw-medium link-primary">#VZ10</a>
+                                            </td>
+                                            <td class="vehicle_type">{{ $cv->vehicleType->name }}</td>
+                                            <td class="registration_no">{{ $cv->registration_no }}</td>
+                                            <td class="chassis_no">{{ $cv->chassis_no }}</td>
+                                            <td class="engine_cc">{{ $cv->engine_cc }}</td>
+                                            <td class="last_renewed_at">{{ $cv->last_renewed_at }}</td>
+                                            <td class="expiry_date">{{ $cv->expiry_date }}</td>
+                                            {{-- <td>
+                                                <div class="d-flex gap-2">
+                                                    <div class="edit">
+                                                        <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal">Edit</button>
+                                                    </div>
+                                                    <div class="remove">
+                                                        <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
+                                                    </div>
+                                                </div>
+                                            </td> --}}
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="noresult" style="display: none">
+                                <div class="text-center">
+                                    <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
+                                    <h5 class="mt-2">Sorry! No Result Found</h5>
+                                    <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any orders for you search.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <div class="pagination-wrap hstack gap-2" style="display: flex;">
+                                <a class="page-item pagination-prev disabled" href="javascript:void(0);">
+                                Previous
+                                </a>
+                                <ul class="pagination listjs-pagination mb-0">
+                                    <li class="active"><a class="page" href="#" data-i="1" data-page="8">1</a></li>
+                                    <li><a class="page" href="#" data-i="2" data-page="8">2</a></li>
+                                </ul>
+                                <a class="page-item pagination-next" href="javascript:void(0);">
+                                Next
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- end col -->
     </div>
-    <!-- customer -->
+    <!-- end row -->
 </script>
 @endsection
 

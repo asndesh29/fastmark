@@ -45,16 +45,11 @@
                                             <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
                                         </div>
                                     </th>
-                                    <th data-ordering="false">SR No.</th>
-                                    <th data-ordering="false">ID</th>
-                                    <th data-ordering="false">Purchase ID</th>
-                                    <th data-ordering="false">Title</th>
-                                    <th data-ordering="false">User</th>
-                                    <th>Assigned To</th>
-                                    <th>Created By</th>
-                                    <th>Create Date</th>
+                                    <th>S.No.</th>
+                                    <th>Customer Name</th>
+                                    <th>Email</th>
+                                    <th>Phone Number</th>
                                     <th>Status</th>
-                                    <th>Priority</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>

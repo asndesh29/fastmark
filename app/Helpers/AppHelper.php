@@ -7,7 +7,6 @@ use Exception;
 use App\Models\BusinessSetting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class AppHelper
 {
@@ -43,16 +42,16 @@ class AppHelper
 
     public static function getDisk()
     {
-        $config=self::get_business_settings('local_storage');
+        $config = self::get_business_settings('local_storage');
 
-        return isset($config)?($config==0?'s3':'public'):'public';
+        return isset($config) ? ($config == 0 ? 's3' : 'public') : 'public';
     }
 
     public static function upload(string $dir, string $format, $image = null)
     {
         try {
             if ($image != null) {
-                $imageName = \Carbon\Carbon::now()->toDateString() . "-" . uniqid() . "." . $format;
+                $imageName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $format;
                 if (!Storage::disk(self::getDisk())->exists($dir)) {
                     Storage::disk(self::getDisk())->makeDirectory($dir);
                 }
@@ -60,7 +59,7 @@ class AppHelper
             } else {
                 $imageName = 'def.png';
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         return $imageName;
     }
@@ -74,7 +73,7 @@ class AppHelper
             if (Storage::disk(self::getDisk())->exists($dir . $old_image)) {
                 Storage::disk(self::getDisk())->delete($dir . $old_image);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         $imageName = AppHelper::upload($dir, $format, $image);
         return $imageName;
@@ -90,26 +89,27 @@ class AppHelper
             if (Storage::disk('s3')->exists($dir . $old_image)) {
                 Storage::disk('s3')->delete($dir . $old_image);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return true;
     }
 
-    public static function get_full_url($path,$data,$type,$placeholder = null){
+    public static function get_full_url($path, $data, $type, $placeholder = null)
+    {
         $place_holders = [
             'default' => dynamicAsset('assets/admin/img/100x100/no-image-found.png'),
             'admin' => dynamicAsset('assets/admin/img/160x160/img1.jpg'),
         ];
 
         try {
-            if ($data && $type == 's3' && Storage::disk('s3')->exists($path .'/'. $data)) {
-                return Storage::disk('s3')->url($path .'/'. $data);
+            if ($data && $type == 's3' && Storage::disk('s3')->exists($path . '/' . $data)) {
+                return Storage::disk('s3')->url($path . '/' . $data);
             }
-        } catch (\Exception $e){
+        } catch (Exception $e) {
         }
 
-        if ($data && Storage::disk('public')->exists($path .'/'. $data)) {
+        if ($data && Storage::disk('public')->exists($path . '/' . $data)) {
             return dynamicStorage('storage/app/public') . '/' . $path . '/' . $data;
         }
 
@@ -117,11 +117,11 @@ class AppHelper
             return null;
         }
 
-        if(isset($placeholder) && array_key_exists($placeholder, $place_holders)){
+        if (isset($placeholder) && array_key_exists($placeholder, $place_holders)) {
             return $place_holders[$placeholder];
-        }elseif(array_key_exists($path, $place_holders)){
+        } elseif (array_key_exists($path, $place_holders)) {
             return $place_holders[$path];
-        }else{
+        } else {
             return $place_holders['default'];
         }
 

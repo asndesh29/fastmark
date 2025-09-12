@@ -2,18 +2,18 @@
 
 namespace App\Http\Services;
 
-use App\Models\Vehicle;
+use App\Models\FeeSlab;
 use App\Helpers\AppHelper;
 use Illuminate\Http\Request;
 
-class VehicleService
+class FeeSlabService
 {
     public function list(Request $request, $perPage = null)
     {
         $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        return Vehicle::when($request->search, function ($query) use ($keywords) {
+        return FeeSlab::when($request->search, function ($query) use ($keywords) {
             foreach ($keywords as $word) {
                 $query->orWhere('name', 'like', "%{$word}%");
             }
@@ -22,24 +22,18 @@ class VehicleService
 
     public function store($data)
     {
-        if (isset($data['image'])) {
-            $data['image'] = AppHelper::upload('customer', 'png', $data['image']);
-        }
-        return Vehicle::store($data);
+        // dd($data);
+        return FeeSlab::create($data);
     }
 
     public function getById($id)
     {
-        return Vehicle::findOrFail($id);
+        return FeeSlab::findOrFail($id);
     }
 
-    public function update(Vehicle $customer, $data)
+    public function update(FeeSlab $feeSlab, $data)
     {
-        if (isset($data['image'])) {
-            $data['image'] = AppHelper::update('customer', $customer->image, 'png', $data['image']);
-        }
-
-        return $customer->update($data);
+        return $feeSlab->update($data);
     }
 
     public function destroy($id)

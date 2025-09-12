@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Renewal;
 use App\Http\Services\RenewalService;
 use App\Http\Requests\RenewalRequest;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
 class RenewalController extends Controller
@@ -18,10 +19,13 @@ class RenewalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        return view('renewal.index');
+        $perPage = $request->show_limit ?? config('default_pagination', 10);
+
+        $renewal_lists = $this->renewalService->list($request, $perPage);
+
+        return view('renewal.index', compact('renewal_lists'));
     }
 
     /**
@@ -29,7 +33,9 @@ class RenewalController extends Controller
      */
     public function create()
     {
-        return view('renewal.add');
+        $vehicleTypes = VehicleType::where('is_active', true)->get();
+
+        return view('renewal.add', compact('vehicleTypes'));
     }
 
     /**
@@ -55,7 +61,9 @@ class RenewalController extends Controller
      */
     public function edit(Renewal $renewal)
     {
-        //
+        $renewal = $this->renewalService->getById($renewal->id);
+
+        return view('renewal.edit', compact('renewal'));
     }
 
     /**
@@ -63,7 +71,11 @@ class RenewalController extends Controller
      */
     public function update(Request $request, Renewal $renewal)
     {
-        //
+        $renewal = $this->renewalService->getById($renewal->id);
+
+        $this->renewalService->update($renewal, $request->all());
+
+        return redirect()->route('admin.renewal.index')->with('success', 'Renewal updated successfully.');
     }
 
     /**
@@ -71,6 +83,8 @@ class RenewalController extends Controller
      */
     public function destroy(Renewal $renewal)
     {
-        //
+        $this->renewalService->delete($renewal->id);
+
+        return redirect()->route('admin.renewal.index')->with('success', 'Renewal deleted successfully.');
     }
 }

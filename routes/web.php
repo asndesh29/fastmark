@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FeeSlabController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RenewalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\VehicleTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,7 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::group(['prefix' => 'module', 'as' => 'module.'], function () {
             Route::get('/', [ModuleController::class, 'index'])->name('index');
             Route::get('add-new', [ModuleController::class, 'create'])->name('create');
-            Route::post('store', [ModuleController::class, 'store'])->name('store');        
+            Route::post('store', [ModuleController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [ModuleController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [ModuleController::class, 'update'])->name('update');
             Route::delete('/renewal/{id}', [ModuleController::class, 'destroy'])->name('destroy');
@@ -50,19 +52,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::group(['prefix' => 'vehicle', 'as' => 'vehicle.'], function () {
             Route::get('/', [VehicleController::class, 'index'])->name('index');
             Route::get('add-new', [VehicleController::class, 'create'])->name('create');
-            Route::post('store', [VehicleController::class, 'store'])->name('store');        
+            Route::post('store', [VehicleController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [VehicleController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [VehicleController::class, 'update'])->name('update');
             Route::delete('/renewal/{id}', [VehicleController::class, 'destroy'])->name('destroy');
         });
 
+        Route::prefix('type')->name('type.')->group(function () {
+            Route::get('/', [VehicleTypeController::class, 'index'])->name('index');
+            Route::get('add-new', [VehicleTypeController::class, 'create'])->name('create');
+            Route::post('store', [VehicleTypeController::class, 'store'])->name('store');
+            Route::get('edit/{vehicleType}', [VehicleTypeController::class, 'edit'])->name('edit');
+            Route::post('update/{vehicleType}', [VehicleTypeController::class, 'update'])->name('update');
+            Route::get('show/{vehicleType}', [VehicleTypeController::class, 'show'])->name('show');
+            Route::delete('delete/{vehicleType}', [VehicleTypeController::class, 'destroy'])->name('destroy');
+            Route::get('status/{vehicleType}/{status}', [VehicleTypeController::class, 'status'])->name('status');
+        });
+
         Route::group(['prefix' => 'renewal', 'as' => 'renewal.'], function () {
             Route::get('/', [RenewalController::class, 'index'])->name('index');
             Route::get('add-new', [RenewalController::class, 'create'])->name('create');
-            Route::post('store', [RenewalController::class, 'store'])->name('store');        
+            Route::post('store', [RenewalController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [RenewalController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [RenewalController::class, 'update'])->name('update');
             Route::delete('/renewal/{id}', [RenewalController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('feeslab')->name('feeslab.')->group(function () {
+            Route::get('/', [FeeSlabController::class, 'index'])->name('index');
+            Route::get('add-new', [FeeSlabController::class, 'create'])->name('create');
+            Route::post('store', [FeeSlabController::class, 'store'])->name('store');
+            Route::get('edit/{fee}', [FeeSlabController::class, 'edit'])->name('edit');
+            Route::post('update/{fee}', [FeeSlabController::class, 'update'])->name('update');
+            Route::get('show/{fee}', [FeeSlabController::class, 'show'])->name('show');
+            Route::delete('delete/{fee}', [FeeSlabController::class, 'destroy'])->name('destroy');
+            Route::get('status/{fee}/{status}', [FeeSlabController::class, 'status'])->name('status');
         });
     });
 

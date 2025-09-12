@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('fee_slabs', function (Blueprint $table) {
+        Schema::create('license_type', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vehicle_type_id')->constrained('vehicle_types')->cascadeOnDelete();
-            $table->string('min_cc')->nullable();
-            $table->string('max_cc')->nullable();
-            $table->decimal('base_fee', 12, 2);
-            $table->boolean('is_active')->default(true);
+            $table->string('name', 255);
+            $table->string('details', 255)->nullable();
+            $table->tinyInteger('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('fee_slabs');
+        Schema::dropIfExists('license_type');
     }
 };
