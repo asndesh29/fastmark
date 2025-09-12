@@ -8,6 +8,7 @@ class Vehicle extends Model
 {
     protected $fillable = [
         'customer_id',
+        'vehicle_type_id',
         'registration_no',
         'chassis_no',
         'engine_no',
@@ -17,12 +18,24 @@ class Vehicle extends Model
         'expiry_date',
         'is_active'
     ];
-    
-    public function owner(){ 
-        return $this->belongsTo(Customer::class, 'customer_id'); 
+
+    protected $casts = [
+        'customer_id' => 'integer',
+        'vehicle_type_id' => 'integer'
+    ];
+
+    public function vehicleType()
+    {
+        return $this->belongsTo(VehicleType::class, 'vehicle_type_id');
     }
-    
-    public function renewals(){ 
-        return $this->hasMany(Renewal::class); 
+
+    public function owner()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function renewals()
+    {
+        return $this->hasMany(Renewal::class);
     }
 }

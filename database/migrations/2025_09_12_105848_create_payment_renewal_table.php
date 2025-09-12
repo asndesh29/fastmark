@@ -4,19 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('renewal_documents', function (Blueprint $table) {
+        Schema::create('payment_renewal', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('payment_id')->constrained()->cascadeOnDelete();
             $table->foreignId('renewal_id')->constrained()->cascadeOnDelete();
-            $table->enum('type', ['bluebook_scan','insurance','emission','citizenship','others']);
-            $table->string('path');
-            $table->string('original_name')->nullable();
+            $table->decimal('amount', 12, 2)->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('renewal_documents');
+        Schema::dropIfExists('payment_renewal');
     }
 };

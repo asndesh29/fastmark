@@ -7,13 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class FeeSlab extends Model
 {
     protected $fillable = [
-        'vehicle_type',
+        'vehicle_type_id',
         'min_cc',
         'max_cc',
         'base_fee',
-        'late_per_day',
-        'is_active'
     ];
+
+    public function vehicleType()
+    {
+        return $this->belongsTo(VehicleType::class);
+    }
 
     public function scopeActive($query)
     {

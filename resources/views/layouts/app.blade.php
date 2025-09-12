@@ -29,6 +29,9 @@
         <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
         <!-- custom Css-->
         <link href="{{ asset('assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
+
+        <!-- Nepali Datepicker CSS -->
+        <link href="https://nepalidatepicker.sajanmaharjan.com.np/v5/nepali.datepicker/css/nepali.datepicker.v5.0.6.min.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <!-- Begin page -->
@@ -83,6 +86,9 @@
         <!-- Sweet Alerts js -->
         <script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('assets/js/pages/sweetalerts.init.js') }}"></script>
+
+        <!-- Nepali datepicker -->
+        <script src="https://nepalidatepicker.sajanmaharjan.com.np/v5/nepali.datepicker/js/nepali.datepicker.v5.0.6.min.js" type="text/javascript"></script>
 
         <!-- App js -->
         <script src="{{ asset('assets/js/app.js')}}"></script>

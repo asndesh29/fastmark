@@ -74,12 +74,53 @@
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
-                    <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Settings</span>
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Settings</span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarSettings">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="dashboard-analytics.html" class="nav-link" data-key="t-analytics"> Fee Slabs </a>
+                                <a href="{{ route('admin.feeslab.index') }}" class="nav-link" data-key="t-analytics"> Fee Slabs </a>
+                            </li>
+
+                             <li class="nav-item">
+                                <a href="{{ route('admin.type.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Type </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarRenew" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarRenew">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Renew</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarRenew">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Road Permit </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Pollution </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Check Pass </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Blue Book </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Beema </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> License </a>
                             </li>
                         </ul>
                     </div>

@@ -21,9 +21,9 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->show_limit ?? config('default_pagination', 10);
-        
+
         $customers = $this->customerService->list($request, $perPage);
-        
+
         return view('customer.index', compact('customers'));
     }
 
@@ -40,7 +40,7 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $this->renewalService->store($request->all());
+        $this->customerService->store($request->all());
 
         return redirect()->route('admin.customer.index')->with('success', 'Renewal record created successfully.');
     }
@@ -50,7 +50,7 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        $customer = Customer::findOrFail($customer->id);
+        $customer = $this->customerService->getById($customer->id);
 
         return view('customer.show', compact('customer'));
     }
@@ -83,7 +83,7 @@ class CustomerController extends Controller
     public function status(Customer $customer, $status)
     {
         $customer->status = in_array($status, [0, 1]) ? $status : 0;
-        
+
         $customer->save();
 
         return back()->with('success', 'Customer status updated successfully.');

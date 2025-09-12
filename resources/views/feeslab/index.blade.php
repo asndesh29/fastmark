@@ -6,11 +6,11 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Renewal</h4>
+                <h4 class="mb-sm-0">Fee Slab</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Renewal</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Fee Slab</a></li>
                         <li class="breadcrumb-item active">List</li>
                     </ol>
                 </div>
@@ -20,7 +20,6 @@
     </div>
     <!-- end page title -->
 
-
     <div class="row">
         <div class="col-lg-12">
             <!-- customer -->
@@ -28,8 +27,8 @@
                 <div class="card-header align-items-center d-flex">
                     <h4 class="card-title mb-0 flex-grow-1"></h4>
                     <div class="flex-shrink-0">
-                        <a href="{{ route('admin.renewal.create') }}">
-                            <button type="button" class="btn btn-primary btn-sm" id="add-renewal-btn">Add New Renewal</button>
+                        <a href="{{ route('admin.feeslab.create') }}">
+                            <button type="button" class="btn btn-primary btn-sm" id="add-renewal-btn">Add New Fee Slab</button>
                         </a>
                     </div>
                 </div>
@@ -40,44 +39,34 @@
                         <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                             <thead>
                                 <tr>
+                                    <th scope="col" style="width: 10px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
+                                        </div>
+                                    </th>
                                     <th>S.No.</th>
-                                    <th>Customer Name</th>
                                     <th>Vehicle Type</th>
-                                    <th>Registration No</th>
-                                    <th>Chassis No</th>
-                                    <th>Engine No</th>
-                                    <th>Renewed At</th>
-                                    <th>Expiry Date</th>
+                                    <th>Min CC</th>
+                                    <th>Max CC</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($renewal_lists as $key => $rl )
+                                @foreach ($fee_slabs as $key => $fee)
                                     <tr>
-                                        <td>{{ $key+1 }}</td>
-                                        <td>{{ $rl->vehicle->owner->first_name }} {{ $rl->vehicle->owner->last_name }}</td>
-                                        <td>{{ $rl->vehicle->vehicleType->name }}</td>
-                                        <td>{{ $rl->vehicle->registration_no }}</td>
-                                        <td>{{ $rl->vehicle->chassis_no }}</td>
-                                        <td>{{ $rl->vehicle->engine_no }}</td>
-                                        <td>{{ $rl->vehicle->last_renewed_at }}</td>
-                                        <td>{{ $rl->vehicle->expiry_date }}</td>
-                                        <td>{{ $rl->vehicle->is_active }}</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ ucwords($fee->vehicleType->name) }}</td>
+                                        <td>{{ $fee->min_cc }}</td>
+                                        <td>{{ $fee->max_cc }}</td>
+                                        <td>{{ $fee->base_fee }}</td>
+                                        <td>{{ $fee->is_active }}</td>
                                         <td>
                                             <ul class="list-inline hstack gap-2 mb-0">
                                                 <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                    <a href="{{ route('admin.customer.edit', $customer->id) }}">
+                                                    <a href="{{ route('admin.feeslab.edit', $fee->id) }}">
                                                         <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
                                                             <i class="ri-edit-fill"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
-                                                    <a href="{{ route('admin.customer.show', $customer->id) }}">
-                                                        <button type="button" class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-eye-fill"></i>
                                                         </button>
                                                     </a>
                                                 </li>
