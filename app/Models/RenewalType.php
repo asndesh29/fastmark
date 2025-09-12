@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VehicleType extends Model
+class RenewalType extends Model
 {
-    protected $table = 'vehicle_types';
+    protected $table = 'renewal_types';
 
     protected $fillable = [
         'name',
-        'service_charge',
         'is_active'
     ];
 

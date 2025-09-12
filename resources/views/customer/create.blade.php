@@ -6,15 +6,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Forms Validation</h4>
-
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
-                        <li class="breadcrumb-item active">Forms Validation</li>
-                    </ol>
-                </div>
-
+                <h4 class="mb-sm-0">Customer</h4>
             </div>
         </div>
     </div>
@@ -29,13 +21,7 @@
                 <!-- customer -->
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Customer</h4>
-                        <div class="flex-shrink-0">
-                            <div class="form-check form-switch form-switch-right form-switch-md">
-                                <label for="FormValidationDefault" class="form-label text-muted">Show Code</label>
-                                <input class="form-check-input code-switcher" type="checkbox" id="FormValidationDefault">
-                            </div>
-                        </div>
+                        <h4 class="card-title mb-0 flex-grow-1">Customer Info</h4>
                     </div>
                     <!-- end card header -->
 
@@ -94,10 +80,10 @@
                 <!-- vehicle -->
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Vehicle</h4>
+                        <h4 class="card-title mb-0 flex-grow-1">Vehicle Info</h4>
                         <div class="flex-shrink-0">
                             <!-- Button -->
-                            <button type="button" class="btn btn-primary btn-sm" id="add-vehicle-btn">Add New Vehicle</button>
+                            <button type="button" class="btn btn-primary btn-md" id="add-vehicle-btn">Add New Vehicle</button>
                         </div>
                     </div>
                     <!-- end card header -->

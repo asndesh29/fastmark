@@ -60,36 +60,6 @@
 
                 <!-- Renewal -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.renewal.index') }}">
-                        <i class="ri-honour-line"></i> <span data-key="t-widgets">Renewal</span>
-                    </a>
-                </li>
-
-                <!-- Customers -->
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.customer.index') }}">
-                        <i class="ri-honour-line"></i> <span data-key="t-widgets">Customers</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Settings</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="sidebarSettings">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.feeslab.index') }}" class="nav-link" data-key="t-analytics"> Fee Slabs </a>
-                            </li>
-
-                             <li class="nav-item">
-                                <a href="{{ route('admin.type.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Type </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarRenew" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarRenew">
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Renew</span>
                     </a>
@@ -112,11 +82,11 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Beema </a>
+                                <a href="" class="nav-link" data-key="t-analytics"> Insurance </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
+                                <a href="{{ route('admin.renewal.tax.create') }}" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
                             </li>
 
                             <li class="nav-item">
@@ -125,6 +95,73 @@
                         </ul>
                     </div>
                 </li>
+                <!-- Renewal -->
+
+                <!-- Customers -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarCustomers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCustomers">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Customers</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarCustomers">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Add New </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> List </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Customers -->
+
+                <!-- Vehicles -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarVehicle" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarVehicle">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Vehicle</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarVehicle">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.feeslab.index') }}" class="nav-link" data-key="t-analytics"> List </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Vehicles -->
+
+                <!-- Settings -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Settings</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarSettings">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Fee Slabs </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> License Type </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Renewal Type </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Vehicle Category </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link" data-key="t-analytics"> Vehicle Type </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Settings -->
+
+                
                 <!-- end Dashboard Menu -->
             </ul>
         </div>

@@ -87,4 +87,12 @@ class RenewalController extends Controller
 
         return redirect()->route('admin.renewal.index')->with('success', 'Renewal deleted successfully.');
     }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create_tax()
+    {
+        return view('renewal.vehicle-tax.index');
+    }
 }

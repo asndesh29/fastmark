@@ -76,6 +76,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/edit/{id}', [RenewalController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [RenewalController::class, 'update'])->name('update');
             Route::delete('/renewal/{id}', [RenewalController::class, 'destroy'])->name('destroy');
+
+            Route::group(['prefix' => 'tax', 'as' => 'tax.'], routes: function () {
+                Route::get('/', [RenewalController::class, 'get_bluebooks'])->name('index');
+                Route::get('/create', [RenewalController::class, 'create_bluebook'])->name('create');
+            });
+
+            Route::group(['prefix' => 'insurance', 'as' => 'insurance.'], routes: function () {
+                Route::get('/', [RenewalController::class, 'get_insurances'])->name('index');
+                Route::get('/create', [RenewalController::class, 'create_insurance'])->name('create');
+            });
+
+            Route::group(['prefix' => 'pollution_check', 'as' => 'pollution_check.'], routes: function () {
+                Route::get('/', [RenewalController::class, 'get_pollution_checks'])->name('index');
+                Route::get('/create', [RenewalController::class, 'create_pollution_check'])->name('create');
+            });
+
+            Route::group(['prefix' => 'road_permit', 'as' => 'road_permit.'], routes: function () {
+                Route::get('/', [RenewalController::class, 'get_road_permits'])->name('index');
+                Route::get('/create', [RenewalController::class, 'create_road_permit'])->name('create');
+            });
+
+            Route::group(['prefix' => 'tax', 'as' => 'tax.'], routes: function () {
+                Route::get('/', [RenewalController::class, 'get_tax'])->name('index');
+                Route::get('/create', [RenewalController::class, 'create_tax'])->name('create');
+            });
         });
 
         Route::prefix('feeslab')->name('feeslab.')->group(function () {
