@@ -2,6 +2,9 @@
 
 @section('content')
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
@@ -10,7 +13,7 @@
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Vehicle Tax</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Road Permit</a></li>
                         <li class="breadcrumb-item active">List</li>
                     </ol>
                 </div>
@@ -24,7 +27,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Add New Vehicle Tax</h5>
+                    <h5>Add New Road Permit</h5>
                 </div>
 
                 <div class="card-body">
@@ -32,17 +35,59 @@
                         <form action="" method="POST">
                             @csrf
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                     <div class="mb-3">
-                                        <label for="validationDefault01" class="form-label">Vehicle Number</label>
-                                        <input type="text" class="form-control @error('vehicle_number') is-invalid @enderror" id="vehicle_number" name="vehicle_number" value="{{ old('vehicle_number') }}" placeholder="Ex: Ba 83 Pa 8297">
-                                        
-                                        @error('vehicle_number')
+                                        <label for="choices-single-default" class="form-label text-muted">Select Vehicle</label>
+                                        <select class="form-control select2" name="choices-single-default" id="choices-single-default">
+                                            <option value="">Select Vehicle</option>
+                                            <option value="Choice 1">Choice 1</option>
+                                            <option value="Choice 2">Choice 2</option>
+                                            <option value="Choice 3">Choice 3</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="">Permit Number</label>
+                                        <input type="text" class="form-control @error('permit_number') is-invalid @enderror" name="permit_number" id="permit_number" placeholder="Ex:">
+
+                                        @error('permit_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                 </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="">Issue Date</label>
+                                        <input type="text" class="form-control @error('issue_date') is-invalid @enderror" id="issue-datepicker" name="issue_date" placeholder="Select Issue Date"/>
+
+                                        @error('issue_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="">Expiry Date</label>
+                                        <input type="text" class="form-control @error('expiry_date') is-invalid @enderror" id="expiry-datepicker" name="expiry_date" placeholder="Select Expiry Date"/>
+
+                                        @error('expiry_date')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="">Remarks</label>
+                                        <input type="text" class="form-control" name="remarks" id="remarks" placeholder="Ex:">
+                                    </div>
+                                 </div>
                             </div>
+
 
                             <!-- button -->
                             <div class="hstack gap-2 justify-content-end d-print-none mt-4">
@@ -156,4 +201,24 @@
     </div>
     <!-- Vehicle Tax List -->
 @endsection
+
+
+@push('script_2')
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Select an option",
+                allowClear: true
+            });
+        });
+
+        // Initialize Nepali Date Picker on both inputs
+        $('#issue-datepicker').NepaliDatePicker();
+        $('#expiry-datepicker').NepaliDatePicker();
+    </script>
+@endpush
+
 

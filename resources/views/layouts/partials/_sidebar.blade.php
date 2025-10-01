@@ -66,23 +66,23 @@
                     <div class="collapse menu-dropdown" id="sidebarRenew">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Road Permit </a>
+                                <a href="{{ route('admin.renewal.road_permit.create') }}" class="nav-link" data-key="t-analytics"> Road Permit </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Pollution </a>
+                                <a href="{{ route('admin.renewal.pollution_check.create') }}" class="nav-link" data-key="t-analytics"> Pollution </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Check Pass </a>
+                                <a href="{{ route('admin.renewal.check_pass.create') }}" class="nav-link" data-key="t-analytics"> Check Pass </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Blue Book </a>
+                                <a href="{{ route('admin.renewal.bluebook.create') }}" class="nav-link" data-key="t-analytics"> Blue Book </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Insurance </a>
+                                <a href="{{ route('admin.renewal.insurance.create') }}" class="nav-link" data-key="t-analytics"> Insurance </a>
                             </li>
 
                             <li class="nav-item">
@@ -138,7 +138,7 @@
                     <div class="collapse menu-dropdown" id="sidebarSettings">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Fee Slabs </a>
+                                <a href="{{ route('admin.feeslab.index') }}" class="nav-link" data-key="t-analytics"> Fee Slabs </a>
                             </li>
 
                             <li class="nav-item">
@@ -146,15 +146,15 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Renewal Type </a>
+                                <a href="{{ route('admin.renewal.type.index') }}" class="nav-link" data-key="t-analytics"> Renewal Type </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Vehicle Category </a>
+                                <a href="{{ route('admin.vehicle.category.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Category </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> Vehicle Type </a>
+                                <a href="{{ route('admin.vehicle.type.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Type </a>
                             </li>
                         </ul>
                     </div>

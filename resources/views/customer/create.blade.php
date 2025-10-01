@@ -16,7 +16,7 @@
     
     <div class="row">
         <div class="col-lg-12">
-            <form action="{{ route('admin.renewal.store') }}" method="POST">
+            <form action="{{ route('admin.customer.store') }}" method="POST">
                 @csrf
                 <!-- customer -->
                 <div class="card">
@@ -88,6 +88,76 @@
                     </div>
                     <!-- end card header -->
 
+                    {{-- <div class="card-body">
+                        <div class="live-preview">
+                            <div id="vehicle-container" style="padding: 16px;">
+                                <div class="row vehicle-row mb-4 border rounded p-3" style="background-color: #f8f9fc">
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="vehicle_category" class="form-label">Category</label>
+                                            <select class="form-select mb-3" name="vehicle_categories[]" required>
+                                                @foreach ($vehicle_categories as $key => $vc)
+                                                    <option value="{{ $vc->id }}">{{ $vc->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="vehicle_type" class="form-label">Vehicle Type</label>
+                                            <select class="form-select mb-3" name="vehicle_type[]" required>
+                                                @foreach ($vehicle_types as $key => $vt)
+                                                    <option value="{{ $vt->id }}">{{ $vt->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="registration_no" class="form-label">Registration No</label>
+                                            <input type="text" name="registration_no[]" class="form-control" placeholder="Ex: Ba 83 Pa 8297">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="chassis_no" class="form-label">Chassis No</label>
+                                            <input type="text" name="chassis_no[]" class="form-control" placeholder="Ex:">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="engine_no" class="form-label">Engine Number</label>
+                                            <input type="text" name="engine_no[]" class="form-control" placeholder="Ex: +977-">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="engine_cc" class="form-label">Engine CC</label>
+                                            <input type="text" name="engine_cc[]" class="form-control" placeholder="Ex: 1500">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="capacity" class="form-label">Capacity</label>
+                                           <input type="text" name="capacity[]" class="form-control" placeholder="Ex: 2"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 🚗 Remove button -->
+                                    <div class="col-12 text-end">
+                                        <button type="button" class="btn btn-danger btn-sm remove-vehicle-btn">Remove</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div> --}}
+
                     <div class="card-body">
                         <div class="live-preview">
                             <div id="vehicle-container" style="padding: 16px;">
@@ -96,10 +166,7 @@
                                         <div class="mb-3">
                                             <label for="vehicle_type" class="form-label">Vehicle Type</label>
                                             <select class="form-select mb-3" name="vehicle_type[]" required>
-                                                <option value="two_wheeler">Two Wheeler</option>
-                                                <option value="four_wheeler">Four Wheeler</option>
-                                                <option value="heavy">Heavy</option>
-                                                <option value="other">Other</option>
+                                                
                                             </select>
                                         </div>
                                     </div>
@@ -135,10 +202,16 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="renewed_date" class="form-label">Last Renewed Date</label>
-                                            <input type="date" name="renewed_date[]" class="form-control">
+                                            <input type="text" class="form-control" id="nepali-datepicker" name="renewed_date[]" placeholder="Select Nepali Date"/>
                                         </div>
                                     </div>
+
+                                    <!-- 🚗 Remove button -->
+                                    <div class="col-12 text-end">
+                                        <button type="button" class="btn btn-danger btn-sm remove-vehicle-btn">Remove</button>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -157,8 +230,23 @@
     <!-- customer -->
 
     
+
+
 <script>
-    document.getElementById('add-vehicle-btn').addEventListener('click', function() {
+    function updateRemoveButtons() {
+        let rows = document.querySelectorAll('.vehicle-row');
+        let buttons = document.querySelectorAll('.remove-vehicle-btn');
+
+        if (rows.length === 1) {
+            // hide the only remove button
+            buttons.forEach(btn => btn.style.display = 'none');
+        } else {
+            // show all remove buttons
+            buttons.forEach(btn => btn.style.display = 'inline-block');
+        }
+    }
+
+    document.getElementById('add-vehicle-btn').addEventListener('click', function () {
         let container = document.getElementById('vehicle-container');
         let newRow = container.querySelector('.vehicle-row').cloneNode(true);
 
@@ -166,8 +254,33 @@
         newRow.querySelectorAll('input').forEach(input => input.value = '');
         newRow.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
 
+        // re-attach remove button event
+        newRow.querySelector('.remove-vehicle-btn').addEventListener('click', function () {
+            newRow.remove();
+            updateRemoveButtons();
+        });
+
         container.appendChild(newRow);
+        updateRemoveButtons();
     });
+
+    // attach remove event for the first row
+    document.querySelectorAll('.remove-vehicle-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            btn.closest('.vehicle-row').remove();
+            updateRemoveButtons();
+        });
+    });
+
+    // initial check
+    updateRemoveButtons();
+
+    
+
+    window.onload = function() {
+        var mainInput = document.getElementById("nepali-datepicker");
+        mainInput.NepaliDatePicker();
+    };
 </script>
 @endsection
 

@@ -49,7 +49,7 @@ class RenewalService
             $expiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($expiryDateEn, '-');
             // dd($expiryDate);
 
-            $vehicle_type = VehicleType::where('name', $vehicleType)->first();
+            $vehicle_type = VehicleType::where('id', $vehicleType)->first();
             // dd($vehicle_type);
 
             $vehicle = Vehicle::create([

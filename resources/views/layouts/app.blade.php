@@ -30,6 +30,9 @@
         <!-- custom Css-->
         <link href="{{ asset('assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
 
+        <!-- Select2 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
         <!-- Nepali Datepicker CSS -->
         <link href="https://nepalidatepicker.sajanmaharjan.com.np/v5/nepali.datepicker/css/nepali.datepicker.v5.0.6.min.css" rel="stylesheet" type="text/css"/>
     </head>
@@ -68,7 +71,7 @@
         <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
         <script src="{{ asset('assets/libs/feather-icons/feather.min.js') }}"></script>
         <script src="{{ asset('assets/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
-        <script src="{{ asset('assets/js/plugins.js')}}"></script>
+        {{-- <script src="{{ asset('assets/js/plugins.js')}}"></script> --}}
 
         <!--datatable js-->
         <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -88,7 +91,7 @@
         <script src="{{ asset('assets/js/pages/sweetalerts.init.js') }}"></script>
 
         <!-- Nepali datepicker -->
-        <script src="https://nepalidatepicker.sajanmaharjan.com.np/v5/nepali.datepicker/js/nepali.datepicker.v5.0.6.min.js" type="text/javascript"></script>
+        <script src="https://nepalidatepicker.sajanmaharjan.com.np/v5/nepali.datepicker/js/nepali.datepicker.v5.0.6.min.js"></script>
 
         <!-- App js -->
         <script src="{{ asset('assets/js/app.js')}}"></script>
