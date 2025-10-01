@@ -5,6 +5,7 @@ use App\Http\Controllers\FeeSlabController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\RenewalController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VehicleCategoryController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\VehicleTypeController;
 use Illuminate\Support\Facades\Route;
@@ -55,18 +56,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('store', [VehicleController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [VehicleController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [VehicleController::class, 'update'])->name('update');
+            Route::get('show/{id}', [VehicleController::class, 'show'])->name('show');
             Route::delete('/renewal/{id}', [VehicleController::class, 'destroy'])->name('destroy');
-        });
 
-        Route::prefix('type')->name('type.')->group(function () {
-            Route::get('/', [VehicleTypeController::class, 'index'])->name('index');
-            Route::get('add-new', [VehicleTypeController::class, 'create'])->name('create');
-            Route::post('store', [VehicleTypeController::class, 'store'])->name('store');
-            Route::get('edit/{vehicleType}', [VehicleTypeController::class, 'edit'])->name('edit');
-            Route::post('update/{vehicleType}', [VehicleTypeController::class, 'update'])->name('update');
-            Route::get('show/{vehicleType}', [VehicleTypeController::class, 'show'])->name('show');
-            Route::delete('delete/{vehicleType}', [VehicleTypeController::class, 'destroy'])->name('destroy');
-            Route::get('status/{vehicleType}/{status}', [VehicleTypeController::class, 'status'])->name('status');
+            Route::prefix('category')->name('category.')->group(function () {
+                Route::get('/', [VehicleCategoryController::class, 'index'])->name('index');
+                Route::get('add-new', [VehicleCategoryController::class, 'create'])->name('create');
+                Route::post('store', [VehicleCategoryController::class, 'store'])->name('store');
+                Route::get('edit/{category}', [VehicleCategoryController::class, 'edit'])->name('edit');
+                Route::post('update/{category}', [VehicleCategoryController::class, 'update'])->name('update');
+                Route::get('show/{category}', [VehicleCategoryController::class, 'show'])->name('show');
+                Route::delete('delete/{category}', [VehicleCategoryController::class, 'destroy'])->name('destroy');
+                Route::get('status/{category}/{status}', [VehicleCategoryController::class, 'status'])->name('status');
+            });
+
+            Route::prefix('type')->name('type.')->group(function () {
+                Route::get('/', [VehicleTypeController::class, 'index'])->name('index');
+                Route::get('add-new', [VehicleTypeController::class, 'create'])->name('create');
+                Route::post('store', [VehicleTypeController::class, 'store'])->name('store');
+                Route::get('edit/{vehicleType}', [VehicleTypeController::class, 'edit'])->name('edit');
+                Route::post('update/{vehicleType}', [VehicleTypeController::class, 'update'])->name('update');
+                Route::get('show/{vehicleType}', [VehicleTypeController::class, 'show'])->name('show');
+                Route::delete('delete/{vehicleType}', [VehicleTypeController::class, 'destroy'])->name('destroy');
+                Route::get('status/{vehicleType}/{status}', [VehicleTypeController::class, 'status'])->name('status');
+            });
         });
 
         Route::group(['prefix' => 'renewal', 'as' => 'renewal.'], function () {
@@ -77,7 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/update/{id}', [RenewalController::class, 'update'])->name('update');
             Route::delete('/renewal/{id}', [RenewalController::class, 'destroy'])->name('destroy');
 
-            Route::group(['prefix' => 'tax', 'as' => 'tax.'], routes: function () {
+            Route::group(['prefix' => 'bluebook', 'as' => 'bluebook.'], routes: function () {
                 Route::get('/', [RenewalController::class, 'get_bluebooks'])->name('index');
                 Route::get('/create', [RenewalController::class, 'create_bluebook'])->name('create');
             });
@@ -97,10 +110,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/create', [RenewalController::class, 'create_road_permit'])->name('create');
             });
 
+            Route::group(['prefix' => 'check_pass', 'as' => 'check_pass.'], routes: function () {
+                Route::get('/', [RenewalController::class, 'get_check_passes'])->name('index');
+                Route::get('/create', [RenewalController::class, 'create_check_pass'])->name('create');
+            });
+
             Route::group(['prefix' => 'tax', 'as' => 'tax.'], routes: function () {
                 Route::get('/', [RenewalController::class, 'get_tax'])->name('index');
                 Route::get('/create', [RenewalController::class, 'create_tax'])->name('create');
             });
+
+            Route::prefix('type')->name('type.')->group(function () {
+                Route::get('/', [RenewalController::class, 'create_renewal_type'])->name('index');
+                Route::post('store', [RenewalController::class, 'store_renewal_type'])->name('store');
+                Route::get('edit/{renewalType}', [RenewalController::class, 'edit_renewal_type'])->name('edit');
+                Route::post('update/{renewalType}', [RenewalController::class, 'update_renewal_type'])->name('update');
+                Route::get('show/{renewalType}', [RenewalController::class, 'show_renewal_type'])->name('show');
+                Route::delete('delete/{renewalType}', [RenewalController::class, 'delete_renewal_type'])->name('destroy');
+                Route::get('status/{renewalType}/{status}', [RenewalController::class, 'update_renewal_type_status'])->name('status');
+            });
+
         });
 
         Route::prefix('feeslab')->name('feeslab.')->group(function () {
@@ -113,6 +142,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('delete/{fee}', [FeeSlabController::class, 'destroy'])->name('destroy');
             Route::get('status/{fee}/{status}', [FeeSlabController::class, 'status'])->name('status');
         });
+
+
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

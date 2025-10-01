@@ -23,7 +23,9 @@ class FeeSlabController extends Controller
     public function index()
     {
         $fee_slabs = FeeSlab::where('is_active', true)->get();
-        return view('feeslab.index', compact('fee_slabs'));
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
+        return view('feeslab.index', compact('fee_slabs', 'vehicle_types'));
     }
 
     /**

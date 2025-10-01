@@ -1,24 +1,28 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Delete button functionality
-    const deleteButtons = document.querySelectorAll('.remove-item-btn');
-    const deleteConfirmButton = document.getElementById('delete-record');
+    $('.delete-btn').on('click', function (e) {
+        e.preventDefault();
 
-    if (deleteConfirmButton) {
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const formId = this.getAttribute('data-id');
-                deleteConfirmButton.setAttribute('data-form-id', formId);
-            });
-        });
+        let id = $(this).data('id');
+        let name = $(this).data('name') || 'this record';
 
-        deleteConfirmButton.addEventListener('click', function () {
-            const formId = this.getAttribute('data-form-id');
-            const form = document.getElementById(formId);
-            if (form) {
-                form.submit();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You are about to delete ${name}.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#FC6A57',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the form with the matching ID
+                $('#renew-' + id).submit();
             }
         });
-    }
+    });
 
     // Image preview functionality
     const productImageInput = document.getElementById('product-image-viewer');

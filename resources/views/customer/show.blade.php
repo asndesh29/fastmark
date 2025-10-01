@@ -107,16 +107,22 @@
                                             <td class="engine_cc">{{ $cv->engine_cc }}</td>
                                             <td class="last_renewed_at">{{ $cv->last_renewed_at }}</td>
                                             <td class="expiry_date">{{ $cv->expiry_date }}</td>
-                                            {{-- <td>
+                                            <td>
                                                 <div class="d-flex gap-2">
                                                     <div class="edit">
                                                         <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal">Edit</button>
                                                     </div>
-                                                    <div class="remove">
-                                                        <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
-                                                    </div>
+                                                    <ul class="list-inline hstack gap-2 mb-0">
+                                                        <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
+                                                            <a href="{{ route('admin.renewal.type.edit', $cv->id) }}">
+                                                                <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
+                                                                    <i class="ri-edit-fill"></i>
+                                                                </button>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-                                            </td> --}}
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

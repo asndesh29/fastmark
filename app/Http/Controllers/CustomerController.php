@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Http\Services\CustomerService;
 use App\Http\Requests\RenewalRequest;
+use App\Models\VehicleCategory;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -32,7 +34,11 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        return view('customer.create');
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
+        $vehicle_categories = VehicleCategory::where('is_active', true)->get();
+
+        return view('customer.create', compact('vehicle_types', 'vehicle_categories'));
     }
 
     /**
@@ -82,7 +88,7 @@ class CustomerController extends Controller
      */
     public function status(Customer $customer, $status)
     {
-        $customer->status = in_array($status, [0, 1]) ? $status : 0;
+        $customer->is_active = in_array($status, [0, 1]) ? $status : 0;
 
         $customer->save();
 

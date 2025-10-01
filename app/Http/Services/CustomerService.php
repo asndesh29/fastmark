@@ -2,13 +2,18 @@
 
 namespace App\Http\Services;
 
+use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 use App\Models\Customer;
 use App\Helpers\AppHelper;
+use App\Models\Vehicle;
+use App\Models\VehicleCategory;
+use App\Models\VehicleType;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class CustomerService 
+class CustomerService
 {
-    public function list(Request $request, $perPage = null) 
+    public function list(Request $request, $perPage = null)
     {
         $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
@@ -20,20 +25,37 @@ class CustomerService
         })->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
-    public function store($data) 
+    public function store($data)
     {
-        if (isset($data['image'])) {
-            $data['image'] = AppHelper::upload('customer', 'png', $data['image']);
+        // dd($data);
+        // if (isset($data['image'])) {
+        //     $data['image'] = AppHelper::upload('customer', 'png', $data['image']);
+        // }
+
+        $customer = Customer::create($data);
+
+        // Store multiple vehicles & create renewal entry for each
+        foreach ($data['vehicle_type'] as $index => $vehicleTypeId) {
+            Vehicle::create([
+                'customer_id' => $customer->id,
+                'vehicle_type_id' => $vehicleTypeId,
+                'vehicle_category_id' => $data['vehicle_categories'][$index], // 💡 use same index
+                'registration_no' => $data['registration_no'][$index],
+                'chassis_no' => $data['chassis_no'][$index],
+                'engine_no' => $data['engine_no'][$index],
+                'engine_cc' => $data['engine_cc'][$index],
+                'capacity' => $data['capacity'][$index],
+            ]);
         }
-        return Customer::store($data);
+        return $customer;
     }
 
-    public function getById($id) 
+    public function getById($id)
     {
         return Customer::findOrFail($id);
     }
 
-    public function update(Customer $customer, $data) 
+    public function update(Customer $customer, $data)
     {
         if (isset($data['image'])) {
             $data['image'] = AppHelper::update('customer', $customer->image, 'png', $data['image']);
@@ -42,7 +64,7 @@ class CustomerService
         return $customer->update($data);
     }
 
-    public function destroy($id) 
+    public function destroy($id)
     {
         $customer = $this->getById($id);
 

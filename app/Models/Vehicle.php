@@ -9,24 +9,30 @@ class Vehicle extends Model
     protected $fillable = [
         'customer_id',
         'vehicle_type_id',
+        'vehicle_category_id',
         'registration_no',
         'chassis_no',
         'engine_no',
         'type',
         'engine_cc',
-        'last_renewed_at',
-        'expiry_date',
+        'capacity',
         'is_active'
     ];
 
     protected $casts = [
         'customer_id' => 'integer',
-        'vehicle_type_id' => 'integer'
+        'vehicle_type_id' => 'integer',
+        'vehicle_category_id' => 'integer'
     ];
 
     public function vehicleType()
     {
         return $this->belongsTo(VehicleType::class, 'vehicle_type_id');
+    }
+
+    public function vehicleCategory()
+    {
+        return $this->belongsTo(VehicleCategory::class, 'vehicle_category_id');
     }
 
     public function owner()

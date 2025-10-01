@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\VehicleTypeService;
-use App\Models\Customer;
-use App\Http\Services\CustomerService;
-use App\Http\Requests\RenewalRequest;
 use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
@@ -26,7 +23,7 @@ class VehicleTypeController extends Controller
 
         $vehicleTypes = $this->vehicleTypeService->list($request, $perPage);
 
-        return view('vehicle.partials.index', compact('vehicleTypes'));
+        return view('vehicle.type.index', compact('vehicleTypes'));
     }
 
     /**
@@ -41,7 +38,7 @@ class VehicleTypeController extends Controller
 
         $this->vehicleTypeService->store($validated);
 
-        return redirect()->route('admin.type.index')->with('success', 'Vehicle Type created successfully.');
+        return redirect()->route('admin.vehicle.type.index')->with('success', 'Vehicle Type created successfully.');
     }
 
     /**
@@ -51,7 +48,7 @@ class VehicleTypeController extends Controller
     {
         $vehicleType = VehicleType::findOrFail($vehicleType->id);
 
-        return view('vehicle.partials.index', compact('vehicleType'));
+        return view('vehicle.type.index', compact('vehicleType'));
     }
 
     /**
@@ -61,7 +58,7 @@ class VehicleTypeController extends Controller
     {
         $vehicleType = $this->vehicleTypeService->getById($vehicleType->id);
 
-        return view('vehicle.partials.edit', compact('vehicleType'));
+        return view('vehicle.type.edit', compact('vehicleType'));
     }
 
     /**
@@ -78,7 +75,7 @@ class VehicleTypeController extends Controller
 
         $this->vehicleTypeService->update($vehicle_type, $vaildated);
 
-        return redirect()->route('admin.type.index')->with('success', 'Vehicle type updated successfully.');
+        return redirect()->route('admin.vehicle.type.index')->with('success', 'Vehicle type updated successfully.');
     }
 
     /**
@@ -90,7 +87,7 @@ class VehicleTypeController extends Controller
 
         $vehicleType->save();
 
-        return back()->with('success', 'Customer status updated successfully.');
+        return back()->with('success', 'Vehicle type status updated successfully.');
     }
 
     /**
@@ -100,6 +97,6 @@ class VehicleTypeController extends Controller
     {
         $this->vehicleTypeService->delete($vehicleType->id);
 
-        return redirect()->route('admin.type.index')->with('success', 'Vehicle type deleted successfully.');
+        return redirect()->route('admin.vehicle.type.index')->with('success', 'Vehicle type deleted successfully.');
     }
 }
