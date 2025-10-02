@@ -10,9 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('vehicle_categories', function (Blueprint $table) {
+        Schema::create('insurance_providers', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->string('name');
+            $table->string('address')->nullable();
+            $table->string('email')->unique();
+            $table->string('phone_no')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
@@ -23,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicle_categories');
+        Schema::dropIfExists('insurance_providers');
     }
 };

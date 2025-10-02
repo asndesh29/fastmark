@@ -3,18 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Renewal;
-use App\Http\Services\RenewalService;
+use App\Models\Vehicle;
 use App\Models\RenewalType;
 use App\Models\VehicleType;
+
+use App\Http\Services\RenewalService;
+use App\Http\Services\VehicleService;
 use Illuminate\Http\Request;
 
 class RenewalController extends Controller
 {
-    protected $renewalService;
+    protected $renewalService, $vehicleService;
 
-    public function __construct(RenewalService $renewalService)
+    public function __construct(RenewalService $renewalService, VehicleService $vehicleService)
     {
         $this->renewalService = $renewalService;
+        $this->vehicleService = $vehicleService;
     }
     /**
      * Display a listing of the resource.
@@ -43,17 +47,41 @@ class RenewalController extends Controller
      */
     public function store(Request $request)
     {
-        $this->renewalService->store($request->all());
+        $data = $request->validate([
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'renewal_type_id' => 'required|exists:renewal_types,id',
+            'type' => 'required|string',
+            'book_number' => 'required_if:type,bluebook',
+            'issue_date' => 'required|date',
+            'expiry_date' => 'required|date',
+            'last_renewed_at' => 'nullable|date',
+            'status' => 'nullable|in:pending,approved,rejected',
+            'remarks' => 'nullable|string',
+        ]);
 
-        return redirect()->route('admin.renewal.index')->with('success', 'Renewal record created successfully.');
+        try {
+            $this->renewalService->store($data);
+            return redirect()->back()->with('success', 'Renewal record created successfully.');
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Renewal $renewal)
+    public function show(Vehicle $vehicle)
     {
-        //
+        $vehicle->load(['renewals.renewable', 'renewals.renewalType']);
+
+        // Get all renewal types (e.g., road permit, insurance, etc.)
+        $renewal_types = RenewalType::all();
+
+        // Group renewals by renewal_type_id for easy lookup
+        $renewalsByType = $vehicle->renewals->keyBy('renewal_type_id');
+        // dd($renewalsByType);
+
+        return view('renewal.show', compact('vehicle', 'renewal_types', 'renewalsByType'));
     }
 
     /**
@@ -89,112 +117,6 @@ class RenewalController extends Controller
     }
 
 
-    /* Start Vehicle Tax */
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create_tax()
-    {
-        return view('renewal.vehicle-tax.index');
-    }
-    /* End Vehicle Tax */
-
-
-    /* Start Bluebook */
-    /**
-     * Display a listing of the resource.
-     */
-    public function get_bluebooks(Request $request)
-    {
-        return view('renewal.bluebook.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create_bluebook(Request $request)
-    {
-        return view('renewal.bluebook.index');
-    }
-    /* End Bluebook */
-
-
-    /* Start Insurance */
-    /**
-     * Display a listing of the resource.
-     */
-    public function get_insurances(Request $request)
-    {
-        return view('renewal.insurance.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create_insurance(Request $request)
-    {
-        return view('renewal.insurance.index');
-    }
-    /* End Insurance */
-
-
-    /* Start Pollution Check */
-    /**
-     * Display a listing of the resource.
-     */
-    public function get_pollution_checks(Request $request)
-    {
-        return view('renewal.pollution-check');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create_pollution_check(Request $request)
-    {
-        return view('renewal.pollution-check.index');
-    }
-    /* End Pollution Check */
-
-
-    /* Start Road Permit */
-    /**
-     * Display a listing of the resource.
-     */
-    public function get_road_permits(Request $request)
-    {
-        return view('renewal.road-permit');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create_road_permit(Request $request)
-    {
-        return view('renewal.road-permit.index');
-    }
-    /* End Road Permits */
-
-
-    /* Start Vehicle/Check Passes */
-    /**
-     * Display a listing of the resource.
-     */
-    public function get_check_passes(Request $request)
-    {
-        return view('renewal.vehicle-pass.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create_check_pass(Request $request)
-    {
-        return view('renewal.vehicle-pass.index');
-    }
-    /* End Vehicle/Check Passes */
-
-
     public function create_renewal_type()
     {
         $renewal_types = RenewalType::all();
@@ -210,6 +132,7 @@ class RenewalController extends Controller
 
         $renewalType = new RenewalType();
         $renewalType->name = $request->name;
+        $renewalType->charge = $request->charge;
         $renewalType->save();
 
         return back();
@@ -230,6 +153,7 @@ class RenewalController extends Controller
         }
 
         $renewal_type->name = $request->name;
+        $renewal_type->charge = $request->charge;
         $renewal_type->save();
 
         return redirect()->route('admin.renewal.type.index');

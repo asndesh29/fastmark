@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 255);
             $table->string('details', 255)->nullable();
-            $table->tinyInteger('is_active')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

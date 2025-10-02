@@ -95,7 +95,8 @@
                                     <div class="col-md-3">
                                         <div class="mb-3">
                                             <label for="vehicle_category" class="form-label">Category</label>
-                                            <select class="form-select mb-3" name="vehicle_categories[]" required>
+                                            <select class="form-select mb-3" name="vehicle_categories[]" required data-placeholder="Select Category" title="Select Category"
+                                            data-choices name="choices-single-default id="chocices-single-default">
                                                 @foreach ($vehicle_categories as $key => $vc)
                                                     <option value="{{ $vc->id }}">{{ $vc->name }}</option>
                                                 @endforeach
@@ -164,9 +165,25 @@
                                 <div class="row vehicle-row mb-4 border rounded p-3" style="background-color: #f8f9fc">
                                     <div class="col-md-4">
                                         <div class="mb-3">
+                                            <label for="vehicle_category" class="form-label">Vehicle Categpru</label>
+                                            <select class="form-select mb-3" name="vehicle_categories[]" required data-placeholder="Select Category" title="Select Category"
+                                            data-choices name="choices-single-default id="chocices-single-default">
+                                                @foreach ($vehicle_categories as $key => $vc)
+                                                    <option value="{{ $vc->id }}">{{ $vc->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
                                             <label for="vehicle_type" class="form-label">Vehicle Type</label>
-                                            <select class="form-select mb-3" name="vehicle_type[]" required>
-                                                
+                                            <select class="form-select mb-3" name="vehicle_types[]" required data-placeholder="Select Type" title="Select Type"
+                                            data-choices name="choices-single-default id="chocices-single-default">
+                                                @foreach ($vehicle_types as $key => $vt)
+                                                    <option value="{{ $vt->id }}">{{ $vt->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -201,12 +218,19 @@
 
                                     <div class="col-md-4">
                                         <div class="mb-3">
+                                            <label for="capacity" class="form-label">Capacity</label>
+                                            <input type="text" name="capacity[]" class="form-control" placeholder="Ex: 2">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
                                             <label for="renewed_date" class="form-label">Last Renewed Date</label>
                                             <input type="text" class="form-control" id="nepali-datepicker" name="renewed_date[]" placeholder="Select Nepali Date"/>
                                         </div>
                                     </div>
 
-                                    <!-- 🚗 Remove button -->
+                                    <!-- Remove button -->
                                     <div class="col-12 text-end">
                                         <button type="button" class="btn btn-danger btn-sm remove-vehicle-btn">Remove</button>
                                     </div>

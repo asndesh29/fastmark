@@ -13,7 +13,9 @@ class Renewal extends Model
         'expiry_date',
         'reminder_date',
         'remarks',
-        'status'
+        'status',
+        'renewable_type',
+        'renewable_id',
     ];
 
     public function vehicle()
@@ -29,6 +31,11 @@ class Renewal extends Model
     public function renewable()
     {
         return $this->morphTo();
+    }
+
+    public function renewalType()
+    {
+        return $this->belongsTo(RenewalType::class);
     }
 
     public function payments()

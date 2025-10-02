@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bluebook extends Model
 {
+    protected $table = 'blue_books';
     protected $fillable = [
         'vehicle_id',
         'book_number',
@@ -18,9 +19,9 @@ class Bluebook extends Model
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'issue_date' => 'date',
-        'last_renewed_at' => 'date',
-        'expiry_date' => 'date',
+        'issue_date' => 'string',
+        'last_renewed_at' => 'string',
+        'expiry_date' => 'string',
     ];
 
     public function renewal()

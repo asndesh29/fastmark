@@ -20,87 +20,64 @@
     </div>
     <!-- end page title -->
 
-
     <div class="row">
-        <div class="col-lg-12">
-            <!-- customer -->
+        <div class="col-xl-12">
             <div class="card">
                 <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1"></h4>
-                    <div class="flex-shrink-0">
-                        <a href="{{ route('admin.renewal.create') }}">
-                            <button type="button" class="btn btn-primary btn-sm" id="add-renewal-btn">Add New Renewal</button>
-                        </a>
-                    </div>
-                </div>
-                <!-- end card header -->
+                    <h4 class="card-title mb-0 flex-grow-1">Renewal List</h4>
+
+                </div><!-- end card header -->
 
                 <div class="card-body">
+                    <p class="text-muted mb-4">Use <code>table-card</code> class to show card-based table within a &lt;tbody&gt;.</p>
+
                     <div class="live-preview">
-                        <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>S.No.</th>
-                                    <th>Customer Name</th>
-                                    <th>Vehicle Type</th>
-                                    <th>Registration No</th>
-                                    <th>Chassis No</th>
-                                    <th>Engine No</th>
-                                    <th>Renewed At</th>
-                                    <th>Expiry Date</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($renewal_lists as $key => $rl )
+                        <div class="table-responsive table-card">
+                            <table class="table align-middle table-nowrap mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>{{ $key+1 }}</td>
-                                        <td>{{ $rl->vehicle->owner->first_name }} {{ $rl->vehicle->owner->last_name }}</td>
-                                        <td>{{ $rl->vehicle->vehicleType->name }}</td>
-                                        <td>{{ $rl->vehicle->registration_no }}</td>
-                                        <td>{{ $rl->vehicle->chassis_no }}</td>
-                                        <td>{{ $rl->vehicle->engine_no }}</td>
-                                        <td>{{ $rl->vehicle->last_renewed_at }}</td>
-                                        <td>{{ $rl->vehicle->expiry_date }}</td>
-                                        <td>{{ $rl->vehicle->is_active }}</td>
-                                        <td>
-                                            <ul class="list-inline hstack gap-2 mb-0">
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                    <a href="{{ route('admin.customer.edit', $customer->id) }}">
-                                                        <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-edit-fill"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
-                                                    <a href="{{ route('admin.customer.show', $customer->id) }}">
-                                                        <button type="button" class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-eye-fill"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
-                                                    <a href="">
-                                                        <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-delete-bin-5-line"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </td>
+                                        <th>S.No.</th>
+                                        <th>Customer Name</th>
+                                        <th>Vehicle Type</th>
+                                        <th>Registration No</th>
+                                        <th>Chassis No</th>
+                                        <th>Engine No</th>
+                                        <th>Action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                   @if (count($renewal_lists) > 0)
+                                        @foreach ($renewal_lists as $key => $renewal)
+                                            <tr>
+                                                <td class="fw-medium">{{ $key+$renewal_lists->firstItem() }}</td>
+                                                <td>{{ $renewal->owner->first_name }} {{ $renewal->owner->last_name }}</td>
+                                                <td>{{ $renewal->vehicleType->name }}</td>
+                                                <td>{{ $renewal->registration_no }}</td>
+                                                <td>{{ $renewal->chassis_no }}</td>
+                                                <td>{{ $renewal->engine_no }}</td>
+
+                                                <td>
+                                                    <ul class="list-inline hstack gap-2 mb-0">
+                                                        <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
+                                                            <a href="{{ route('admin.renewal.show', $renewal->id) }}">
+                                                                <button type="button" class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light">
+                                                                    <i class="ri-eye-fill"></i>
+                                                                </button>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <!-- customer -->
-        </div> 
-        <!-- end col -->
+                    
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div><!-- end col -->
     </div>
     <!-- customer -->
 @endsection

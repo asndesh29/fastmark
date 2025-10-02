@@ -10,6 +10,7 @@ class RenewalType extends Model
 
     protected $fillable = [
         'name',
+        'charge',
         'is_active'
     ];
 

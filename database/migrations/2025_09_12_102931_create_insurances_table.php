@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('insurances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
-            $table->string('provider');
+            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
+            $table->foreignId('provider_id')->constrained('insurance_providers')->onDelete('cascade');
             $table->string('policy_number')->nullable();
             $table->string('issue_date')->nullable();
             $table->string('expiry_date')->nullable();

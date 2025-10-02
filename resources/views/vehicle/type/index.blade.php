@@ -36,17 +36,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="validationDefault02" class="form-label">Service Charge</label>
-                                        <input type="text" class="form-control @error('service_charge') is-invalid @enderror" id="service_charge" name="service_charge" value="{{ old('service_charge') }}" placeholder="Ex: 300">
-                                        
-                                        @error('service_charge')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -85,7 +74,6 @@
                                     </th>
                                     <th>S.No.</th>
                                     <th>Name</th>
-                                    <th>Service Charge</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -96,7 +84,6 @@
                                         <td></td>
                                         <td>{{ $key+1 }}</td>
                                         <td>{{ $vt->name }}</td>
-                                        <td>{{ $vt->service_charge }}</td>
                                         <td>{{ $vt->is_active }}</td>
                                         <td>
                                             <ul>

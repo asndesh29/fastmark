@@ -10,7 +10,6 @@ class VehicleType extends Model
 
     protected $fillable = [
         'name',
-        'service_charge',
         'is_active'
     ];
 

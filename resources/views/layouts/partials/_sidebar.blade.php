@@ -60,40 +60,9 @@
 
                 <!-- Renewal -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarRenew" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarRenew">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Renew</span>
+                    <a class="nav-link menu-link" href="{{ route('admin.renewal.index') }}">
+                        <i class="ri-honour-line"></i> <span data-key="t-widgets">Renew</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarRenew">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.renewal.road_permit.create') }}" class="nav-link" data-key="t-analytics"> Road Permit </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('admin.renewal.pollution_check.create') }}" class="nav-link" data-key="t-analytics"> Pollution </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('admin.renewal.check_pass.create') }}" class="nav-link" data-key="t-analytics"> Check Pass </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('admin.renewal.bluebook.create') }}" class="nav-link" data-key="t-analytics"> Blue Book </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('admin.renewal.insurance.create') }}" class="nav-link" data-key="t-analytics"> Insurance </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('admin.renewal.tax.create') }}" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="" class="nav-link" data-key="t-analytics"> License </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
                 <!-- Renewal -->
 

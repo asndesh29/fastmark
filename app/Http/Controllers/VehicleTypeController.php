@@ -33,7 +33,6 @@ class VehicleTypeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'service_charge' => 'required|decimal:0,99999.99'
         ]);
 
         $this->vehicleTypeService->store($validated);

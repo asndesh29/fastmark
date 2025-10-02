@@ -3,11 +3,13 @@
 namespace App\Http\Services;
 
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
+use App\Models\Bluebook;
 use App\Models\Customer;
 use App\Models\Renewal;
 use App\Models\Vehicle;
 use App\Models\VehicleType;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class RenewalService
@@ -17,14 +19,17 @@ class RenewalService
         $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        return Renewal::when($request->search, function ($query) use ($keywords) {
+        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'Renewals'])
+        ->when($request->search, function ($query) use ($keywords) {
             foreach ($keywords as $word) {
                 $query->orWhere('name', 'like', "%{$word}%");
             }
         })->orderBy('created_at', 'desc')->paginate($perPage);
+
+        return $vehicles;
     }
 
-    public function store($data)
+    public function store1($data)
     {
         // Create customer
         $customer = Customer::create([
@@ -73,14 +78,57 @@ class RenewalService
         return $customer;
     }
 
+    public function store(array $data)
+    {
+        // dd($data);
+        DB::beginTransaction();
+
+        try {
+            // dd(1);
+            // Step 1: Create the specific renewable record
+            switch ($data['type']) {
+                case 'bluebook':
+                    //  dd(1);
+                    $renewable = Bluebook::create([
+                        'vehicle_id' => $data['vehicle_id'],
+                        'book_number' => $data['book_number'],
+                        'issue_date' => $data['issue_date'],
+                        'last_renewed_at' => $data['last_renewed_at'] ?? null,
+                        'expiry_date' => $data['expiry_date'],
+                        'status' => $data['status'] ?? 'pending',
+                        'remarks' => $data['remarks'] ?? null,
+                    ]);
+                    break;
+
+                default:
+                    throw new \Exception("Invalid renewal type.");
+            }
+
+            // Step 2: Create the polymorphic renewal
+            Renewal::create([
+                'vehicle_id' => $data['vehicle_id'],
+                'renewal_type_id' => $data['renewal_type_id'],
+                'renewable_type' => get_class($renewable),
+                'renewable_id' => $renewable->id,
+                'status' => $data['status'] ?? 'pending',
+                'start_date' => $data['issue_date'],
+                'expiry_date' => $data['expiry_date'],
+                'reminder_date' => now()->addDays(7),
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e; // re-throw so controller can handle it
+        }
+}
+
+
+
     public function getById($id)
     {
         return Renewal::findOrFail($id);
-    }
-
-    public function show()
-    {
-
     }
 
     public function update(Renewal $renewal, $data)

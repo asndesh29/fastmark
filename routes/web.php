@@ -86,39 +86,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', [RenewalController::class, 'index'])->name('index');
             Route::get('add-new', [RenewalController::class, 'create'])->name('create');
             Route::post('store', [RenewalController::class, 'store'])->name('store');
-            Route::get('/edit/{id}', [RenewalController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [RenewalController::class, 'update'])->name('update');
-            Route::delete('/renewal/{id}', [RenewalController::class, 'destroy'])->name('destroy');
-
-            Route::group(['prefix' => 'bluebook', 'as' => 'bluebook.'], routes: function () {
-                Route::get('/', [RenewalController::class, 'get_bluebooks'])->name('index');
-                Route::get('/create', [RenewalController::class, 'create_bluebook'])->name('create');
-            });
-
-            Route::group(['prefix' => 'insurance', 'as' => 'insurance.'], routes: function () {
-                Route::get('/', [RenewalController::class, 'get_insurances'])->name('index');
-                Route::get('/create', [RenewalController::class, 'create_insurance'])->name('create');
-            });
-
-            Route::group(['prefix' => 'pollution_check', 'as' => 'pollution_check.'], routes: function () {
-                Route::get('/', [RenewalController::class, 'get_pollution_checks'])->name('index');
-                Route::get('/create', [RenewalController::class, 'create_pollution_check'])->name('create');
-            });
-
-            Route::group(['prefix' => 'road_permit', 'as' => 'road_permit.'], routes: function () {
-                Route::get('/', [RenewalController::class, 'get_road_permits'])->name('index');
-                Route::get('/create', [RenewalController::class, 'create_road_permit'])->name('create');
-            });
-
-            Route::group(['prefix' => 'check_pass', 'as' => 'check_pass.'], routes: function () {
-                Route::get('/', [RenewalController::class, 'get_check_passes'])->name('index');
-                Route::get('/create', [RenewalController::class, 'create_check_pass'])->name('create');
-            });
-
-            Route::group(['prefix' => 'tax', 'as' => 'tax.'], routes: function () {
-                Route::get('/', [RenewalController::class, 'get_tax'])->name('index');
-                Route::get('/create', [RenewalController::class, 'create_tax'])->name('create');
-            });
+            Route::get('/edit/{renewal}', [RenewalController::class, 'edit'])->name('edit');
+            // Route::get('show/{renewal}', [RenewalController::class, 'show'])->name('show');
+            Route::get('renewal/show/{vehicle}', [RenewalController::class, 'show'])->name('show');
+            Route::post('/update/{renewal}', [RenewalController::class, 'update'])->name('update');
+            Route::delete('/delete/{renewal}', [RenewalController::class, 'destroy'])->name('destroy');
 
             Route::prefix('type')->name('type.')->group(function () {
                 Route::get('/', [RenewalController::class, 'create_renewal_type'])->name('index');
@@ -142,8 +114,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('delete/{fee}', [FeeSlabController::class, 'destroy'])->name('destroy');
             Route::get('status/{fee}/{status}', [FeeSlabController::class, 'status'])->name('status');
         });
-
-
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

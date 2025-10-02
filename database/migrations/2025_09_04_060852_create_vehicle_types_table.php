@@ -13,8 +13,7 @@ return new class extends Migration {
         Schema::create('vehicle_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
-            $table->decimal('service_charge', 12, 2)->default(0);
-            $table->tinyInteger('is_active')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
