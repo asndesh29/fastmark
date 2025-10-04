@@ -22,8 +22,6 @@
 
                 <div class="card-body">
                     <p class="text-muted mb-4">Use <code>table-card</code> class to show card-based table within a &lt;tbody&gt;.</p>
-                    <label>Issue Date</label>
-                    <input type="text" id="nepali-datepicker" class="form-control" placeholder="Select Nepali Date"/>
 
                     <table class="table align-middle table-nowrap mb-0">
                         <thead class="table-light">
@@ -47,11 +45,12 @@
                                     <tr>
                                         <td>
                                             <div class="form-check">
-                                                <input class="form-check-input renewal-checkbox" 
-                                                    type="checkbox" 
-                                                    data-type="{{ $type->name }}" 
-                                                    data-type-id="{{ $type->id }}" 
-                                                    id="renewalCheckbox{{ $type->id }}">
+                                                <input class="form-check-input renewal-checkbox"
+                                                type="checkbox"
+                                                data-type="{{ $type->name }}"
+                                                data-type-id="{{ $type->id }}"
+                                                data-modal="{{ Str::camel($type->name) }}Modal"
+                                                id="renewalCheckbox{{ $type->id }}">
                                             </div>
                                         </td>
                                         <td>{{ $type->name }}</td>
@@ -100,16 +99,16 @@
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control" id="nepali-datepicker" name="issue_date" placeholder="Select Nepali Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
                             <!-- <input type="text" class="form-control" id="nepali-datepicker" name="issue_date" placeholder="Select Issue Date"/> -->
                         </div>
                         <div class="mb-3">
                             <label>Last Renewed At</label>
-                            <input type="text" class="form-control" id="nepali-datepicker1" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control" id="nepali-datepicker2" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -134,13 +133,13 @@
     </div>
 
     <!-- Road Permit Modal -->
-    <div class="modal fade" id="bluebookModal" tabindex="-1" aria-labelledby="bluebookModalLabel" aria-hidden="true">
+    <div class="modal fade" id="roadPermitModal" tabindex="-1" aria-labelledby="roadPermitModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form id="bluebookForm" method="POST" action="{{ route('admin.renewal.store') }}">
+            <form id="roadPermitForm" method="POST" action="{{ route('admin.renewal.store') }}">
                 @csrf
                 <input type="hidden" name="renewal_type_id" value="">
                 <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
-                <input type="hidden" name="type" value="bluebook">
+                <input type="hidden" name="type" value="road_permit">
 
                 <div class="modal-content">
                     <div class="modal-header">
@@ -150,20 +149,236 @@
                     <div class="modal-body">
 
                         <div class="mb-3">
-                            <label>Permit Number</label>
-                            <input type="text" class="form-control" name="permit_number" required>
+                            <label>Book Number</label>
+                            <input type="text" class="form-control" name="book_number" required>
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control" id="nepali-datepicker3" name="issue_date" placeholder="Select Issue Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
                         </div>
                         <div class="mb-3">
                             <label>Last Renewed At</label>
-                            <input type="text" class="form-control" id="nepali-datepicker1" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control" id="nepali-datepicker2" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Status</label>
+                            <select class="form-control select" name="status">
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Remarks</label>
+                            <textarea class="form-control" name="remarks"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Renewal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pollution Modal -->
+    <div class="modal fade" id="pollutionModal" tabindex="-1" aria-labelledby="pollutionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="pollutionForm" method="POST" action="{{ route('admin.renewal.store') }}">
+                @csrf
+                <input type="hidden" name="renewal_type_id" value="">
+                <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
+                <input type="hidden" name="type" value="pollution">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add PollutionRenewal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label>Book Number</label>
+                            <input type="text" class="form-control" name="book_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Issue Date</label>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Last Renewed At</label>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Expiry Date</label>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Status</label>
+                            <select class="form-control select" name="status">
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Remarks</label>
+                            <textarea class="form-control" name="remarks"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Renewal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Check Pass Modal -->
+    <div class="modal fade" id="checkPassModal" tabindex="-1" aria-labelledby="checkPassModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="checkPassForm" method="POST" action="{{ route('admin.renewal.store') }}">
+                @csrf
+                <input type="hidden" name="renewal_type_id" value="">
+                <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
+                <input type="hidden" name="type" value="check_pass">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Check Pass</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label>Book Number</label>
+                            <input type="text" class="form-control" name="book_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Issue Date</label>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Last Renewed At</label>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Expiry Date</label>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Status</label>
+                            <select class="form-control select" name="status">
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Remarks</label>
+                            <textarea class="form-control" name="remarks"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Renewal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Insurance Modal -->
+    <div class="modal fade" id="insuranceModal" tabindex="-1" aria-labelledby="insuranceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="insuranceForm" method="POST" action="{{ route('admin.renewal.store') }}">
+                @csrf
+                <input type="hidden" name="renewal_type_id" value="">
+                <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
+                <input type="hidden" name="type" value="insurance">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Insurance</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label>Book Number</label>
+                            <input type="text" class="form-control" name="book_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Issue Date</label>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Last Renewed At</label>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Expiry Date</label>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Status</label>
+                            <select class="form-control select" name="status">
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Remarks</label>
+                            <textarea class="form-control" name="remarks"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Renewal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tax Modal -->
+    <div class="modal fade" id="taxModal" tabindex="-1" aria-labelledby="taxModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="taxForm" method="POST" action="{{ route('admin.renewal.store') }}">
+                @csrf
+                <input type="hidden" name="renewal_type_id" value="">
+                <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
+                <input type="hidden" name="type" value="tax">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Tax</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label>Book Number</label>
+                            <input type="text" class="form-control" name="book_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Issue Date</label>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Last Renewed At</label>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Expiry Date</label>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -190,43 +405,53 @@
 @endsection
 
 @push('script_2')
+<script>
+    $(document).ready(function () {
+        $('.renewal-checkbox').on('change', function () {
+            if (this.checked) {
+                const $checkbox = $(this);
+                const typeId = $checkbox.data('type-id');
+                const modalId = `#${$checkbox.data('modal')}`;
+                const $modal = $(modalId);
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".renewal-checkbox").forEach(function (checkbox) {
-                checkbox.addEventListener("change", function () {
-                    if (this.checked) {
-                        let type = this.dataset.type.toLowerCase();
-                        let modalId = type + "Modal";
-                        let modal = new bootstrap.Modal(document.getElementById(modalId));
-                        modal.show();
+                // Set hidden input
+                $modal.find('input[name="renewal_type_id"]').val(typeId);
 
-                        // Set the correct renewal_type_id in hidden field
-                        document.querySelector(`#${modalId} input[name="renewal_type_id"]`).value = this.dataset.typeId;
+                // Reset form (clear values)
+                const $form = $modal.find('form');
+                $form[0].reset();
+
+                // Show modal
+                const modalInstance = new bootstrap.Modal(document.querySelector(modalId));
+                modalInstance.show();
+
+                // Initialize Nepali datepickers
+                $modal.find('.nepali-date').each(function () {
+                    if (!$(this).hasClass('ndp-initialized')) {
+                        $(this).NepaliDatePicker({
+                            container: modalId
+                        }).addClass('ndp-initialized');
                     }
                 });
-            });
+            }
         });
 
-        $(document).ready(function () {
-            $('#bluebookModal').on('shown.bs.modal', function () {
-                // Initialize datepickers only once
-                let $issue = $('#nepali-datepicker');
-                let $lastRenew = $('#nepali-datepicker1');
-                let $expiry = $('#nepali-datepicker2');
+        // When modal is closed
+        $('.modal').on('hidden.bs.modal', function () {
+            const $modal = $(this);
 
-                if (!$issue.hasClass('ndp-initialized')) {
-                    $issue.NepaliDatePicker();
-                }
-                if (!$lastRenew.hasClass('ndp-initialized')) {
-                    $lastRenew.NepaliDatePicker();
-                }
-                if (!$expiry.hasClass('ndp-initialized')) {
-                    $expiry.NepaliDatePicker();
-                }
-            });
+            // Uncheck all checkboxes
+            $('.renewal-checkbox').prop('checked', false);
+
+            // Reset the form inside this modal
+            const $form = $modal.find('form');
+            if ($form.length > 0) {
+                $form[0].reset();
+            }
+
+            // Optional: remove Nepali datepicker class if needed
+            $modal.find('.nepali-date').removeClass('ndp-initialized');
         });
-    </script>
-
+    });
+</script>
 @endpush
-
