@@ -92,23 +92,22 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-
                         <div class="mb-3">
                             <label>Book Number</label>
                             <input type="text" class="form-control" name="book_number" required>
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                             <!-- <input type="text" class="form-control" id="nepali-datepicker" name="issue_date" placeholder="Select Issue Date"/> -->
                         </div>
                         <div class="mb-3">
                             <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -147,22 +146,17 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-
                         <div class="mb-3">
-                            <label>Book Number</label>
-                            <input type="text" class="form-control" name="book_number" required>
+                            <label>Permit Number</label>
+                            <input type="text" class="form-control" name="permit_number" required>
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
-                        </div>
-                        <div class="mb-3">
-                            <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -208,15 +202,15 @@
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -262,15 +256,15 @@
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -309,22 +303,21 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-
                         <div class="mb-3">
                             <label>Book Number</label>
                             <input type="text" class="form-control" name="book_number" required>
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -370,15 +363,15 @@
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date"/>
+                            <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date"/>
+                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date"/>
+                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>

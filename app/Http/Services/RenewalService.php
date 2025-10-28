@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Renewal;
 use App\Models\Vehicle;
 use App\Models\VehicleType;
+use App\Models\RoadPermit;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -88,17 +89,27 @@ class RenewalService
             // Step 1: Create the specific renewable record
             switch ($data['type']) {
                 case 'bluebook':
-                    //  dd(1);
-                    $renewable = Bluebook::create([
-                        'vehicle_id' => $data['vehicle_id'],
-                        'book_number' => $data['book_number'],
-                        'issue_date' => $data['issue_date'],
-                        'last_renewed_at' => $data['last_renewed_at'] ?? null,
-                        'expiry_date' => $data['expiry_date'],
-                        'status' => $data['status'] ?? 'pending',
-                        'remarks' => $data['remarks'] ?? null,
-                    ]);
-                    break;
+                $renewable = Bluebook::create([
+                    'vehicle_id' => $data['vehicle_id'],
+                    'book_number' => $data['book_number'],
+                    'issue_date' => $data['issue_date'],
+                    'last_renewed_at' => $data['last_renewed_at'] ?? null,
+                    'expiry_date' => $data['expiry_date'],
+                    'status' => $data['status'] ?? 'pending',
+                    'remarks' => $data['remarks'] ?? null,
+                ]);
+                break;
+
+            case 'road_permit':
+                $renewable = RoadPermit::create([
+                    'vehicle_id' => $data['vehicle_id'],
+                    'permit_number' => $data['permit_number'],
+                    'issue_date' => $data['issue_date'],
+                    'expiry_date' => $data['expiry_date'],
+                    'status' => $data['status'] ?? 'pending',
+                    'remarks' => $data['remarks'] ?? null,
+                ]);
+                break;
 
                 default:
                     throw new \Exception("Invalid renewal type.");
@@ -122,9 +133,7 @@ class RenewalService
             DB::rollBack();
             throw $e; // re-throw so controller can handle it
         }
-}
-
-
+    }
 
     public function getById($id)
     {

@@ -52,6 +52,7 @@ class RenewalController extends Controller
             'renewal_type_id' => 'required|exists:renewal_types,id',
             'type' => 'required|string',
             'book_number' => 'required_if:type,bluebook',
+            'permit_number' => 'required_if:type,road_permit',
             'issue_date' => 'required|date',
             'expiry_date' => 'required|date',
             'last_renewed_at' => 'nullable|date',
