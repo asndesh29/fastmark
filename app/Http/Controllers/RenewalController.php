@@ -6,6 +6,7 @@ use App\Models\Renewal;
 use App\Models\Vehicle;
 use App\Models\RenewalType;
 use App\Models\VehicleType;
+use App\Models\InsuranceProvider;
 
 use App\Http\Services\RenewalService;
 use App\Http\Services\VehicleService;
@@ -52,8 +53,19 @@ class RenewalController extends Controller
             'renewal_type_id' => 'required|exists:renewal_types,id',
             'type' => 'required|string',
             'book_number' => 'required_if:type,bluebook',
+            'permit_number' => 'required_if:type,road_permit',
+            
+            'provider_id' => 'required_if:type,insurance',
+            'policy_number' => 'required_if:type,insurance',
+            'amount' => 'required_if:type,insurance',
+
+            'check_date' => 'required_if:type,pollution',
+            'certificate_number' => 'required_if:type,pollution',
+
+            'inspection_result' => 'required_if:type,check_pass | in:pass,fail',
+            
             'issue_date' => 'required|date',
-            'expiry_date' => 'required|date',
+            // 'expiry_date' => 'required|date',
             'last_renewed_at' => 'nullable|date',
             'status' => 'nullable|in:pending,approved,rejected',
             'remarks' => 'nullable|string',
@@ -81,7 +93,10 @@ class RenewalController extends Controller
         $renewalsByType = $vehicle->renewals->keyBy('renewal_type_id');
         // dd($renewalsByType);
 
-        return view('renewal.show', compact('vehicle', 'renewal_types', 'renewalsByType'));
+        $providers = InsuranceProvider::where('is_active', true)->get();
+        // dd($providers);
+
+        return view('renewal.show', compact('vehicle', 'renewal_types', 'renewalsByType', 'providers'));
     }
 
     /**
@@ -180,4 +195,38 @@ class RenewalController extends Controller
 
         return back()->with('success', 'Renewal Type status updated successfully.');
     }
+
+    public function getRenewDetails($vehicleId)
+    {
+        $today = now(); // today's date
+
+        $data = [
+            'road_permit' => $this->getRenewInfo(RoadPermit::where('vehicle_id', $vehicleId)->latest()->first(), $today),
+            'pollution' => $this->getRenewInfo(PollutionCertificate::where('vehicle_id', $vehicleId)->latest()->first(), $today),
+            'check_pass' => $this->getRenewInfo(CheckPass::where('vehicle_id', $vehicleId)->latest()->first(), $today),
+            'bluebook' => $this->getRenewInfo(BlueBook::where('vehicle_id', $vehicleId)->latest()->first(), $today),
+            'insurance' => $this->getRenewInfo(Insurance::where('vehicle_id', $vehicleId)->latest()->first(), $today),
+            'vehicle_tax' => $this->getRenewInfo(VehicleTax::where('vehicle_id', $vehicleId)->latest()->first(), $today),
+        ];
+
+        return response()->json($data);
+    }
+
+    private function getRenewInfo($record, $today)
+    {
+        if (!$record) {
+            return [
+                'last_renewed_at' => null,
+                'expiry_date' => null,
+                'is_expired' => null
+            ];
+        }
+
+        return [
+            'last_renewed_at' => $record->last_renewed_at,
+            'expiry_date' => $record->expiry_date,
+            'is_expired' => Carbon::parse($record->expiry_date)->lt($today)
+        ];
+    }
+
 }

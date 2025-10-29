@@ -19,8 +19,8 @@ class RoadPermit extends Model
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'issue_date' => 'date',
-        'expiry_date' => 'date'
+        'issue_date' => 'string',
+        'expiry_date' => 'string'
     ];
 
     public function renewal()

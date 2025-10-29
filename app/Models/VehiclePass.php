@@ -12,15 +12,15 @@ class VehiclePass extends Model
         'issue_date',
         'expiry_date',
         'inspection_result',
-        'inspection_date',
+        // 'inspection_date',
         'remarks',
     ];
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'issue_date' => 'date',
-        'inspection_date' => 'date',
-        'expiry_date' => 'date',
+        'issue_date' => 'string',
+        // 'inspection_date' => 'string',
+        'expiry_date' => 'string',
     ];
 
     public function renewal()

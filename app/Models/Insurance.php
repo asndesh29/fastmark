@@ -8,7 +8,7 @@ class Insurance extends Model
 {
     protected $fillable = [
         'vehicle_id',
-        'provider',
+        'provider_id',
         'policy_number',
         'issue_date',
         'expiry_date',
@@ -18,13 +18,18 @@ class Insurance extends Model
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'issue_date' => 'date',
-        'expiry_date' => 'date',
+        'issue_date' => 'string',
+        'expiry_date' => 'string',
         'amount' => 'decimal'
     ];
 
     public function renewal()
     {
         return $this->morphOne(Renewal::class, 'renewable');
+    }
+
+    public function providers()
+    {
+        return $this->belongsTo(InsuranceProvider::class);
     }
 }
