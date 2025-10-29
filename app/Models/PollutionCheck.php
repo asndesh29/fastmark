@@ -20,8 +20,9 @@ class PollutionCheck extends Model
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'issue_date' => 'date',
-        'expiry_date' => 'date'
+        'check_date' => 'string',
+        'issue_date' => 'string',
+        'expiry_date' => 'string'
     ];
 
     public function renewal()

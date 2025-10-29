@@ -197,20 +197,16 @@
                     <div class="modal-body">
 
                         <div class="mb-3">
-                            <label>Book Number</label>
-                            <input type="text" class="form-control" name="book_number" required>
+                            <label>Certificate Number</label>
+                            <input type="text" class="form-control" name="certificate_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Last Renewed At</label>
+                            <input type="text" class="form-control nepali-date" name="check_date" placeholder="Select Check Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
                             <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
-                        </div>
-                        <div class="mb-3">
-                            <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
-                        </div>
-                        <div class="mb-3">
-                            <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -249,29 +245,19 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label>Book Number</label>
                             <input type="text" class="form-control" name="book_number" required>
-                        </div>
+                        </div> -->
                         <div class="mb-3">
                             <label>Issue Date</label>
                             <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
-                            <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
-                        </div>
-                        <div class="mb-3">
-                            <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
-                        </div>
-                        <div class="mb-3">
-                            <label>Status</label>
-                            <select class="form-control select" name="status">
-                                <option value="pending">Pending</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
+                            <label>Inspection Result</label>
+                            <select class="form-control select" name="inspection_result">
+                                <option value="pass">Pass</option>
+                                <option value="fail">Fail</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -304,29 +290,33 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label>Book Number</label>
-                            <input type="text" class="form-control" name="book_number" required>
+                            <label>Select Insurance Provider</label>
+                            <select name="provider_id" id="provider_id" class="form-control select">
+                                @foreach ($providers as $provider)
+                                    <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Policy Number</label>
+                            <input type="text" class="form-control" name="policy_number" required>
                         </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
                             <input type="text" class="form-control nepali-date" name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
                         </div>
                         <div class="mb-3">
-                            <label>Last Renewed At</label>
-                            <input type="text" class="form-control nepali-date" name="last_renewed_at" placeholder="Select Last Renew Date" autocomplete="off"/>
+                            <label>Amount</label>
+                            <input type="number" min="0" max="9999999999.00" step="0.01" class="form-control" name="amount" required>
                         </div>
-                        <div class="mb-3">
-                            <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
-                        </div>
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label>Status</label>
                             <select class="form-control select" name="status">
                                 <option value="pending">Pending</option>
                                 <option value="approved">Approved</option>
                                 <option value="rejected">Rejected</option>
                             </select>
-                        </div>
+                        </div> -->
                         <div class="mb-3">
                             <label>Remarks</label>
                             <textarea class="form-control" name="remarks"></textarea>
