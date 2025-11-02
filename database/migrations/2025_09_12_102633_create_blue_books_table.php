@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('issue_date');
             $table->string('last_renewed_at');
             $table->string('expiry_date');
-            $table->enum('status', ['pending', 'approved', 'rejected']);
+            // $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('policy_number')->nullable();
             $table->string('issue_date')->nullable();
             $table->string('expiry_date')->nullable();
-            $table->decimal('amount', 12, 2)->default(0);
+            // $table->decimal('amount', 12, 2)->default(0);
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

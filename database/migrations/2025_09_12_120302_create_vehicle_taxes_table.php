@@ -13,10 +13,10 @@ return new class extends Migration {
         Schema::create('vehicle_taxes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
-            $table->string('tax_year')->nullable();
-            $table->string('last_renewed_at')->nullable();
+            // $table->string('tax_year')->nullable();
+            $table->string('issue_date')->nullable();
             $table->string('expiry_date')->nullable();
-            $table->decimal('amount', 12, 2)->default(0);
+            // $table->decimal('amount', 12, 2)->default(0);
             $table->string('remarks')->nullable();
             $table->timestamps();
         });
