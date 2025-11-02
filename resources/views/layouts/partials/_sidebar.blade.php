@@ -66,6 +66,39 @@
                 </li>
                 <!-- Renewal -->
 
+                <!-- Renewal -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarRenewal" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarRenewal">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Renew</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarRenewal">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.bluebook.index') }}" class="nav-link" data-key="t-analytics"> Bluebook </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Check Pass </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> Insurance </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> License </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Pollution </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> Road Permit </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Renewal -->
+
                 <!-- Customers -->
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarCustomers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCustomers">

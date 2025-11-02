@@ -36,17 +36,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="charge" class="form-label">Charge</label>
-                                        <input type="number" min="0" max="99999.99" class="form-control @error('charge') is-invalid @enderror" id="charge" name="charge" value="{{ old('charge') }}" placeholder="Ex: 300">
-                                        
-                                        @error('charge')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- button -->

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\RenewalTypeService;
 use App\Models\Renewal;
 use App\Models\Vehicle;
 use App\Models\RenewalType;
@@ -14,12 +15,13 @@ use Illuminate\Http\Request;
 
 class RenewalController extends Controller
 {
-    protected $renewalService, $vehicleService;
+    protected $renewalService, $vehicleService, $renewalTypeService;
 
-    public function __construct(RenewalService $renewalService, VehicleService $vehicleService)
+    public function __construct(RenewalService $renewalService, VehicleService $vehicleService, RenewalTypeService $renewalTypeService)
     {
         $this->renewalService = $renewalService;
         $this->vehicleService = $vehicleService;
+        $this->renewalTypeService = $renewalTypeService;
     }
     /**
      * Display a listing of the resource.
@@ -54,7 +56,7 @@ class RenewalController extends Controller
             'type' => 'required|string',
             'book_number' => 'required_if:type,bluebook',
             'permit_number' => 'required_if:type,road_permit',
-            
+
             'provider_id' => 'required_if:type,insurance',
             'policy_number' => 'required_if:type,insurance',
             'amount' => 'required_if:type,insurance',
@@ -63,7 +65,7 @@ class RenewalController extends Controller
             'certificate_number' => 'required_if:type,pollution',
 
             'inspection_result' => 'required_if:type,check_pass | in:pass,fail',
-            
+
             'issue_date' => 'required|date',
             // 'expiry_date' => 'required|date',
             'last_renewed_at' => 'nullable|date',
@@ -140,15 +142,9 @@ class RenewalController extends Controller
 
     public function store_renewal_type(Request $request)
     {
-        // dd($request->all());
-        $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
+        $input = $request->all();
 
-        $renewalType = new RenewalType();
-        $renewalType->name = $request->name;
-        $renewalType->charge = $request->charge;
-        $renewalType->save();
+        $this->renewalTypeService->store($input);
 
         return back();
     }

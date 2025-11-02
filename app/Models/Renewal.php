@@ -9,13 +9,13 @@ class Renewal extends Model
     protected $fillable = [
         'vehicle_id',
         'renewal_type_id',
+        'renewable_type',
+        'renewable_id',
         'start_date',
         'expiry_date',
         'reminder_date',
         'remarks',
         'status',
-        'renewable_type',
-        'renewable_id',
     ];
 
     public function vehicle()

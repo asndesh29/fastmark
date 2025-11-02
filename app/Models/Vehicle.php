@@ -44,4 +44,9 @@ class Vehicle extends Model
     {
         return $this->hasMany(Renewal::class);
     }
+
+    public function bluebook()  // latest one
+    {
+        return $this->hasOne(Bluebook::class)->latestOfMany();
+    }
 }
