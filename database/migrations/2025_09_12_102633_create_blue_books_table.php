@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
             $table->string('book_number')->unique();
             $table->string('issue_date');
-            $table->string('last_renewed_at');
+            $table->string('last_expiry_date');
             $table->string('expiry_date');
-            $table->enum('status', ['pending', 'approved', 'rejected']);
+            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

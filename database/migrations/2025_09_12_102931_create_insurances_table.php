@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('issue_date')->nullable();
             $table->string('expiry_date')->nullable();
             $table->decimal('amount', 12, 2)->default(0);
+            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
             $table->string('remarks')->nullable();
             $table->timestamps();
         });

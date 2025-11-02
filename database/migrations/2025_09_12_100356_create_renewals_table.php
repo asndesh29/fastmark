@@ -19,10 +19,11 @@ return new class extends Migration {
             $table->string('renewable_type');  // e.g., App\Models\RoadPermit
             $table->unsignedBigInteger('renewable_id');
 
-            $table->enum('status', ['pending', 'approved', 'rejected', 'expired']);
-            $table->string('start_date');
-            $table->string('expiry_date');
-            $table->date('reminder_date');
+            $table->string('start_date')->nullable();
+            $table->string('expiry_date')->nullable();
+            $table->date('reminder_date')->nullable();
+
+            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
             $table->text('remarks')->nullable();
 
             // Index for polymorphic lookup optimization

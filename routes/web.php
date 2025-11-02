@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlueBookController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeeSlabController;
 use App\Http\Controllers\ModuleController;
@@ -113,6 +114,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('show/{fee}', [FeeSlabController::class, 'show'])->name('show');
             Route::delete('delete/{fee}', [FeeSlabController::class, 'destroy'])->name('destroy');
             Route::get('status/{fee}/{status}', [FeeSlabController::class, 'status'])->name('status');
+        });
+
+
+        Route::prefix('bluebook')->name('bluebook.')->group(function () {
+            Route::get('/', [BlueBookController::class, 'index'])->name('index');
+            Route::get('add-new', [BlueBookController::class, 'create'])->name('create');
+            Route::post('store', [BlueBookController::class, 'store'])->name('store');
+            Route::get('edit/{bluebook}', [BlueBookController::class, 'edit'])->name('edit');
+            Route::post('update/{bluebook}', [BlueBookController::class, 'update'])->name('update');
+            Route::get('show/{bluebook}', [BlueBookController::class, 'show'])->name('show');
+            Route::delete('delete/{bluebook}', [BlueBookController::class, 'destroy'])->name('destroy');
         });
     });
 
