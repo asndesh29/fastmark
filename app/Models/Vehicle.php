@@ -49,4 +49,29 @@ class Vehicle extends Model
     {
         return $this->hasOne(Bluebook::class)->latestOfMany();
     }
+
+    public function pollution()
+    {
+        return $this->hasOne(PollutionCheck::class)->latestOfMany();
+    }
+
+    public function roadPermit()
+    {
+        return $this->hasOne(RoadPermit::class)->latestOfMany();
+    }
+
+    public function insurance()
+    {
+        return $this->hasOne(Insurance::class)->latestOfMany();
+    }
+
+    public function vehicleTax()
+    {
+        return $this->hasOne(VehicleTax::class)->latestOfMany();
+    }
+
+    public function vehiclePass()
+    {
+        return $this->hasOne(VehiclePass::class)->latestOfMany();
+    }
 }

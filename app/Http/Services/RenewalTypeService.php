@@ -24,41 +24,37 @@ class RenewalTypeService
         $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'Renewals'])
-            ->when($request->search, function ($query) use ($keywords) {
-                foreach ($keywords as $word) {
-                    $query->orWhere('name', 'like', "%{$word}%");
-                }
-            })->orderBy('created_at', 'desc')->paginate($perPage);
+        return RenewalType::when($request->search, function ($query) use ($keywords) {
+            foreach ($keywords as $word) {
+                $query->orWhere('name', 'like', "%{$word}%");
+            }
+        })->orderBy('created_at', 'desc')->paginate($perPage);
 
-        return $vehicles;
     }
-
-
 
     public function store(array $data)
     {
-        return RenewalType::store($data);
+        return RenewalType::create($data);
     }
 
     public function getById($id)
     {
-        return Renewal::findOrFail($id);
+        return RenewalType::findOrFail($id);
     }
 
-    public function update(Renewal $renewal, $data)
+    public function update(RenewalType $renewalType, $data)
     {
-        return $renewal->update($data);
+        return $renewalType->update($data);
     }
 
     public function delete($id)
     {
-        $renewal = $this->getById($id);
+        $renewalType = $this->getById($id);
 
-        if (!$renewal) {
+        if (!$renewalType) {
             return false;
         }
 
-        return $renewal->delete();
+        return $renewalType->delete();
     }
 }

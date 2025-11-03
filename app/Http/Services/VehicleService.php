@@ -22,9 +22,6 @@ class VehicleService
 
     public function store($data)
     {
-        if (isset($data['image'])) {
-            $data['image'] = AppHelper::upload('customer', 'png', $data['image']);
-        }
         return Vehicle::store($data);
     }
 
@@ -33,23 +30,19 @@ class VehicleService
         return Vehicle::findOrFail($id);
     }
 
-    public function update(Vehicle $customer, $data)
+    public function update(Vehicle $vehicle, $data)
     {
-        if (isset($data['image'])) {
-            $data['image'] = AppHelper::update('customer', $customer->image, 'png', $data['image']);
-        }
-
-        return $customer->update($data);
+        return $vehicle->update($data);
     }
 
     public function destroy($id)
     {
-        $customer = $this->getById($id);
+        $vehicle = $this->getById($id);
 
-        if (!$customer) {
+        if (!$vehicle) {
             return false;
         }
 
-        return $customer->delete();
+        return $vehicle->delete();
     }
 }

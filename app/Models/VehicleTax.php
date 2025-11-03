@@ -7,24 +7,51 @@ use Illuminate\Database\Eloquent\Model;
 class VehicleTax extends Model
 {
     protected $table = 'vehicle_taxes';
+
     protected $fillable = [
         'vehicle_id',
-        'tax_year',
-        'last_renewed_at',
+        'invoice_no',
+        'last_expiry_date',
+        'issue_date',
         'expiry_date',
-        'amount',
-        'status',
+        'tax_amount',
+        'renewal_charge',
+        'income_tax',
         'remarks',
+        'status'
     ];
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'last_renewed_at' => 'date',
-        'expiry_date' => 'date',
+        'last_expiry_date' => 'string',
+        'issue_date' => 'string',
+        'expiry_date' => 'string'
     ];
 
     public function renewal()
     {
         return $this->morphOne(Renewal::class, 'renewable');
     }
+
+    public function renewals()
+    {
+        return $this->morphMany(Renewal::class, 'renewable');
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function scopeExpiringSoon($query, $days = 30)
+    {
+        return $query->where('expiry_date', '<=', now()->addDays($days))
+            ->where('expiry_date', '>=', now());
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('expiry_date', '<', now());
+    }
 }
+

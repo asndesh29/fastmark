@@ -13,8 +13,7 @@ return new class extends Migration {
         Schema::create('renewal_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
-            $table->string('slug')->unique();
-            // $table->decimal('charge', 12, 2)->default(0);
+            $table->string('slug', 255)->unique()->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

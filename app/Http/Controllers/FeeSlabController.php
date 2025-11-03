@@ -20,12 +20,15 @@ class FeeSlabController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $fee_slabs = FeeSlab::where('is_active', true)->get();
+        $perPage = $request->show_limit ?? config('default_pagination', 10);
+
+        $fee_slabs = $this->feeSlabService->list($request, $perPage);
+
         $vehicle_types = VehicleType::where('is_active', true)->get();
 
-        return view('feeslab.index', compact('fee_slabs', 'vehicle_types'));
+        return view('providers.index', compact('fee_slabs', 'vehicle_types'));
     }
 
     /**

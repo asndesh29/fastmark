@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('vehicle_taxes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
-            $table->string('tax_year')->nullable();
+            $table->string('invoice_no')->nullable();
             $table->string('issue_date')->nullable();
             $table->string('last_expiry_date')->nullable();
             $table->string('expiry_date')->nullable();

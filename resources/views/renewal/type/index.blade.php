@@ -63,63 +63,66 @@
 
                 <div class="card-body">
                     <div class="live-preview">
-                        <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>S.No.</th>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($renewal_types as $Key => $rt)
+                         <div class="table-responsive table-card">
+                            <table class="table table-nowrap mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>{{ $loop->iteration}}</td>
-                                        <td>{{ $rt->name }}</td>
-                                        <td>
-                                            <div class="form-check form-switch form-switch-right form-switch-md">
-                                                <input 
-                                                    type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
-                                                    data-url="{{ route('admin.renewal.type.status', [$rt->id, $rt->is_active ? 0 : 1]) }}"
-                                                    data-message="{{$rt->is_active ? 'you want to deactivate this renewal type' : 'you want to activate this renewal type' }}"
-                                                    id="status_change_alert_{{ $rt->id }}" 
-                                                    {{ $rt->is_active ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <ul class="list-inline hstack gap-2 mb-0">
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                    <a href="{{ route('admin.renewal.type.edit', $rt->id) }}">
-                                                        <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-edit-fill"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-
-                                                <!-- Delete button -->
-                                                <li class="list-inline-item" data-bs-toggle="tooltip"
-                                                    data-bs-trigger="hover" data-bs-placement="top" title="Remove">
-
-                                                    <button type="button"
-                                                        class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
-                                                        data-id="{{ $rt->id }}"
-                                                        data-name="{{ $rt->name ?? '' }}"> <!-- Optional: display name in alert -->
-                                                        <i class="ri-delete-bin-5-fill fs-16"></i>
-                                                    </button>
-
-                                                    <!-- Delete form -->
-                                                    <form action="{{ route('admin.renewal.type.destroy', [$rt->id]) }}"
-                                                        method="post" id="renew-{{ $rt->id }}" style="display: none;">
-                                                        @csrf @method('delete')
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </td>
+                                        <th>S.No.</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                    @foreach ($renewal_types as $key => $rt)
+                                        <tr>
+                                            <td>{{ $key + $renewal_types->firstItem() }}</td>
+                                            <td>{{ $rt->name }}</td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-right form-switch-md">
+                                                    <input 
+                                                        type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
+                                                        data-url="{{ route('admin.renewal.type.status', [$rt->id, $rt->is_active ? 0 : 1]) }}"
+                                                        data-message="{{$rt->is_active ? 'you want to deactivate this renewal type' : 'you want to activate this renewal type' }}"
+                                                        id="status_change_alert_{{ $rt->id }}" 
+                                                        {{ $rt->is_active ? 'checked' : '' }}>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <ul class="list-inline hstack gap-2 mb-0">
+                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
+                                                        <a href="{{ route('admin.renewal.type.edit', $rt->id) }}">
+                                                            <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
+                                                                <i class="ri-edit-fill"></i>
+                                                            </button>
+                                                        </a>
+                                                    </li>
+
+                                                    <!-- Delete button -->
+                                                    <li class="list-inline-item" data-bs-toggle="tooltip"
+                                                        data-bs-trigger="hover" data-bs-placement="top" title="Remove">
+
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
+                                                            data-id="{{ $rt->id }}"
+                                                            data-name="{{ $rt->name ?? '' }}"> <!-- Optional: display name in alert -->
+                                                            <i class="ri-delete-bin-5-fill fs-16"></i>
+                                                        </button>
+
+                                                        <!-- Delete form -->
+                                                        <form action="{{ route('admin.renewal.type.destroy', [$rt->id]) }}"
+                                                            method="post" id="renew-{{ $rt->id }}" style="display: none;">
+                                                            @csrf @method('delete')
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

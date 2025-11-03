@@ -82,7 +82,7 @@ class VehicleTypeController extends Controller
      */
     public function status(VehicleType $vehicleType, $status)
     {
-        $vehicleType->status = in_array($status, [0, 1]) ? $status : 0;
+        $vehicleType->is_active = in_array($status, [0, 1]) ? $status : 0;
 
         $vehicleType->save();
 
