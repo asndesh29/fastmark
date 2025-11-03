@@ -13,10 +13,11 @@ return new class extends Migration {
         Schema::create('vehicle_passes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
-            $table->string('issue_date');
-            $table->string('last_renew_date');
-            $table->string('expiry_date');
-            $table->enum('inspection_result', ['pass', 'fail']);
+            $table->string('invoice_no')->nullable();
+            $table->string('issue_date')->nullable();
+            $table->string('last_expiry_date')->nullable();
+            $table->string('expiry_date')->nullable();
+            // $table->enum('inspection_result', ['pass', 'fail']);
             $table->decimal('tax_amount', 12, 2)->default(0);
             $table->decimal('renewal_charge', 12, 2)->default(0);
             $table->decimal('income_tax', 12, 2)->default(0);

@@ -62,50 +62,55 @@
 
                 <div class="card-body">
                     <div class="live-preview">
-                        <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th scope="col" style="width: 10px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
-                                        </div>
-                                    </th>
-                                    <th>S.No.</th>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($vehicleCategories as $key => $vc )
+                        <div class="table-responsive table-card">
+                            <table class="table table-nowrap mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <td></td>
-                                        <td>{{ $loop->iteration}}</td>
-                                        <td>{{ $vc->name }}</td>
-                                        <td>{{ $vc->is_active }}</td>
-                                        <td>
-                                            <ul class="list-inline hstack gap-2 mb-0">
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                    <a href="{{ route('admin.vehicle.category.edit', $vc->id) }}">
-                                                        <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-edit-fill"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
-                                                    <a href="">
-                                                        <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-delete-bin-5-line"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </td>
+                                        <th>S.No.</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($vehicleCategories as $key => $vc )
+                                        <tr>
+                                            <td>{{ $key + $vehicleCategories->firstItem() }}</td>
+                                            <td>{{ $vc->name }}</td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-right form-switch-md">
+                                                    <input 
+                                                        type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
+                                                        data-url="{{ route('admin.vehicle.category.status', [$vc->id, $vc->is_active ? 0 : 1]) }}"
+                                                        data-message="{{$vc->is_active ? 'you want to deactivate this vehicle category' : 'you want to activate this vehicle category' }}"
+                                                        id="status_change_alert_{{ $vc->id }}" 
+                                                        {{ $vc->is_active ? 'checked' : '' }}>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <ul class="list-inline hstack gap-2 mb-0">
+                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
+                                                        <a href="{{ route('admin.vehicle.category.edit', $vc->id) }}">
+                                                            <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
+                                                                <i class="ri-edit-fill"></i>
+                                                            </button>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
+                                                        <a href="">
+                                                            <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
+                                                                <i class="ri-delete-bin-5-line"></i>
+                                                            </button>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,4 +119,9 @@
         <!-- end col -->
     </div>
 @endsection
+
+@push('script_2')
+    <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
+@endpush
+
 

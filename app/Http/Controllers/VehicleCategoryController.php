@@ -82,13 +82,13 @@ class VehicleCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function status(VehicleCategory $vehicleCategory, $status)
+    public function status(VehicleCategory $category, $status)
     {
-        $vehicleCategory->status = in_array($status, [0, 1]) ? $status : 0;
+        $category->is_active = in_array($status, [0, 1]) ? $status : 0;
 
-        $vehicleCategory->save();
+        $category->save();
 
-        return back()->with('success', 'Customer status updated successfully.');
+        return back()->with('success', 'Vehicle category status updated successfully.');
     }
 
     /**

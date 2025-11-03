@@ -64,50 +64,65 @@
 
                 <div class="card-body">
                     <div class="live-preview">
-                        <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th scope="col" style="width: 10px;">
-                                        <div class="form-check">
-                                            <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
-                                        </div>
-                                    </th>
-                                    <th>S.No.</th>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($vehicleTypes as $key => $vt )
+                        <div class="table-responsive table-card">
+                            <table class="table table-nowrap mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <td></td>
-                                        <td>{{ $key+1 }}</td>
-                                        <td>{{ $vt->name }}</td>
-                                        <td>{{ $vt->is_active }}</td>
-                                        <td>
-                                            <ul>
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                    <a href="{{ route('admin.vehicle.type.edit', $vt->id) }}">
-                                                        <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-edit-fill"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-
-                                                <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
-                                                    <a href="">
-                                                        <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
-                                                            <i class="ri-delete-bin-5-line"></i>
-                                                        </button>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </td>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                     @foreach ($vehicleTypes as $key => $vt )
+                                        <tr>
+                                            <td>{{ $key + $vehicleTypes->firstItem() }}</td>
+                                            <td>{{ $vt->name }}</td>
+                                            <td>
+                                                <div class="form-check form-switch form-switch-right form-switch-md">
+                                                    <input 
+                                                        type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
+                                                        data-url="{{ route('admin.vehicle.type.status', [$vt->id, $vt->is_active ? 0 : 1]) }}"
+                                                        data-message="{{$vt->is_active ? 'you want to deactivate this vehicle type' : 'you want to activate this vehicle type' }}"
+                                                        id="status_change_alert_{{ $vt->id }}" 
+                                                        {{ $vt->is_active ? 'checked' : '' }}>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <ul>
+                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
+                                                        <a href="{{ route('admin.vehicle.type.edit', $vt->id) }}">
+                                                            <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
+                                                                <i class="ri-edit-fill"></i>
+                                                            </button>
+                                                        </a>
+                                                    </li>
+
+                                                    <!-- Delete button -->
+                                                    <li class="list-inline-item" data-bs-toggle="tooltip"
+                                                        data-bs-trigger="hover" data-bs-placement="top" title="Remove">
+
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
+                                                            data-id="{{ $vt->id }}"
+                                                            data-name="{{ $vt->name ?? '' }}"> 
+                                                            <i class="ri-delete-bin-5-fill fs-16"></i>
+                                                        </button>
+
+                                                        <!-- Delete form -->
+                                                        <form action="{{ route('admin.vehicle.type.destroy', [$vt->id]) }}"
+                                                            method="post" id="renew-{{ $vt->id }}" style="display: none;">
+                                                            @csrf @method('delete')
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -118,3 +133,6 @@
     <!-- customer -->
 @endsection
 
+@push('script_2')
+    <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
+@endpush

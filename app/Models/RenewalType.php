@@ -26,7 +26,7 @@ class RenewalType extends Model
     {
         parent::boot();
         static::created(function ($renewalType) {
-            $renewalType->slug = $renewalType->generateSlug($renewalType->title);
+            $renewalType->slug = $renewalType->generateSlug($renewalType->name);
             $renewalType->save();
         });
 

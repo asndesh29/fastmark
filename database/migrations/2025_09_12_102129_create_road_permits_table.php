@@ -14,8 +14,9 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
             $table->string('invoice_no')->nullable();
-            $table->string('issue_date');
-            $table->string('expiry_date');
+            $table->string('issue_date')->nullable();
+            $table->string('last_expiry_date')->nullable();
+            $table->string('expiry_date')->nullable();
             $table->decimal('tax_amount', 12, 2)->default(0);
             $table->decimal('renewal_charge', 12, 2)->default(0);
             $table->decimal('income_tax', 12, 2)->default(0);

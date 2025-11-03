@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
@@ -10,7 +9,7 @@
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Vehicle Tax</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Insurance</a></li>
                         <li class="breadcrumb-item active">List</li>
                     </ol>
                 </div>
@@ -19,141 +18,209 @@
     </div>
     <!-- end page title -->
 
-    <!-- Add Vehicle Tax -->
+    <!-- Insurance Renewal List -->
     <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Add New Vehicle Tax</h5>
-                </div>
-
-                <div class="card-body">
-                    <div class="live-preview">
-                        <form action="" method="POST">
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="validationDefault01" class="form-label">Vehicle Number</label>
-                                        <input type="text" class="form-control @error('vehicle_number') is-invalid @enderror" id="vehicle_number" name="vehicle_number" value="{{ old('vehicle_number') }}" placeholder="Ex: Ba 83 Pa 8297">
-                                        
-                                        @error('vehicle_number')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- button -->
-                            <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                                <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Save</button>
-                            </div>
-                            <!-- button -->
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Add Vehicle Tax -->
-
-    <!-- Vehicle Tax List -->
-    <div class="row">
-        <!-- start col -->
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Vehicle Tax List</h4>
-                    <div class="flex-shrink-0">
-                    </div>
+                    <h4 class="card-title mb-0 flex-grow-1">Insurance Renewal List</h4>
                 </div>
-                <!-- end card header -->
 
                 <div class="card-body">
                     <div class="live-preview">
                         <div class="listjs-table" id="customerList">
-                            <div class="row g-4 mb-3">
-                                <div class="col-sm">
-                                    <div class="d-flex justify-content-sm-end">
-                                        <div class="search-box ms-2">
-                                            <input type="text" class="form-control search" placeholder="Search...">
-                                            <i class="ri-search-line search-icon"></i>
-                                        </div>
+                            <!-- Filters -->
+                            <div class="row g-3">
+                                <div class="col-xxl-2 col-sm-12">
+                                    <div class="search-box">
+                                        <input type="text" class="form-control"
+                                               placeholder="Search for customer">
+                                        <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
+
+                                <div class="col-xxl-2 col-sm-12">
+                                    <div class="search-box">
+                                        <input type="text" class="form-control"
+                                               placeholder="Search for registration no">
+                                        <i class="ri-search-line search-icon"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-2 col-sm-12">
+                                    <div class="search-box">
+                                        <input type="text" class="form-control"
+                                               placeholder="Last Expiry Date">
+                                        <i class="ri-calendar-line search-icon"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-2 col-sm-12">
+                                    <div class="search-box">
+                                        <input type="text" class="form-control"
+                                               placeholder="New Expiry Date">
+                                        <i class="ri-calendar-line search-icon"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-2 col-sm-4">
+                                    <select class="form-select" id="idStatus">
+                                        <option value="all" selected>All</option>
+                                        <option value="unpaid">Unpaid</option>
+                                        <option value="paid">Paid</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-primary w-100" onclick="SearchData();">
+                                        <i class="ri-equalizer-fill me-1 align-bottom"></i> Filters
+                                    </button>
+                                </div>
                             </div>
+
+                            <!-- Table -->
                             <div class="table-responsive table-card mt-3 mb-1">
-                                <table class="table align-middle table-nowrap" id="customerTable">
-                                    <thead class="table-light">
+                                <table class="table align-middle">
+                                    <thead class="table-light text-muted">
                                         <tr>
-                                            <th>S.No.</th>
-                                            <th>Action</th>
+                                            <th>#</th>
+                                            <th>Customer</th>
+                                            <th>Vehicle Type</th>
+                                            <th>Registration No</th>
+                                            <th>Issue Date</th>
+                                            <th>New Expiry Date</th>
+                                            <th>Renewal</th>
+                                            <th>Payment</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="list form-check-all">
-                                        <tr>
-                                            <td></td>
-                                            <td>
-                                                <ul class="list-inline hstack gap-2 mb-0">
-                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                        <a href="">
-                                                            <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
-                                                                <i class="ri-edit-fill"></i>
-                                                            </button>
-                                                        </a>
-                                                    </li>
-
-                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
-                                                        <a href="">
-                                                            <button type="button" class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light">
-                                                                <i class="ri-eye-fill"></i>
-                                                            </button>
-                                                        </a>
-                                                    </li>
-
-                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
-                                                        <a href="">
-                                                            <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
-                                                                <i class="ri-delete-bin-5-line"></i>
-                                                            </button>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
+                                    <tbody id="renewalTableBody">
+                                        @include('renewal.insurance.partials.table', ['renewal_lists' => $renewal_lists])
                                     </tbody>
                                 </table>
-                                
-                                <div class="noresult" style="display: none">
-                                    <div class="text-center">
-                                        <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
-                                        <h5 class="mt-2">Sorry! No Result Found</h5>
-                                        <p class="text-muted mb-0">We've searched more than 150+ Orders We did not find any orders for you search.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="d-flex justify-content-end">
-                                <div class="pagination-wrap hstack gap-2" style="display: flex;">
-                                    <a class="page-item pagination-prev disabled" href="javascript:void(0);">
-                                    Previous
-                                    </a>
-                                    <ul class="pagination listjs-pagination mb-0">
-                                        <li class="active"><a class="page" href="#" data-i="1" data-page="8">1</a></li>
-                                        <li><a class="page" href="#" data-i="2" data-page="8">2</a></li>
-                                    </ul>
-                                    <a class="page-item pagination-next" href="javascript:void(0);">
-                                    Next
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> 
-        <!-- end col -->
+        </div>
     </div>
-    <!-- Vehicle Tax List -->
+
+    <!-- Insurance Modal -->
+    <div class="modal fade" id="insuranceModal" tabindex="-1" aria-labelledby="insuranceModal"
+            aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="insuranceForm" method="POST" action="{{ route('admin.insurance.store') }}">
+                @csrf
+                <input type="hidden" name="vehicle_id">
+                <input type="hidden" name="type" value="insurance">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Insurance Renewal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Insurance Provider</label>
+                            <select name="provider_id" id="provider_id" class="form-select">
+                                @foreach ($providers as $provider)
+                                    <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Policy Number</label>
+                            <input type="text" class="form-control" name="policy_number"
+                                    placeholder="Enter Policy Number" autocomplete="off"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Issue Date</label>
+                            <input type="text" class="form-control nepali-date" name="issue_date"
+                                    placeholder="Select Issue Date" autocomplete="off"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>Amount</label>
+                            <input type="text" class="form-control" name="amount" placeholder="Enter amount">
+                        </div>
+                        <div class="mb-3">
+                            <label>Status</label>
+                            <select class="form-select" name="status">
+                                <option value="paid">Paid</option>
+                                <option value="unpaid">Unpaid</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Remarks</label>
+                            <textarea class="form-control" name="remarks"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Renewal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
+@push('script_2')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Dynamically set vehicle_id in modal
+        const modal = document.getElementById('insuranceModal');
+        const vehicleInput = modal.querySelector('input[name="vehicle_id"]');
+
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.addBtn')) {
+                const btn = e.target.closest('.addBtn');
+                vehicleInput.value = btn.getAttribute('data-vehicle-id');
+            }
+        });
+
+        // Initialize Nepali datepicker on page load
+        document.querySelectorAll('.nepali-date').forEach(function(input) {
+            if (!input.classList.contains('ndp-initialized')) {
+                $(input).NepaliDatePicker({
+                    container: '#insuranceModal'
+                }).addClass('ndp-initialized');
+            }
+        });
+    });
+
+    // AJAX Filter + Pagination
+    function SearchData(page = 1) {
+        const customer = document.querySelector('input[placeholder="Search for customer"]').value;
+        const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
+        const last_expiry_date = document.querySelector('input[placeholder="Last Expiry Date"]').value;
+        const new_expiry_date = document.querySelector('input[placeholder="New Expiry Date"]').value;
+        const status = document.getElementById('idStatus').value;
+
+        const params = { customer, registration_no, last_expiry_date, new_expiry_date, status, page };
+
+        const tbody = document.getElementById('renewalTableBody');
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-4">Loading...</td></tr>`;
+
+        fetch(`{{ route('admin.insurance.index') }}?${new URLSearchParams(params)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            tbody.innerHTML = data.html;
+
+            // Re-bind pagination links
+            document.querySelectorAll('.pagination a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = new URL(this.href).searchParams.get('page');
+                    SearchData(page);
+                });
+            });
+        })
+        .catch(() => {
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Error loading data</td></tr>`;
+        });
+    }
+</script>
+@endpush

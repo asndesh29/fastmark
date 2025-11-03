@@ -77,22 +77,22 @@
                                 <a href="{{ route('admin.bluebook.index') }}" class="nav-link" data-key="t-analytics"> Bluebook </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Check Pass </a>
+                                <a href="{{ route('admin.checkpass.index') }}" class="nav-link" data-key="t-analytics"> Check Pass </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> Insurance </a>
+                                <a href="{{ route('admin.insurance.index') }}" class="nav-link" data-key="t-analytics"> Insurance </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> License </a>
+                                <a href="{{ route('admin.license.index') }}" class="nav-link" data-key="t-analytics"> License </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Pollution </a>
+                                <a href="{{ route('admin.pollution.index') }}" class="nav-link" data-key="t-analytics"> Pollution </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> Road Permit </a>
+                                <a href="{{ route('admin.road-permit.index') }}" class="nav-link" data-key="t-analytics"> Road Permit </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
+                                <a href="{{ route('admin.vehicle-tax.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
                             </li>
                         </ul>
                     </div>
@@ -125,7 +125,7 @@
                     <div class="collapse menu-dropdown" id="sidebarVehicle">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.feeslab.index') }}" class="nav-link" data-key="t-analytics"> List </a>
+                                <a href="{{ route('admin.vehicle.index') }}" class="nav-link" data-key="t-analytics"> List </a>
                             </li>
                         </ul>
                     </div>
@@ -157,6 +157,10 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.vehicle.type.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Type </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.insurance-provider.index') }}" class="nav-link" data-key="t-analytics"> Insurance Provider </a>
                             </li>
                         </ul>
                     </div>
