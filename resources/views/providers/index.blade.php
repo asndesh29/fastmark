@@ -22,7 +22,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <form action="{{ route('admin.insurance-provider.store') }}" method="POST">
+            <form action="{{ route('admin.settings.insurance-provider.store') }}" method="POST">
                 @csrf
                 <!-- customer -->
                 <div class="card">
@@ -129,7 +129,7 @@
                                                 <div class="form-check form-switch form-switch-right form-switch-md">
                                                     <input 
                                                         type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
-                                                        data-url="{{ route('admin.insurance-provider.status', [$provider->id, $provider->is_active ? 0 : 1]) }}"
+                                                        data-url="{{ route('admin.settings.insurance-provider.status', [$provider->id, $provider->is_active ? 0 : 1]) }}"
                                                         data-message="{{$provider->is_active ? 'you want to deactivate this insurance provider' : 'you want to activate this insurance provider' }}"
                                                         id="status_change_alert_{{ $provider->id }}" 
                                                         {{ $provider->is_active ? 'checked' : '' }}>
@@ -138,7 +138,7 @@
                                             <td>
                                                 <ul class="list-inline hstack gap-2 mb-0">
                                                     <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                        <a href="{{ route('admin.insurance-provider.edit', $provider->id) }}">
+                                                        <a href="{{ route('admin.settings.insurance-provider.edit', $provider->id) }}">
                                                             <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
                                                                 <i class="ri-edit-fill"></i>
                                                             </button>
@@ -157,7 +157,7 @@
                                                         </button>
 
                                                         <!-- Delete form -->
-                                                        <form action="{{ route('admin.insurance-provider.destroy', [$provider->id]) }}"
+                                                        <form action="{{ route('admin.settings.insurance-provider.destroy', [$provider->id]) }}"
                                                             method="post" id="renew-{{ $provider->id }}" style="display: none;">
                                                             @csrf @method('delete')
                                                         </form>

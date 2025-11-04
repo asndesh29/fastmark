@@ -23,7 +23,7 @@
 
                 <div class="card-body">
                     <div class="live-preview">
-                        <form action="{{ route('admin.vehicle.category.store') }}" method="POST">
+                        <form action="{{ route('admin.settings.vehicle.category.store') }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-md-4">
@@ -81,7 +81,7 @@
                                                 <div class="form-check form-switch form-switch-right form-switch-md">
                                                     <input 
                                                         type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
-                                                        data-url="{{ route('admin.vehicle.category.status', [$vc->id, $vc->is_active ? 0 : 1]) }}"
+                                                        data-url="{{ route('admin.settings.vehicle.category.status', [$vc->id, $vc->is_active ? 0 : 1]) }}"
                                                         data-message="{{$vc->is_active ? 'you want to deactivate this vehicle category' : 'you want to activate this vehicle category' }}"
                                                         id="status_change_alert_{{ $vc->id }}" 
                                                         {{ $vc->is_active ? 'checked' : '' }}>
@@ -90,7 +90,7 @@
                                             <td>
                                                 <ul class="list-inline hstack gap-2 mb-0">
                                                     <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                        <a href="{{ route('admin.vehicle.category.edit', $vc->id) }}">
+                                                        <a href="{{ route('admin.settings.vehicle.category.edit', $vc->id) }}">
                                                             <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
                                                                 <i class="ri-edit-fill"></i>
                                                             </button>

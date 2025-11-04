@@ -14,7 +14,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-             <form action="{{ route('admin.vehicle.type.update', $vehicleType) }}" method="POST">
+             <form action="{{ route('admin.settings.vehicle.type.update', $vehicleType) }}" method="POST">
                 @csrf
                 <!-- Vehicle Type -->
                 <div class="card">
@@ -37,7 +37,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="validationDefault02" class="form-label">Service Charge</label>
                                         <input type="text" class="form-control @error('service_charge') is-invalid @enderror" id="service_charge" name="service_charge" value="{{ old('service_charge', $vehicleType->service_charge ) }}" placeholder="Ex: 300">
@@ -46,7 +46,7 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
 

@@ -110,7 +110,7 @@
     <div class="modal fade" id="bluebookModal" tabindex="-1" aria-labelledby="bluebookModalLabel"
             aria-hidden="true">
         <div class="modal-dialog">
-            <form id="bluebookForm" method="POST" action="{{ route('admin.bluebook.store') }}">
+            <form id="bluebookForm" method="POST" action="{{ route('admin.renewal.bluebook.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
                 <input type="hidden" name="type" value="bluebook">
@@ -194,7 +194,7 @@
         const tbody = document.getElementById('renewalTableBody');
         tbody.innerHTML = `<tr><td colspan="9" class="text-center p-4">Loading...</td></tr>`;
 
-        fetch(`{{ route('admin.bluebook.index') }}?${new URLSearchParams(params)}`, {
+        fetch(`{{ route('admin.renewal.bluebook.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(res => res.json())

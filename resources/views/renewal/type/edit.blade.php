@@ -14,7 +14,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <form action="{{ route('admin.renewal.type.update', $renewal_type) }}" method="POST">
+            <form action="{{ route('admin.settings.renewal-type.update', $renewal_type) }}" method="POST">
                 @csrf
                 <!-- Vehicle Category -->
                 <div class="card">

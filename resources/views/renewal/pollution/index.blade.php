@@ -116,10 +116,10 @@
     </div>
 
     <!-- Check Pollution Modal -->
-    <div class="modal fade" id="bluebookModal" tabindex="-1" aria-labelledby="bluebookModal"
+    <div class="modal fade" id="pollutionModal" tabindex="-1" aria-labelledby="pollutionModal"
             aria-hidden="true">
         <div class="modal-dialog">
-            <form id="bluebookForm" method="POST" action="{{ route('admin.pollution.store') }}">
+            <form id="pollutionForm" method="POST" action="{{ route('admin.renewal.pollution.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
                 <input type="hidden" name="type" value="pollution">
@@ -184,7 +184,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Dynamically set vehicle_id in modal
-        const modal = document.getElementById('bluebookModal');
+        const modal = document.getElementById('pollutionModal');
         const vehicleInput = modal.querySelector('input[name="vehicle_id"]');
 
         document.addEventListener('click', function (e) {
@@ -198,7 +198,7 @@
         document.querySelectorAll('.nepali-date').forEach(function(input) {
             if (!input.classList.contains('ndp-initialized')) {
                 $(input).NepaliDatePicker({
-                    container: '#bluebookModal'
+                    container: '#pollutionModal'
                 }).addClass('ndp-initialized');
             }
         });
@@ -218,7 +218,7 @@
         const tbody = document.getElementById('renewalTableBody');
         tbody.innerHTML = `<tr><td colspan="10" class="text-center p-4">Loading...</td></tr>`;
 
-        fetch(`{{ route('admin.pollution.index') }}?${new URLSearchParams(params)}`, {
+        fetch(`{{ route('admin.renewal.pollution.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(res => res.json())

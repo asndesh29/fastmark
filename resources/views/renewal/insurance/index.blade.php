@@ -110,7 +110,7 @@
     <div class="modal fade" id="insuranceModal" tabindex="-1" aria-labelledby="insuranceModal"
             aria-hidden="true">
         <div class="modal-dialog">
-            <form id="insuranceForm" method="POST" action="{{ route('admin.insurance.store') }}">
+            <form id="insuranceForm" method="POST" action="{{ route('admin.renewal.insurance.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
                 <input type="hidden" name="type" value="insurance">
@@ -202,7 +202,7 @@
         const tbody = document.getElementById('renewalTableBody');
         tbody.innerHTML = `<tr><td colspan="9" class="text-center p-4">Loading...</td></tr>`;
 
-        fetch(`{{ route('admin.insurance.index') }}?${new URLSearchParams(params)}`, {
+        fetch(`{{ route('admin.renewal.insurance.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(res => res.json())

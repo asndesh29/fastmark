@@ -32,19 +32,19 @@
 
                     @if($insurance)
                         <li class="list-inline-item" title="Edit">
-                            <a href="{{ route('admin.insurance.edit', $insurance->id) }}">
+                            <a href="{{ route('admin.renewal.insurance.edit', $insurance->id) }}">
                                 <button type="button" class="btn btn-outline-primary btn-sm btn-icon">
                                     <i class="ri-edit-fill"></i>
                                 </button>
                             </a>
                         </li>
-                        <li class="list-inline-item" title="View">
-                            <a href="{{ route('admin.insurance.show', $insurance->id) }}">
+                        {{-- <li class="list-inline-item" title="View">
+                            <a href="{{ route('admin.renewal.insurance.show', $insurance->id) }}">
                                 <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
                                     <i class="ri-eye-fill"></i>
                                 </button>
                             </a>
-                        </li>
+                        </li> --}}
                     @endif
                 </ul>
             </td>

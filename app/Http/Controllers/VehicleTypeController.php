@@ -69,12 +69,11 @@ class VehicleTypeController extends Controller
 
         $vaildated = $request->validate([
             'name' => 'required|string|max:255',
-            'service_charge' => 'required|numeric|min:0, max:99999.99'
         ]);
 
         $this->vehicleTypeService->update($vehicle_type, $vaildated);
 
-        return redirect()->route('admin.vehicle.type.index')->with('success', 'Vehicle type updated successfully.');
+        return redirect()->route('admin.settings.vehicle.type.index')->with('success', 'Vehicle type updated successfully.');
     }
 
     /**

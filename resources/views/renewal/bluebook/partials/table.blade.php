@@ -32,19 +32,19 @@
 
                     @if($bluebook)
                         <li class="list-inline-item" title="Edit">
-                            <a href="{{ route('admin.bluebook.edit', $bluebook->id) }}">
+                            <a href="{{ route('admin.renewal.bluebook.edit', $bluebook->id) }}">
                                 <button type="button" class="btn btn-outline-primary btn-sm btn-icon">
                                     <i class="ri-edit-fill"></i>
                                 </button>
                             </a>
                         </li>
-                        <li class="list-inline-item" title="View">
-                            <a href="{{ route('admin.bluebook.show', $bluebook->id) }}">
+                        {{-- <li class="list-inline-item" title="View">
+                            <a href="{{ route('admin.renewal.bluebook.show', $bluebook->id) }}">
                                 <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
                                     <i class="ri-eye-fill"></i>
                                 </button>
                             </a>
-                        </li>
+                        </li> --}}
                     @endif
                 </ul>
             </td>

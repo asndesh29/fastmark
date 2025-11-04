@@ -14,7 +14,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-             <form action="{{ route('admin.vehicle.type.store') }}" method="POST">
+             <form action="{{ route('admin.settings.vehicle.type.store') }}" method="POST">
                 @csrf
                 <!-- Vehicle Type -->
                 <div class="card">
@@ -83,7 +83,7 @@
                                                 <div class="form-check form-switch form-switch-right form-switch-md">
                                                     <input 
                                                         type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
-                                                        data-url="{{ route('admin.vehicle.type.status', [$vt->id, $vt->is_active ? 0 : 1]) }}"
+                                                        data-url="{{ route('admin.settings.vehicle.type.status', [$vt->id, $vt->is_active ? 0 : 1]) }}"
                                                         data-message="{{$vt->is_active ? 'you want to deactivate this vehicle type' : 'you want to activate this vehicle type' }}"
                                                         id="status_change_alert_{{ $vt->id }}" 
                                                         {{ $vt->is_active ? 'checked' : '' }}>
@@ -92,7 +92,7 @@
                                             <td>
                                                 <ul>
                                                     <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                        <a href="{{ route('admin.vehicle.type.edit', $vt->id) }}">
+                                                        <a href="{{ route('admin.settings.vehicle.type.edit', $vt->id) }}">
                                                             <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
                                                                 <i class="ri-edit-fill"></i>
                                                             </button>
@@ -111,7 +111,7 @@
                                                         </button>
 
                                                         <!-- Delete form -->
-                                                        <form action="{{ route('admin.vehicle.type.destroy', [$vt->id]) }}"
+                                                        <form action="{{ route('admin.settings.vehicle.type.destroy', [$vt->id]) }}"
                                                             method="post" id="renew-{{ $vt->id }}" style="display: none;">
                                                             @csrf @method('delete')
                                                         </form>

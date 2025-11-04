@@ -33,19 +33,19 @@
 
                     @if($vehicle_tax)
                         <li class="list-inline-item" title="Edit">
-                            <a href="{{ route('admin.vehicle-tax.edit', $vehicle_tax->id) }}">
+                            <a href="{{ route('admin.renewal.vehicle-tax.edit', $vehicle_tax->id) }}">
                                 <button type="button" class="btn btn-outline-primary btn-sm btn-icon">
                                     <i class="ri-edit-fill"></i>
                                 </button>
                             </a>
                         </li>
-                        <li class="list-inline-item" title="View">
-                            <a href="{{ route('admin.vehicle-tax.show', $vehicle_tax->id) }}">
+                        {{-- <li class="list-inline-item" title="View">
+                            <a href="{{ route('admin.renewal.vehicle-tax.show', $vehicle_tax->id) }}">
                                 <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
                                     <i class="ri-eye-fill"></i>
                                 </button>
                             </a>
-                        </li>
+                        </li> --}}
                     @endif
                 </ul>
             </td>

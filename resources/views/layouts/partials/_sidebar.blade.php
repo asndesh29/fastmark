@@ -53,46 +53,47 @@
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <!-- Dashboard -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="widgets.html">
+                    <a class="nav-link menu-link" href="#">
                         <i class="ri-honour-line"></i> <span data-key="t-widgets">Dashboard</span>
                     </a>
                 </li>
 
                 <!-- Renewal -->
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('admin.renewal.index') }}">
                         <i class="ri-honour-line"></i> <span data-key="t-widgets">Renew</span>
                     </a>
-                </li>
+                </li> --}}
                 <!-- Renewal -->
 
                 <!-- Renewal -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarRenewal" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarRenewal">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Renew</span>
+                    <a class="nav-link menu-link {{ Request::is('admin/renewal/*') ? 'active' : '' }}" href="#sidebarRenewal" data-bs-toggle="collapse" role="button" aria-expanded="{{ Route::is('admin.renewal.*') ? 'true' : 'false' }}"  aria-controls="sidebarRenewal">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Renewal</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarRenewal">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.renewal.*') ? 'show' : '' }}" id="sidebarRenewal">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.bluebook.index') }}" class="nav-link" data-key="t-analytics"> Bluebook </a>
+                                <a href="{{ route('admin.renewal.bluebook.index') }}" class="nav-link {{ Request::is('admin/renewal/bluebook') ? 'active' : '' }}" data-key="t-analytics"> Bluebook </a>
+                            </li>
+                            
+                            <li class="nav-item">
+                                <a href="{{ route('admin.renewal.checkpass.index') }}" class="nav-link {{ Request::is('admin/renewal/checkpass') ? 'active' : '' }}" data-key="t-analytics"> Jach Pass </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.checkpass.index') }}" class="nav-link" data-key="t-analytics"> Check Pass </a>
+                                <a href="{{ route('admin.renewal.insurance.index') }}" class="nav-link {{ Request::is('admin/renewal/insurance') ? 'active' : '' }}" data-key="t-analytics"> Insurance </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.insurance.index') }}" class="nav-link" data-key="t-analytics"> Insurance </a>
-                            </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('admin.license.index') }}" class="nav-link" data-key="t-analytics"> License </a>
+                            </li> --}}
+                            <li class="nav-item">
+                                <a href="{{ route('admin.renewal.pollution.index') }}" class="nav-link {{ Request::is('admin/renewal/pollution') ? 'active' : '' }}" data-key="t-analytics"> Pollution </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.pollution.index') }}" class="nav-link" data-key="t-analytics"> Pollution </a>
+                                <a href="{{ route('admin.renewal.road-permit.index') }}" class="nav-link {{ Request::is('admin/renewal/road-permit') ? 'active' : '' }}" data-key="t-analytics"> Road Permit </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.road-permit.index') }}" class="nav-link" data-key="t-analytics"> Road Permit </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.vehicle-tax.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Tax </a>
+                                <a href="{{ route('admin.renewal.vehicle-tax.index') }}" class="nav-link {{ Request::is('admin/renewal/vehicle-tax') ? 'active' : '' }}" data-key="t-analytics"> Vehicle Tax </a>
                             </li>
                         </ul>
                     </div>
@@ -101,16 +102,17 @@
 
                 <!-- Customers -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarCustomers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCustomers">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Customers</span>
+                    <a class="nav-link menu-link {{ Request::is('admin/customer/*') ? 'active' : '' }}" href="#sidebarCustomer" data-bs-toggle="collapse" role="button" aria-expanded="{{ Route::is('admin.customer.*') ? 'true' : 'false' }}"  aria-controls="sidebarCustomer">
+                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Customer</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarCustomers">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.customer.*') ? 'show' : '' }}" id="sidebarCustomer">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.create') }}" class="nav-link" data-key="t-analytics"> Add New </a>
+                                <a href="{{ route('admin.customer.create') }}" class="nav-link {{ Request::is('admin/customer/add-new') ? 'active' : '' }}" data-key="t-analytics"> Add New </a>
                             </li>
+
                             <li class="nav-item">
-                                <a href="{{ route('admin.customer.index') }}" class="nav-link" data-key="t-analytics"> List </a>
+                                <a href="{{ route('admin.customer.index') }}" class="nav-link {{ Request::is('admin/customer') ? 'active' : '' }}" data-key="t-analytics"> List </a>
                             </li>
                         </ul>
                     </div>
@@ -119,13 +121,13 @@
 
                 <!-- Vehicles -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarVehicle" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarVehicle">
+                    <a class="nav-link menu-link {{ Request::is('admin/vehicle/*') ? 'active' : '' }}" href="#sidebarVehicle" data-bs-toggle="collapse" role="button" aria-expanded="{{ Route::is('admin.vehicle.*') ? 'true' : 'false' }}"  aria-controls="sidebarVehicle">
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Vehicle</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarVehicle">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.vehicle.*') ? 'show' : '' }}" id="sidebarVehicle">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.vehicle.index') }}" class="nav-link" data-key="t-analytics"> List </a>
+                                <a href="{{ route('admin.vehicle.index') }}" class="nav-link {{ Request::is('admin/vehicle') ? 'active' : '' }}" data-key="t-analytics"> List </a>
                             </li>
                         </ul>
                     </div>
@@ -133,14 +135,16 @@
                 <!-- Vehicles -->
 
                 <!-- Settings -->
+                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Setting</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Settings</span>
+                    <a class="nav-link menu-link {{ Request::is('admin/settings/*') ? 'active' : '' }}" href="#sidebarSettings" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{ Route::is('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">
+                        <i class="ri-pencil-ruler-2-line"></i> <span data-key="t-base-ui">Settings</span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarSettings">
+                    <div class="collapse menu-dropdown {{ Route::is('admin.settings.*') ? 'show' : '' }}" id="sidebarSettings">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.feeslab.index') }}" class="nav-link" data-key="t-analytics"> Fee Slabs </a>
+                                <a href="{{ route('admin.settings.feeslab.index') }}" class="nav-link {{ Request::is('admin/settings/feeslab/list') ? 'active' : '' }}" data-key="t-analytics"> Fee Slabs </a>
                             </li>
 
                             <li class="nav-item">
@@ -148,19 +152,19 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('admin.renewal.type.index') }}" class="nav-link" data-key="t-analytics"> Renewal Type </a>
+                                <a href="{{ route('admin.settings.renewal-type.index') }}" class="nav-link {{ Request::is('admin/settings/renewal-type/list') ? 'active' : '' }}" data-key="t-analytics"> Renewal Type </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('admin.vehicle.category.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Category </a>
+                                <a href="{{ route('admin.settings.vehicle.category.index') }}" class="nav-link {{ Request::is('admin/settings/vehicle/category/list') ? 'active' : '' }}" data-key="t-analytics"> Vehicle Category </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('admin.vehicle.type.index') }}" class="nav-link" data-key="t-analytics"> Vehicle Type </a>
+                                <a href="{{ route('admin.settings.vehicle.type.index') }}" class="nav-link {{ Request::is('admin/settings/vehicle/type/list') ? 'active' : '' }}" data-key="t-analytics"> Vehicle Type </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('admin.insurance-provider.index') }}" class="nav-link" data-key="t-analytics"> Insurance Provider </a>
+                                <a href="{{ route('admin.settings.insurance-provider.index') }}" class="nav-link {{ Request::is('admin/settings/insurance-provider/list') ? 'active' : '' }}" data-key="t-analytics"> Insurance Provider </a>
                             </li>
                         </ul>
                     </div>
