@@ -106,7 +106,7 @@ class CheckPassController extends Controller
 
         $this->checkpassService->update($checkpass, $data);
 
-        return redirect()->route('admin.check-pass.index')->with('success', 'Check Pollution updated successfully!');
+        return redirect()->route('admin.renewal.checkpass.index')->with('success', 'Check Pollution updated successfully!');
     }
 
     /**

@@ -23,6 +23,12 @@ class VehicleController extends Controller
 
         $vehicles = $this->vehicleService->list($request, $perPage);
 
+        // ✅ Handle AJAX filter requests
+        if ($request->ajax()) {
+            $html = view('vehicle.partials.table', compact('vehicles'))->render();
+            return response()->json(['html' => $html]);
+        }
+
         return view('vehicle.index', compact('vehicles'));
     }
 
@@ -45,9 +51,10 @@ class VehicleController extends Controller
      */
     public function show(Vehicle $vehicle)
     {
+        // dd($vehicle);
         $vehicle = Vehicle::findOrFail($vehicle->id);
 
-        return view('vehicle.index', compact('vehicle'));
+        return view('vehicle.show', compact('vehicle'));
     }
 
     /**

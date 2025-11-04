@@ -22,7 +22,7 @@
     <!-- Insurance Renewal List -->
     <div class="row">
         <div class="col-lg-12">
-            <form action="{{ route('admin.insurance.update', $renewal->id) }}" method="POST">
+            <form action="{{ route('admin.renewal.insurance.update', $renewal->id) }}" method="POST">
                 @csrf
                 <input type="hidden" name="vehicle_id" value="{{ $renewal->vehicle_id }}">
                 <input type="hidden" name="type" value="insurance">

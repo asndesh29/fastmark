@@ -119,7 +119,7 @@
     <div class="modal fade" id="roadpermitModal" tabindex="-1" aria-labelledby="roadpermitModal"
             aria-hidden="true">
         <div class="modal-dialog">
-            <form id="roadpermitForm" method="POST" action="{{ route('admin.road-permit.store') }}">
+            <form id="roadpermitForm" method="POST" action="{{ route('admin.renewal.road-permit.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
                 <input type="hidden" name="type" value="road-permit">
@@ -218,7 +218,7 @@
         const tbody = document.getElementById('renewalTableBody');
         tbody.innerHTML = `<tr><td colspan="10" class="text-center p-4">Loading...</td></tr>`;
 
-        fetch(`{{ route('admin.pollution.index') }}?${new URLSearchParams(params)}`, {
+        fetch(`{{ route('admin.renewal.road-permit.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(res => res.json())

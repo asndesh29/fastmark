@@ -106,7 +106,7 @@ class BlueBookController extends Controller
 
         $this->bluebookService->update($bluebook, $data);
 
-        return redirect()->back()->with('success', 'Bluebook updated successfully!');
+        return redirect()->route('admin.renewal.bluebook.index')->with('success', 'Bluebook updated successfully!');
     }
 
     /**

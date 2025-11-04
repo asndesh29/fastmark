@@ -119,7 +119,7 @@
     <div class="modal fade" id="vehicletaxModal" tabindex="-1" aria-labelledby="vehicletaxModal"
             aria-hidden="true">
         <div class="modal-dialog">
-            <form id="vehicletaxForm" method="POST" action="{{ route('admin.vehicle-tax.store') }}">
+            <form id="vehicletaxForm" method="POST" action="{{ route('admin.renewal.vehicle-tax.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
                 <input type="hidden" name="type" value="vehicle-tax">
@@ -218,7 +218,7 @@
         const tbody = document.getElementById('renewalTableBody');
         tbody.innerHTML = `<tr><td colspan="10" class="text-center p-4">Loading...</td></tr>`;
 
-        fetch(`{{ route('admin.vehicle-tax.index') }}?${new URLSearchParams(params)}`, {
+        fetch(`{{ route('admin.renewal.vehicle-tax.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(res => res.json())

@@ -14,7 +14,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <form action="{{ route('admin.insurance-provider.update', $provider) }}" method="POST">
+            <form action="{{ route('admin.settings.insurance-provider.update', $provider) }}" method="POST">
                 @csrf
                 <!-- customer -->
                 <div class="card">

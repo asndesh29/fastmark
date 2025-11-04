@@ -115,7 +115,7 @@ class InsuranceController extends Controller
 
         $this->insuranceService->update($insurance, $data);
 
-        return redirect()->route('admin.insurance.index')->with('success', 'Insurance updated successfully!');
+        return redirect()->route('admin.renewal.insurance.index')->with('success', 'Insurance updated successfully!');
     }
 
     /**

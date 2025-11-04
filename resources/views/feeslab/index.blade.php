@@ -22,7 +22,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <form action="{{ route('admin.feeslab.store') }}" method="POST">
+            <form action="{{ route('admin.settings.feeslab.store') }}" method="POST">
                 @csrf
                 <!-- customer -->
                 <div class="card">

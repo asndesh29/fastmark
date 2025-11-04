@@ -108,7 +108,7 @@ class RoadPermitController extends Controller
 
         $this->roadpermitService->update($roadpermit, $data);
 
-        return redirect()->route('admin.road-permit.index')->with('success', 'Check Pollution updated successfully!');
+        return redirect()->route('admin.renewal.road-permit.index')->with('success', 'Check Pollution updated successfully!');
     }
 
     /**

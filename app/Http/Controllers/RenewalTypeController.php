@@ -63,7 +63,7 @@ class RenewalTypeController extends Controller
 
         $this->renewalTypeService->update($renewalType, $data);
 
-        return redirect()->route('admin.renewal.type.index')->with('success', 'Renewal Type record updated successfully.');
+        return redirect()->route('admin.settings.renewal-type.index')->with('success', 'Renewal Type record updated successfully.');
     }
 
     public function destroy(RenewalType $renewalType)

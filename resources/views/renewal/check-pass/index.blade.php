@@ -119,14 +119,14 @@
     <div class="modal fade" id="vehiclepassModal" tabindex="-1" aria-labelledby="vehiclepassModal"
             aria-hidden="true">
         <div class="modal-dialog">
-            <form id="vehiclepassForm" method="POST" action="{{ route('admin.checkpass.store') }}">
+            <form id="vehiclepassForm" method="POST" action="{{ route('admin.renewal.checkpass.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
                 <input type="hidden" name="type" value="vehicle-pass">
 
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add Road Permit Renewal</h5>
+                        <h5 class="modal-title">Add Jach Pass Renewal</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                     </div>
@@ -218,7 +218,7 @@
         const tbody = document.getElementById('renewalTableBody');
         tbody.innerHTML = `<tr><td colspan="10" class="text-center p-4">Loading...</td></tr>`;
 
-        fetch(`{{ route('admin.checkpass.index') }}?${new URLSearchParams(params)}`, {
+        fetch(`{{ route('admin.renewal.checkpass.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(res => res.json())

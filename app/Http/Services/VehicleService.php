@@ -13,11 +13,28 @@ class VehicleService
         $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        return Vehicle::when($request->search, function ($query) use ($keywords) {
-            foreach ($keywords as $word) {
-                $query->orWhere('name', 'like', "%{$word}%");
-            }
-        })->orderBy('created_at', 'desc')->paginate($perPage);
+        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType'])
+            ->when($request->customer, function ($query, $customer) {
+                $query->whereHas('owner', function ($q) use ($customer) {
+                    $q->where('first_name', 'like', "%{$customer}%")
+                        ->orWhere('last_name', 'like', "%{$customer}%");
+                });
+            })
+            ->when($request->registration_no, function ($query, $registration_no) {
+                $query->where('registration_no', 'like', "%{$registration_no}%");
+            })
+            // ->when($request->status && $request->status !== 'all', function ($query, $status) {
+            //     if (in_array($status, ['active', 'inactive'])) {
+            //         $query->where('is_active', $status === 'active' ? 1 : 0);
+            //     }
+            // })
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('is_active', (int) $request->status);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return $vehicles;
     }
 
     public function store($data)

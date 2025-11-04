@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <h4 class="card-title mb-0">Renewal History for {{ $checkpass->vehicle->registration_no }}</h4>
-                <a href="{{ route('admin.checkpass.index') }}" class="btn btn-primary btn-md">← Back</a>
+                <a href="{{ route('admin.renewal.checkpass.index') }}" class="btn btn-primary btn-md">← Back</a>
             </div>
 
             <div class="card-body">

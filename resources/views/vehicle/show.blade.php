@@ -5,8 +5,8 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <h4 class="card-title mb-0">Renewal History for {{ $roadpermit->vehicle->registration_no }}</h4>
-                <a href="{{ route('admin.renewal.road-permit.index') }}" class="btn btn-primary btn-md">← Back</a>
+                <h4 class="card-title mb-0">Renewal History for {{ $vehicle->registration_no }}</h4>
+                <a href="{{ route('admin.vehicle.index') }}" class="btn btn-primary btn-md">← Back</a>
             </div>
 
             <div class="card-body">
@@ -14,6 +14,7 @@
                     <table class="table align-middle">
                         <thead class="table-light text-muted">
                             <tr>
+                                <th>#</th>
                                 <th>Renewal Type</th>
                                 <th>Issue Date</th>
                                 <th>Last Expiry Date</th>
@@ -23,11 +24,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if($roadpermit->vehicle->renewals->count())
-                                @foreach($roadpermit->vehicle->renewals as $renewal)
+                            @if($vehicle->renewals->count())
+                                @foreach($vehicle->renewals as $key => $renewal)
                                     <tr>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $renewal->renewalType->name ?? '—' }}</td>
-                                        <td>{{ $roadpermit->issue_date }}</td>
+                                        <td>{{ $renewal->renewable->issue_date ?? '-' }}</td>
                                         <td>{{ $renewal->start_date }}</td>
                                         <td>{{ $renewal->expiry_date }}</td>
                                         <td>

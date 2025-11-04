@@ -106,7 +106,7 @@ class PollutionController extends Controller
 
         $this->pollutionService->update($pollution, $data);
 
-        return redirect()->route('admin.pollution.index')->with('success', 'Check Pollution updated successfully!');
+        return redirect()->route('admin.renewal.pollution.index')->with('success', 'Check Pollution updated successfully!');
     }
 
     /**

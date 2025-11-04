@@ -14,7 +14,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-             <form action="{{ route('admin.vehicle.category.update', $vehicleCategory) }}" method="POST">
+             <form action="{{ route('admin.settings.vehicle.category.update', $vehicleCategory) }}" method="POST">
                 @csrf
                 <!-- Vehicle Category -->
                 <div class="card">

@@ -22,7 +22,7 @@
                 <!-- end card header -->
 
                 <div class="card-body">
-                    <form action="{{ route('admin.renewal.type.store') }}" method="POST">
+                    <form action="{{ route('admin.settings.renewal-type.store') }}" method="POST">
                     @csrf
                         <div class="live-preview">
                             <div class="row">
@@ -83,7 +83,7 @@
                                                 <div class="form-check form-switch form-switch-right form-switch-md">
                                                     <input 
                                                         type="checkbox" class="form-check-input code-switcher toggle-switch-input status_change_alert" 
-                                                        data-url="{{ route('admin.renewal.type.status', [$rt->id, $rt->is_active ? 0 : 1]) }}"
+                                                        data-url="{{ route('admin.settings.renewal-type.status', [$rt->id, $rt->is_active ? 0 : 1]) }}"
                                                         data-message="{{$rt->is_active ? 'you want to deactivate this renewal type' : 'you want to activate this renewal type' }}"
                                                         id="status_change_alert_{{ $rt->id }}" 
                                                         {{ $rt->is_active ? 'checked' : '' }}>
@@ -92,7 +92,7 @@
                                             <td>
                                                 <ul class="list-inline hstack gap-2 mb-0">
                                                     <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                        <a href="{{ route('admin.renewal.type.edit', $rt->id) }}">
+                                                        <a href="{{ route('admin.settings.renewal-type.edit', $rt->id) }}">
                                                             <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
                                                                 <i class="ri-edit-fill"></i>
                                                             </button>
@@ -111,7 +111,7 @@
                                                         </button>
 
                                                         <!-- Delete form -->
-                                                        <form action="{{ route('admin.renewal.type.destroy', [$rt->id]) }}"
+                                                        <form action="{{ route('admin.settings.renewal-type.destroy', [$rt->id]) }}"
                                                             method="post" id="renew-{{ $rt->id }}" style="display: none;">
                                                             @csrf @method('delete')
                                                         </form>

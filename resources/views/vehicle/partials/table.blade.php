@@ -20,7 +20,7 @@
             </td>
             <td>
                 <li class="list-inline-item" title="View">
-                    <a href="#">
+                    <a href="{{ route('admin.vehicle.show', $vehicle->id) }}">
                         <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
                             <i class="ri-eye-fill"></i>
                         </button>

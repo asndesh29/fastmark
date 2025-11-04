@@ -76,7 +76,7 @@ class VehicleCategoryController extends Controller
 
         $this->vehicleCategoryService->update($vehicle_type, $vaildated);
 
-        return redirect()->route('admin.vehicle.category.index')->with('success', 'Vehicle type updated successfully.');
+        return redirect()->route('admin.settings.vehicle.category.index')->with('success', 'Vehicle type updated successfully.');
     }
 
     /**
