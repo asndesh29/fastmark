@@ -97,12 +97,22 @@
                                                         </a>
                                                     </li>
 
-                                                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
-                                                        <a href="">
-                                                            <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
-                                                                <i class="ri-delete-bin-5-line"></i>
-                                                            </button>
-                                                        </a>
+                                                    <!-- Delete button -->
+                                                    <li class="list-inline-item" data-bs-toggle="tooltip"
+                                                        data-bs-trigger="hover" data-bs-placement="top" title="Remove">
+
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
+                                                            data-id="{{ $vc->id }}"
+                                                            data-name="{{ $vc->name ?? '' }}"> 
+                                                            <i class="ri-delete-bin-5-fill fs-16"></i>
+                                                        </button>
+
+                                                        <!-- Delete form -->
+                                                        <form action="{{ route('admin.settings.vehicle.category.destroy', [$vc->id]) }}"
+                                                            method="post" id="renew-{{ $vc->id }}" style="display: none;">
+                                                            @csrf @method('delete')
+                                                        </form>
                                                     </li>
                                                 </ul>
                                             </td>
@@ -110,6 +120,21 @@
                                     @endforeach
                                 </tbody>
                             </table>
+
+                           @if(count($vehicleCategories) === 0)
+                                <div class="noresult">
+                                    <div class="text-center">
+                                        <img src="{{ dynamicAsset('assets/images/empty.png') }}" alt="public" style="height: 100px;">
+                                        <h5 class="mt-2">Sorry! No Result Found</h5>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <div class="pagination-wrap hstack gap-2 mt-5">
+                                {!! $vehicleCategories->links('vendor.pagination.bootstrap-4') !!}
+                            </div>
                         </div>
                     </div>
                 </div>

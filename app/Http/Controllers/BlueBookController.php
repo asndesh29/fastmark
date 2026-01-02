@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\BluebookService;
 use App\Http\Services\RenewalService;
 use App\Http\Services\VehicleService;
@@ -23,11 +24,11 @@ class BlueBookController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->show_limit ?? config('default_pagination', 1);
+        $perPage = $request->show_limit ?? config('default_pagination', 10);
 
         $renewal_lists = $this->bluebookService->list($request, $perPage);
 
-        // ✅ Handle AJAX filter requests
+        // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('renewal.bluebook.partials.table', compact('renewal_lists'))->render();
             return response()->json(['html' => $html]);
@@ -49,21 +50,22 @@ class BlueBookController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'book_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            // 'expiry_date' => 'nullable|string',
-            'status' => 'required|in:paid,unpaid,pending',
-            'remarks' => 'nullable|string',
-            'type' => 'nullable|string'
-        ]);
-
         try {
-            $this->bluebookService->store($data);
-            return redirect()->back()->with('success', 'Bluebook Renewal record created successfully.');
+            $validator = Bluebook::validateData($request->all());
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $this->bluebookService->store($validated);
+
+            AppHelper::success('Bluebook renewal record created successfully.');
+
+            return redirect()->back();
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -93,20 +95,22 @@ class BlueBookController extends Controller
 
     public function update(Request $request, Bluebook $bluebook)
     {
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'book_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'expiry_date' => 'nullable|string',
-            'status' => 'required|in:paid,unpaid,pending',
-            'remarks' => 'nullable|string',
-            'type' => 'nullable|string'
-        ]);
+        // dd($request->all());
+        $validator = Bluebook::validateData($request->all());
 
-        $this->bluebookService->update($bluebook, $data);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-        return redirect()->route('admin.renewal.bluebook.index')->with('success', 'Bluebook updated successfully!');
+        $validated = $validator->validated();
+
+        $this->bluebookService->update($bluebook, $validated);
+
+        AppHelper::success('Bluebook record updated successfully.');
+
+        return redirect()->route('admin.renewal.bluebook.index');
     }
 
     /**

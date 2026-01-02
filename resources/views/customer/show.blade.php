@@ -86,8 +86,7 @@
                                         <th class="sort" data-sort="registration_no">Registration No</th>
                                         <th class="sort" data-sort="chassis_no">Chassis No</th>
                                         <th class="sort" data-sort="engine_cc">Engine CC</th>
-                                        <th class="sort" data-sort="last_renewed_at">Last Renewed At</th>
-                                        <th class="sort" data-sort="expiry_date">Expirty Date</th>
+                                        <th class="sort" data-sort="action">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="list form-check-all">
@@ -105,16 +104,11 @@
                                             <td class="registration_no">{{ $cv->registration_no }}</td>
                                             <td class="chassis_no">{{ $cv->chassis_no }}</td>
                                             <td class="engine_cc">{{ $cv->engine_cc }}</td>
-                                            <td class="last_renewed_at">{{ $cv->last_renewed_at }}</td>
-                                            <td class="expiry_date">{{ $cv->expiry_date }}</td>
                                             <td>
                                                 <div class="d-flex gap-2">
-                                                    <div class="edit">
-                                                        <button class="btn btn-sm btn-success edit-item-btn" data-bs-toggle="modal" data-bs-target="#showModal">Edit</button>
-                                                    </div>
                                                     <ul class="list-inline hstack gap-2 mb-0">
                                                         <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                            <a href="{{ route('admin.renewal.type.edit', $cv->id) }}">
+                                                            <a href="{{ route('admin.settings.renewal-type.edit', $cv->id) }}">
                                                                 <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
                                                                     <i class="ri-edit-fill"></i>
                                                                 </button>

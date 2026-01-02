@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
+use App\Helpers\AppHelper;
 use App\Models\Bluebook;
 use App\Models\Customer;
 use App\Models\Renewal;
@@ -59,16 +60,22 @@ class BluebookService
     {
         // dd($data);
         $renewal_type = RenewalType::where('slug', $data['type'])->first();
+        // dd($renewal_type);
 
         if (!$renewal_type) {
             throw new \Exception("Renewal type '{$data['type']}' not found.");
         }
 
+        // Generate the book number automatically
+        $book_number = AppHelper::generateInvoiceNumber('bluebook');
+        // dd($book_number);
+
         $expiryDate = $this->calculateExpiryDate($data['last_expiry_date']);
+        // dd($expiryDate);
 
         $bluebook = Bluebook::create([
             'vehicle_id' => $data['vehicle_id'],
-            'book_number' => $data['book_number'],
+            'book_number' => $book_number,
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'expiry_date' => $expiryDate,
@@ -89,7 +96,6 @@ class BluebookService
         ]);
 
         return $bluebook;
-
     }
 
     private function calculateExpiryDate($lastExpiryDate)
@@ -124,7 +130,6 @@ class BluebookService
         // Update the Bluebook
         $bluebook->update([
             'vehicle_id' => $data['vehicle_id'],
-            'book_number' => $data['book_number'],
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'expiry_date' => $expiryDate,

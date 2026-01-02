@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Helpers\AppHelper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class Customer extends Model
 {
@@ -23,12 +25,14 @@ class Customer extends Model
 
     protected $appends = ['image_full_url'];
 
-    public function vehicles(){ 
-        return $this->hasMany(Vehicle::class); 
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class);
     }
 
-    public function renewals(){ 
-        return $this->hasMany(Renewal::class); 
+    public function renewals()
+    {
+        return $this->hasMany(Renewal::class);
     }
 
     public function getImageFullUrlAttribute()
@@ -73,5 +77,37 @@ class Customer extends Model
         });
     }
 
+    public static function validateData($data)
+    {
+        $rules = [
+            // Customer fields
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'email'],
+            'phone' => ['nullable', 'string'],
 
+            // Vehicle arrays
+            'vehicle_types' => ['required', 'array', 'min:1'],
+            'vehicle_types.*' => ['required', 'integer', 'exists:vehicle_types,id'],
+
+            'vehicle_categories' => ['required', 'array'],
+            'vehicle_categories.*' => ['required', 'integer', 'exists:vehicle_categories,id'],
+
+            'registration_no' => ['required', 'array'],
+            'registration_no.*' => ['required', 'string', 'max:255'],
+
+            'permit_no' => ['required', 'array'],
+            'permit_no.*' => ['required', 'string', 'max:255'],
+        ];
+
+        $messages = [
+            'first_name.required' => 'First name is required.',
+            'last_name.required' => 'Last name is required.',
+            'vehicle_types.*.required' => 'Vehicle type is required.',
+            'registration_no.*.required' => 'Registration number is required.',
+            'permit_no.*.required' => 'Permit number is required.',
+        ];
+
+        return Validator::make($data, $rules, $messages);
+    }
 }

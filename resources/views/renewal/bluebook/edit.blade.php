@@ -36,22 +36,26 @@
                     <div class="card-body">
                         <div class="live-preview">
                             <div class="row">
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="book_number" class="form-label">Book Number</label>
-                                        <input type="text" class="form-control @error('book_number') is-invalid @enderror" id="book_number" name="book_number" value="{{ old('book_number', $renewal->book_number) }}" placeholder="Ex: Two Wheeler">
+                                        <input type="text" class="form-control @error('book_number') is-invalid @enderror" id="book_number" 
+                                        name="book_number" value="{{ old('book_number', $renewal->book_number) }}" 
+                                        placeholder="Ex: Two Wheeler" disabled>
                                         
                                         @error('book_number')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="issue_date" class="form-label">Issue Date</label>
-                                        <input type="text" class="form-control @error('issue_date') is-invalid @enderror" id="issue_date" name="issue_date" value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Ex: Issue Date">
-                                        
+                                        {{-- <input type="text" class="form-control @error('issue_date') is-invalid @enderror" id="issue_date" name="issue_date" value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Ex: Issue Date"> --}}
+                                        <input type="text" class="form-control nepali-date @error('issue_date') is-invalid @enderror" name="issue_date"
+                                            value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Select Issue Date" autocomplete="off"/>
+
                                         @error('issue_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -61,32 +65,37 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="last_expiry_date" class="form-label">Last Expiry Date</label>
-                                        <input type="text" class="form-control @error('last_expiry_date') is-invalid @enderror" id="last_expiry_date" name="last_expiry_date" value="{{ old('last_expiry_date', $renewal->last_expiry_date) }}" placeholder="Ex: Last Expiry Date">
+                                        {{-- <input type="text" class="form-control @error('last_expiry_date') is-invalid @enderror" id="last_expiry_date" name="last_expiry_date" value="{{ old('last_expiry_date', $renewal->last_expiry_date) }}" placeholder="Ex: Last Expiry Date"> --}}
                                         
+                                        <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" name="last_expiry_date"
+                                            value="{{ old('last_expiry_date', $renewal->last_expiry_date) }}" placeholder="Select Expiry Date" autocomplete="off"/>
                                         @error('last_expiry_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="expiry_date" class="form-label">Expiry Date</label>
-                                        <input type="text" class="form-control @error('expiry_date') is-invalid @enderror" id="expiry_date" name="expiry_date" value="{{ old('expiry_date', $renewal->expiry_date) }}" placeholder="Ex: Expiry Date">
+                                        <input type="text" class="form-control @error('expiry_date') is-invalid @enderror" id="expiry_date" 
+                                            name="expiry_date" value="{{ old('expiry_date', $renewal->expiry_date) }}" 
+                                            placeholder="Ex: Expiry Date" disabled>
                                         
                                         @error('expiry_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label>Status</label>
                                         <select class="form-select" name="status">
-                                            <option value="paid" {{ $renewal->status === 'paid' ? 'selected' : '' }}>Paid</option>
-                                            <option value="unpaid" {{ $renewal->status === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                            <option value="paid" {{ old('status', $renewal->status) === 'paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="unpaid" {{ old('status', $renewal->status) === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
                                         </select>
+
                                     </div>
                                 </div>
                                 
@@ -111,8 +120,9 @@
         </div>
     </div>
     <!-- Bluebook Renewal List -->
-
-    
 @endsection
 
+@push('script_2')
+    <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
+@endpush
 

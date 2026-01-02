@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class Vehicle extends Model
 {
@@ -11,6 +12,7 @@ class Vehicle extends Model
         'vehicle_type_id',
         'vehicle_category_id',
         'registration_no',
+        'permit_no',
         'chassis_no',
         'engine_no',
         'type',
@@ -73,5 +75,20 @@ class Vehicle extends Model
     public function vehiclePass()
     {
         return $this->hasOne(VehiclePass::class)->latestOfMany();
+    }
+
+    public static function validateData($data, $vehicleType = null)
+    {
+        $rules = [
+            'registration_no' => ['required', 'string', 'max:255'],
+            'permit_number' => ['required', 'string', 'max:255'],
+        ];
+
+        $messages = [
+            'registration_no.required' => 'Registration No. is required.',
+            'permit_number.required' => 'Permit No. is required.',
+        ];
+
+        return Validator::make($data, $rules, $messages);
     }
 }

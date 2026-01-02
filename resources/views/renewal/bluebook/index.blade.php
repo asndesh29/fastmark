@@ -122,23 +122,31 @@
                                 aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label>Book Number</label>
                             <input type="text" class="form-control" name="book_number" placeholder="Enter bluebook number">
-                        </div>
+                        </div> --}}
                         <div class="mb-3">
                             <label>Issue Date</label>
-                            <input type="text" class="form-control nepali-date" name="issue_date"
-                                    placeholder="Select Issue Date" autocomplete="off"/>
+                            <input type="text" class="form-control nepali-date @error('issue_date') is-invalid @enderror" 
+                                name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
+
+                            @error('issue_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label>Last Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="last_expiry_date"
-                                    placeholder="Select Last Expiry Date" autocomplete="off"/>
+                            <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" 
+                                name="last_expiry_date" placeholder="Select Last Expiry Date" autocomplete="off"/>
+
+                            @error('last_expiry_date')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
-                            <select class="form-select" name="status">
+                            <select class="form-select mb-3" name="status">
                                 <option value="paid">Paid</option>
                                 <option value="unpaid">Unpaid</option>
                             </select>
@@ -158,11 +166,65 @@
 @endsection
 
 @push('script_2')
+<script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Dynamically set vehicle_id in modal
         const modal = document.getElementById('bluebookModal');
         const vehicleInput = modal.querySelector('input[name="vehicle_id"]');
+
+         // Prevent modal from closing if form validation fails
+        const form = document.getElementById('bluebookForm');
+        form.addEventListener('submit', function (e) {
+            // Clear any previous error messages
+            clearErrorMessages();
+
+            // Check if there are validation errors for required fields
+            const issueDate = form.querySelector('input[name="issue_date"]');
+            const lastExpiryDate = form.querySelector('input[name="last_expiry_date"]');
+
+            let hasError = false;
+
+            // Validate Issue Date
+            if (!issueDate.value) {
+                showError(issueDate, 'Issue Date is required.');
+                hasError = true;
+            }
+
+            // Validate Last Expiry Date
+            if (!lastExpiryDate.value) {
+                showError(lastExpiryDate, 'Last Expiry Date is required.');
+                hasError = true;
+            }
+
+            // If there are errors, prevent form submission
+            if (hasError) {
+                e.preventDefault();
+            }
+        });
+
+        // Show error message below the input field
+        function showError(input, message) {
+            input.classList.add('is-invalid');  // Adds Bootstrap invalid styling
+            const errorDiv = document.createElement('div');
+            errorDiv.classList.add('invalid-feedback');
+            errorDiv.textContent = message;
+            input.parentElement.appendChild(errorDiv);  // Add error message below the input
+        }
+
+        // Clear all error messages
+        function clearErrorMessages() {
+            const errorMessages = form.querySelectorAll('.invalid-feedback');
+            errorMessages.forEach(function(error) {
+                error.remove();  // Remove error message
+            });
+
+            // Remove invalid class from all inputs
+            const inputs = form.querySelectorAll('.form-control');
+            inputs.forEach(function(input) {
+                input.classList.remove('is-invalid');
+            });
+        }
 
         document.addEventListener('click', function (e) {
             if (e.target.closest('.addBtn')) {
@@ -172,13 +234,13 @@
         });
 
         // Initialize Nepali datepicker on page load
-        document.querySelectorAll('.nepali-date').forEach(function(input) {
-            if (!input.classList.contains('ndp-initialized')) {
-                $(input).NepaliDatePicker({
-                    container: '#bluebookModal'
-                }).addClass('ndp-initialized');
-            }
-        });
+        // document.querySelectorAll('.nepali-date').forEach(function(input) {
+        //     if (!input.classList.contains('ndp-initialized')) {
+        //         $(input).NepaliDatePicker({
+        //             container: '#bluebookModal'
+        //         }).addClass('ndp-initialized');
+        //     }
+        // });
     });
 
     // AJAX Filter + Pagination

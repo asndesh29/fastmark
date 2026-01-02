@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\VehicleService;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
@@ -37,13 +38,22 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        // Validate using the model's validateData method
+        $validator = Vehicle::validateData($request->all());
 
-        $this->vehicleService->store($data);
+        // If validation fails, redirect back with errors
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('admin.vehicle.index')->with('success', 'Vehicle created successfully.');
+        // If validation passes, store the data
+        $validated = $validator->validated();
+
+        $this->vehicleService->store($validated);
+
+        AppHelper::success('Vehicle Created Successfully.');
+
+        return redirect()->route('admin.vehicle.index');
     }
 
     /**

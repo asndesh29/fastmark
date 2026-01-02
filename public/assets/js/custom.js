@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
             showCancelButton: true,
             confirmButtonColor: '#FC6A57',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Yes, Delete it!',
+            cancelButtonText: 'No, Keep it',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
@@ -73,4 +73,24 @@ document.addEventListener('DOMContentLoaded', function () {
             $target.prop('disabled', false); // Re-enable
         });
     }
+
+    $(document).ready(function () {
+        // Initialize Nepali Datepicker for .nepali-date inputs
+        initializeNepaliDatepicker();
+
+        // Optional: Reinitialize datepicker when the modal is opened
+        $('#bluebookModal').on('shown.bs.modal', function () {
+            initializeNepaliDatepicker();
+        });
+    });
+
+    // Function to initialize Nepali Datepicker
+    function initializeNepaliDatepicker() {
+        $('.nepali-date').each(function () {
+            if (!$(this).hasClass('ndp-initialized')) {
+                $(this).NepaliDatePicker().addClass('ndp-initialized');
+            }
+        });
+    }
 });
+
