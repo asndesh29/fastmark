@@ -5,7 +5,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Sign In | {{ config('app.url') }}</title>
+    <title>Sign In | {{ config('app.name') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="{{ config('app.url') }}" name="description" />
     <meta content="Themesbrand" name="author" />
@@ -87,7 +87,7 @@
                                     <div class="p-lg-5 p-4">
                                         <div>
                                             <h5 class="text-primary">Welcome Back !</h5>
-                                            <p class="text-muted">Sign in to continue to Fast Mark.</p>
+                                            <p class="text-muted">Sign in to continue to {{ config('app.name') }}.</p>
                                         </div>
 
                                         <div class="mt-4">
