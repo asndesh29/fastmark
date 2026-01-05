@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\VehicleTaxService;
 
 use App\Models\VehicleTax;
@@ -47,22 +48,22 @@ class VehicleTaxController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
-
         try {
-            $this->vehicleTaxService->store($data);
-            return redirect()->back()->with('success', 'Vehicle Tax Renewal record created successfully.');
+            $validator = VehicleTax::validateData($request->all());
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $this->vehicleTaxService->store($validated);
+
+            AppHelper::success('Vehicle Tax record updated successfully.');
+
+            return redirect()->back();
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -92,22 +93,21 @@ class VehicleTaxController extends Controller
 
     public function update(Request $request, VehicleTax $vehicletax)
     {
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
+        $validator = VehicleTax::validateData($request->all());
 
-        $this->vehicleTaxService->update($vehicletax, $data);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-        return redirect()->route('admin.vehicle-tax.index')->with('success', 'Vehicle Tax updated successfully!');
+        $validated = $validator->validated();
+
+        $this->vehicleTaxService->update($vehicletax, $validated);
+
+        AppHelper::success('Vehicle Tax record updated successfully.');
+
+        return redirect()->route('admin.renewal.vehicle-tax.index');
 
         // return redirect()->back()->with('success', 'Vehicle Tax updated successfully!');
     }

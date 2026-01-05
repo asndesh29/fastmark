@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->decimal('income_tax', 12, 2)->default(0);
             $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
             $table->string('remarks')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

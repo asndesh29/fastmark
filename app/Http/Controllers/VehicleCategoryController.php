@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\VehicleCategoryService;
 use App\Http\Services\VehicleTypeService;
 use App\Models\VehicleCategory;
@@ -33,13 +34,22 @@ class VehicleCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        // Validate using the model's validateData method
+        $validator = VehicleCategory::validateData($request->all());
+
+        // If validation fails, redirect back with errors
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // If validation passes, store the data
+        $validated = $validator->validated();
 
         $this->vehicleCategoryService->store($validated);
 
-        return redirect()->route('admin.vehicle.category.index')->with('success', 'Vehicle Type created successfully.');
+        AppHelper::success('Vehicle Category created successfully.');
+
+        return redirect()->route('admin.settings.vehicle.category.index');
     }
 
     /**
@@ -68,15 +78,28 @@ class VehicleCategoryController extends Controller
      */
     public function update(Request $request, VehicleCategory $category)
     {
-        $vehicle_type = $this->vehicleCategoryService->getById($category->id);
+        // dd($request->all());
+        $vehicle_category = $this->vehicleCategoryService->getById($category->id);
+        // dd($vehicle_category);
 
-        $vaildated = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        $validated = VehicleCategory::validateData($request->all(), $category);
 
-        $this->vehicleCategoryService->update($vehicle_type, $vaildated);
+        // If validation fails, redirect back with errors
+        if ($validated->fails()) {
+            return redirect()->back()->withErrors($validated)->withInput();
+        }
 
-        return redirect()->route('admin.settings.vehicle.category.index')->with('success', 'Vehicle type updated successfully.');
+        // Get the validated data
+        $validatedData = $validated->validated();
+
+        // Update the vehicle type using the service
+        $this->vehicleCategoryService->update($vehicle_category, $validatedData);
+
+        // Show a success message
+        AppHelper::success('Vehicle Category Updated Successfully.');
+
+        // Redirect back to the vehicle type index page
+        return redirect()->route('admin.settings.vehicle.category.index');
     }
 
     /**
@@ -94,10 +117,15 @@ class VehicleCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(VehicleCategory $vehicleCategory)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(VehicleCategory $category)
     {
-        $this->vehicleCategoryService->delete($vehicleCategory->id);
+        $this->vehicleCategoryService->delete($category->id);
 
-        return redirect()->route('admin.vehicle.category.index')->with('success', 'Vehicle category deleted successfully.');
+        AppHelper::success('Vehicle Category deleted successfully.');
+
+        return redirect()->route('admin.settings.vehicle.category.index');
     }
 }

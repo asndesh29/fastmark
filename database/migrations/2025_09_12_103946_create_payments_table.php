@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->enum('status', ['paid', 'unpaid', 'overdue']);
             $table->enum('method', ['cash', 'online', 'bank_transfer']);
             $table->date('paid_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

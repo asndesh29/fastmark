@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 
+use App\Helpers\AppHelper;
 use App\Models\Renewal;
 use App\Models\RenewalType;
 use App\Models\RoadPermit;
@@ -64,11 +65,14 @@ class RoadpermitService
             throw new \Exception("Renewal type '{$data['type']}' not found.");
         }
 
+        // Generate the invoice number automatically
+        $invoice_no = AppHelper::generateInvoiceNumber('roadpermit');
+
         $expiryDate = $this->calculateExpiryDate($data['last_expiry_date'], $data['vehicle_id']);
 
         $roadPermit = RoadPermit::create([
             'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $data['invoice_number'],
+            'invoice_no' => $invoice_no,
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'tax_amount' => $data['tax_amount'],
@@ -97,6 +101,48 @@ class RoadpermitService
     }
 
     private function calculateExpiryDate($lastExpiryDate, $vehicleId)
+    {
+        // Get the vehicle
+        $vehicle = Vehicle::with('vehicleCategory')->findOrFail($vehicleId);
+
+        // Convert Nepali issue date to English (Y-m-d)
+        $engIssueDate = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($lastExpiryDate, '-');
+
+        // Determine validity duration
+        $categoryName = strtolower($vehicle->vehicleCategory->name ?? '');
+        // dd($categoryName);
+
+        if (in_array($categoryName, ['public', 'commercial'])) {
+            // $daysToAdd = 181; // 6 months for public/commercial
+            $engExpiryDate = Carbon::parse($engIssueDate)
+                ->addMonths(6)
+                ->subDay()
+                ->format('Y-m-d');
+            // dd($engExpiryDate);
+        } else {
+            // $daysToAdd = 365; // 1 year for private or others
+            $engExpiryDate = Carbon::parse($engIssueDate)
+                ->addYear()
+                ->subDay()
+                ->format('Y-m-d');
+        }
+
+        // Add days based on category
+        // $engExpiryDate = Carbon::parse($engIssueDate)->addDays($daysToAdd)->format('Y-m-d');
+
+        // Convert back to Nepali date
+        $nepaliDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
+        // dd($nepExpiryDate);
+
+        $nepExpiryDate = Carbon::parse($nepaliDate)
+            ->subDay()
+            ->format('Y-m-d');
+        // dd($nepExpiryDate);
+
+        return $nepExpiryDate;
+    }
+
+    private function calculateExpiryDate1($lastExpiryDate, $vehicleId)
     {
         // Get the vehicle
         $vehicle = Vehicle::with('vehicleCategory')->findOrFail($vehicleId);
@@ -143,7 +189,6 @@ class RoadpermitService
         // Update the Bluebook
         $roadpermit->update([
             'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $data['invoice_number'],
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'tax_amount' => $data['tax_amount'],

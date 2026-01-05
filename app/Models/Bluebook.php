@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class Bluebook extends Model
 {
@@ -48,5 +49,25 @@ class Bluebook extends Model
     public function scopeExpired($query)
     {
         return $query->where('expiry_date', '<', now());
+    }
+
+    public static function validateData($data)
+    {
+        $rules = [
+            'vehicle_id' => ['required', 'exists:vehicles,id'],
+            'book_number' => ['nullable', 'string', 'max:255'],
+            'issue_date' => ['required', 'string', 'max:255'],
+            'last_expiry_date' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'in:paid,unpaid'],
+            'remarks' => ['nullable', 'string', 'max:255'],
+            'type' => ['nullable', 'string']
+        ];
+
+        $messages = [
+            'issue_date.required' => 'Issue Date is required.',
+            'last_expiry_date.required' => 'Last Expiry Date is required.',
+        ];
+
+        return Validator::make($data, $rules, $messages);
     }
 }

@@ -75,7 +75,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                     @foreach ($vehicleTypes as $key => $vt )
+                                    @foreach ($vehicleTypes as $key => $vt )
                                         <tr>
                                             <td>{{ $key + $vehicleTypes->firstItem() }}</td>
                                             <td>{{ $vt->name }}</td>
@@ -122,6 +122,21 @@
                                     @endforeach
                                 </tbody>
                             </table>
+
+                            @if(count($vehicleTypes) === 0)
+                                <div class="noresult">
+                                    <div class="text-center">
+                                        <img src="{{ dynamicAsset('assets/images/empty.png') }}" alt="public" style="height: 100px;">
+                                        <h5 class="mt-2">Sorry! No Result Found</h5>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <div class="pagination-wrap hstack gap-2 mt-5">
+                                {!! $vehicleTypes->links('vendor.pagination.bootstrap-4') !!}
+                            </div>
                         </div>
                     </div>
                 </div>

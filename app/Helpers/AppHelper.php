@@ -2,6 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Models\Bluebook;
+use App\Models\Insurance;
+use App\Models\PollutionCheck;
+use App\Models\RoadPermit;
+use App\Models\VehiclePass;
+use App\Models\VehicleTax;
 use Carbon\Carbon;
 use Exception;
 use App\Models\BusinessSetting;
@@ -143,5 +149,98 @@ class AppHelper
     {
         $time = config('timeformat', 'H:i');
         return Carbon::parse($data)->locale(app()->getLocale())->translatedFormat($time);
+    }
+
+    /**
+     * Generate a unique invoice number for different document types.
+     *
+     * @param string $type Document type (e.g., 'bluebook', 'jachpass', etc.)
+     * @return string
+     */
+    public static function generateInvoiceNumber($type)
+    {
+        // dd($type);
+        // Prefix for each document type
+        $prefix = '';
+
+        switch (strtolower($type)) {
+            case 'bluebook':
+                $prefix = 'BB';
+                $model = Bluebook::class;
+                break;
+            case 'jachpass':
+                $prefix = 'JP';
+                $model = VehiclePass::class;
+                break;
+            case 'pollution':
+                $prefix = 'PL';
+                $model = PollutionCheck::class;
+                break;
+            case 'insurance':
+                $prefix = 'IN';
+                $model = Insurance::class;
+                break;
+            case 'roadpermit':
+                $prefix = 'RP';
+                $model = RoadPermit::class;
+                break;
+            case 'tax':
+                $prefix = 'TX';
+                $model = VehicleTax::class;
+                break;
+            default:
+                throw new \Exception("Invalid document type '{$type}'");
+        }
+
+        $year = date('Y');  // Current year
+        $lastInvoice = $model::latest('id')->first();  // Get the latest invoice for this type
+        // dd($lastInvoice);
+
+        // If there's no existing invoice, start with 1
+        if ($type == 'bluebook') {
+            $serial = $lastInvoice ? (int) substr($lastInvoice->book_number, -4) + 1 : 1;
+        } elseif ($type == 'insurance') {
+            $serial = $lastInvoice ? (int) substr($lastInvoice->policy_number, -4) + 1 : 1;
+        } else {
+            $serial = $lastInvoice ? (int) substr($lastInvoice->invoice_no, -4) + 1 : 1;
+        }
+
+        // Format serial to be 4 digits
+        $serialFormatted = str_pad($serial, 4, '0', STR_PAD_LEFT);
+
+        return "{$prefix}-{$year}-{$serialFormatted}";
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Toastr Helper Methods
+    |--------------------------------------------------------------------------
+    */
+    public static function toastr(string $type, string $message): void
+    {
+        session()->flash('toastr', [
+            'type' => $type,
+            'message' => $message,
+        ]);
+    }
+
+    public static function success(string $message): void
+    {
+        self::toastr('success', $message);
+    }
+
+    public static function error(string $message): void
+    {
+        self::toastr('error', $message);
+    }
+
+    public static function info(string $message): void
+    {
+        self::toastr('info', $message);
+    }
+
+    public static function warning(string $message): void
+    {
+        self::toastr('warning', $message);
     }
 }

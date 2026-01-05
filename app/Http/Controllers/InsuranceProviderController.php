@@ -88,14 +88,6 @@ class InsuranceProviderController extends Controller
         return redirect()->route('admin.insurance-provider.index')->with('success', 'Insurance provider record updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(InsuranceProvider $insuranceProvider)
-    {
-        //
-    }
-
     public function status(InsuranceProvider $insuranceProvider, $status)
     {
         $insuranceProvider->is_active = in_array($status, [0, 1]) ? $status : 0;
@@ -104,4 +96,21 @@ class InsuranceProviderController extends Controller
 
         return back()->with('success', 'Insurance Provider status updated successfully.');
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(InsuranceProvider $insuranceProvider)
+    {
+        $insurance_provider = InsuranceProvider::findOrFail($insuranceProvider->id);
+
+        if (!$insurance_provider) {
+            return false;
+        }
+
+        $insurance_provider->delete();
+
+        return back();
+    }
+
 }

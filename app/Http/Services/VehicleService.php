@@ -39,7 +39,7 @@ class VehicleService
 
     public function store($data)
     {
-        return Vehicle::store($data);
+        return Vehicle::create($data);
     }
 
     public function getById($id)

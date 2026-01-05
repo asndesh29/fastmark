@@ -8,14 +8,7 @@
         <meta content="Yantra" name="author" />
         <!-- App favicon -->
         <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
-
-        <!--datatable css-->
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-        <!--datatable responsive css-->
-        <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
-
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-
+       
         <!-- Sweet Alert css-->
         <link href="{{ asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css">
 
@@ -29,6 +22,9 @@
         <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
         <!-- custom Css-->
         <link href="{{ asset('assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
+
+        <!--Toastr css-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
         <!-- Select2 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -63,6 +59,7 @@
         </div>
         <!-- END layout-wrapper -->
         
+        
         <!-- JAVASCRIPT -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -83,6 +80,51 @@
         <!-- App js -->
         <script src="{{ asset('assets/js/app.js')}}"></script>
 
+        <!-- Toastr js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        <script>
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                timeOut: 3000,
+                positionClass: "toast-top-right",
+                preventDuplicates: true,
+                showDuration: 300,
+                hideDuration: 1000,
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+
+            @if(session()->has('toastr'))
+                const toast = @json(session('toastr'));
+                switch(toast.type){
+                    case 'success':
+                        toastr.success(toast.message);
+                        break;
+                    case 'error':
+                        toastr.error(toast.message);
+                        break;
+                    case 'info':
+                        toastr.info(toast.message);
+                        break;
+                    case 'warning':
+                        toastr.warning(toast.message);
+                        break;
+                    default:
+                        toastr.info(toast.message);
+                }
+            @endif
+
+            @if($errors->any())
+                @foreach ($errors->all() as $error)
+                    toastr.error(@json($error));
+                @endforeach
+            @endif
+        </script>
+
+
         @stack('script_2')
+
     </body>
 </html>

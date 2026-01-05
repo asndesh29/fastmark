@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 
+use App\Helpers\AppHelper;
 use App\Models\Insurance;
 use App\Models\Renewal;
 use App\Models\RenewalType;
@@ -59,17 +60,23 @@ class InsuranceService
     {
         // dd($data);
         $renewal_type = RenewalType::where('slug', $data['type'])->first();
+        // dd($renewal_type);
 
         if (!$renewal_type) {
             throw new \Exception("Renewal type '{$data['type']}' not found.");
         }
 
+        // Generate the invoice number automatically
+        $policy_number = AppHelper::generateInvoiceNumber('insurance');
+        // dd($policy_number);
+
         $expiryDate = $this->calculateExpiryDate($data['issue_date']);
+        // dd($expiryDate);
 
         $insurance = Insurance::create([
             'vehicle_id' => $data['vehicle_id'],
             'provider_id' => $data['provider_id'],
-            'policy_number' => $data['policy_number'],
+            'policy_number' => $policy_number,
             'issue_date' => $data['issue_date'],
             'amount' => $data['amount'],
             'expiry_date' => $expiryDate,
@@ -118,16 +125,17 @@ class InsuranceService
 
     public function update(Insurance $insurance, array $data)
     {
+        // dd($data);
         // Find the renewal type
         $renewalType = RenewalType::where('slug', $data['type'])->firstOrFail();
 
         $expiryDate = $this->calculateExpiryDate($data['issue_date']);
+        // dd($expiryDate);
 
         // Update the Bluebook
         $insurance->update([
             'vehicle_id' => $data['vehicle_id'],
             'provider_id' => $data['provider_id'],
-            'policy_number' => $data['policy_number'],
             'issue_date' => $data['issue_date'],
             'amount' => $data['amount'],
             'expiry_date' => $expiryDate,

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class PollutionCheck extends Model
 {
@@ -26,6 +27,12 @@ class PollutionCheck extends Model
         'last_expiry_date' => 'string',
         'issue_date' => 'string',
         'expiry_date' => 'string'
+    ];
+
+    protected $attributes = [
+        'tax_amount' => 0,
+        'renewal_charge' => 0,
+        'income_tax' => 0,
     ];
 
     public function renewal()
@@ -52,5 +59,32 @@ class PollutionCheck extends Model
     public function scopeExpired($query)
     {
         return $query->where('expiry_date', '<', now());
+    }
+
+    public static function validateData($data)
+    {
+        $data['tax_amount'] = $data['tax_amount'] ?? 0;
+        $data['renewal_charge'] = $data['renewal_charge'] ?? 0;
+        $data['income_tax'] = $data['income_tax'] ?? 0;
+
+        $rules = [
+            'vehicle_id' => ['required', 'exists:vehicles,id'],
+            'type' => ['nullable', 'string'],
+            'invoice_number' => ['nullable', 'string', 'max:255'],
+            'issue_date' => ['required', 'string', 'max:255'],
+            'last_expiry_date' => ['required', 'string', 'max:255'],
+            'tax_amount' => ['nullable', 'numeric'],
+            'renewal_charge' => ['nullable', 'numeric'],
+            'income_tax' => ['nullable', 'numeric'],
+            'status' => ['required', 'in:paid,unpaid'],
+            'remarks' => ['nullable', 'string', 'max:255'],
+        ];
+
+        $messages = [
+            'issue_date.required' => 'Issue Date is required.',
+            'last_expiry_date.required' => 'Last Expiry Date is required.',
+        ];
+
+        return Validator::make($data, $rules, $messages);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class Renewal extends Model
 {
@@ -43,6 +44,24 @@ class Renewal extends Model
         return $this->belongsToMany(Payment::class, 'payment_renewal')
             ->withPivot('amount')
             ->withTimestamps();
+    }
+
+    public static function validateData($data)
+    {
+        $rules = [
+            // Bluebook fields
+            'issue_date' => ['required', 'string', 'max:255'],
+            'last_expiry_date' => ['required', 'string', 'max:255'],
+            'expiry_date' => ['required', 'string', 'max:255'],
+        ];
+
+        $messages = [
+            'issue_date.required' => 'First name is required.',
+            'last_expiry_date.required' => 'Last name is required.',
+            'expiry_date.required' => 'Vehicle type is required.',
+        ];
+
+        return Validator::make($data, $rules, $messages);
     }
 
 }

@@ -36,16 +36,15 @@ class CustomerService
 
         // Store multiple vehicles & create renewal entry for each
         foreach ($data['vehicle_types'] as $index => $vehicleTypeId) {
-
             Vehicle::create([
                 'customer_id' => $customer->id,
                 'vehicle_type_id' => $vehicleTypeId,
                 'vehicle_category_id' => $data['vehicle_categories'][$index],
                 'registration_no' => $data['registration_no'][$index],
-                'chassis_no' => $data['chassis_no'][$index],
-                'engine_no' => $data['engine_no'][$index],
-                'engine_cc' => $data['engine_cc'][$index],
-                'capacity' => $data['capacity'][$index],
+                'chassis_no' => $data['chassis_no'][$index] ?? null,
+                'engine_no' => $data['engine_no'][$index] ?? null,
+                'engine_cc' => $data['engine_cc'][$index] ?? null,
+                'capacity' => $data['capacity'][$index] ?? null,
             ]);
         }
         return $customer;

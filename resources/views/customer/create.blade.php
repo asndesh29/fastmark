@@ -165,9 +165,9 @@
                                 <div class="row vehicle-row mb-4 border rounded p-3" style="background-color: #f8f9fc">
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="vehicle_category" class="form-label">Vehicle Categpru</label>
+                                            <label for="vehicle_category" class="form-label">Vehicle Category</label>
                                             <select class="form-select mb-3" name="vehicle_categories[]" required data-placeholder="Select Category" title="Select Category"
-                                            data-choices name="choices-single-default id="chocices-single-default">
+                                            data-choices name="choices-single-default" id="chocices-single-default">
                                                 @foreach ($vehicle_categories as $key => $vc)
                                                     <option value="{{ $vc->id }}">{{ $vc->name }}</option>
                                                 @endforeach
@@ -180,7 +180,7 @@
                                         <div class="mb-3">
                                             <label for="vehicle_type" class="form-label">Vehicle Type</label>
                                             <select class="form-select mb-3" name="vehicle_types[]" required data-placeholder="Select Type" title="Select Type"
-                                            data-choices name="choices-single-default id="chocices-single-default">
+                                            data-choices name="choices-single-default" id="chocices-single-default">
                                                 @foreach ($vehicle_types as $key => $vt)
                                                     <option value="{{ $vt->id }}">{{ $vt->name }}</option>
                                                 @endforeach
@@ -191,8 +191,23 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="registration_no" class="form-label">Registration No</label>
-                                            <input type="text" name="registration_no[]" class="form-control" placeholder="Ex: Ba 83 Pa 8297">
+                                            <input type="text" name="registration_no[]" class="form-control @error('registration_no.*') is-invalid @enderror" placeholder="Ex: Ba 83 Pa 8297">
                                         </div>
+
+                                        @error('registration_no.*')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="permit_no" class="form-label">Permit No</label>
+                                            <input type="text" name="permit_no[]" class="form-control @error('permit_no.*') is-invalid @enderror" placeholder="Ex: Ba 83 Pa 8297">
+                                        </div>
+
+                                        @error('permit_no.*')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-4">
@@ -223,19 +238,11 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label for="renewed_date" class="form-label">Last Renewed Date</label>
-                                            <input type="text" class="form-control" id="nepali-datepicker" name="renewed_date[]" placeholder="Select Nepali Date"/>
-                                        </div>
-                                    </div>
-
                                     <!-- Remove button -->
                                     <div class="col-12 text-end">
                                         <button type="button" class="btn btn-danger btn-sm remove-vehicle-btn">Remove</button>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

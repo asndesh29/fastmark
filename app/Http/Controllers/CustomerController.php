@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Models\Customer;
 use App\Http\Services\CustomerService;
 use App\Http\Requests\RenewalRequest;
@@ -46,9 +47,21 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $this->customerService->store($request->all());
+        $validator = Customer::validateData($request->all());
 
-        return redirect()->route('admin.customer.index')->with('success', 'Renewal record created successfully.');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
+
+        $this->customerService->store($validated);
+
+        AppHelper::success('Customer created successfully;');
+
+        return redirect()->route('admin.customer.index');
     }
 
     /**

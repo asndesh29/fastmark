@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\PollutionService;
 use App\Http\Services\RoadpermitService;
 use App\Models\PollutionCheck;
@@ -48,22 +49,22 @@ class RoadPermitController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
-
         try {
-            $this->roadpermitService->store($data);
-            return redirect()->back()->with('success', 'Road Permit Renewal record created successfully.');
+            $validator = RoadPermit::validateData($request->all());
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $this->roadpermitService->store($validated);
+
+            AppHelper::success('Road Permit record updated successfully.');
+
+            return redirect()->back();
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -93,22 +94,21 @@ class RoadPermitController extends Controller
 
     public function update(Request $request, RoadPermit $roadpermit)
     {
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
+        $validator = RoadPermit::validateData($request->all());
 
-        $this->roadpermitService->update($roadpermit, $data);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-        return redirect()->route('admin.renewal.road-permit.index')->with('success', 'Check Pollution updated successfully!');
+        $validated = $validator->validated();
+
+        $this->roadpermitService->update($roadpermit, $validated);
+
+        AppHelper::success('Road Permit record updated successfully.');
+
+        return redirect()->route('admin.renewal.road-permit.index');
     }
 
     /**

@@ -29,14 +29,14 @@
                 
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Update Vehicle Tax Detail</h4>
+                        <h4 class="card-title mb-0 flex-grow-1">Update Vehicle Tax Detail - {{ $renewal->vehicle->registration_no }}</h4>
                     </div>
                     <!-- end card header -->
 
                     <div class="card-body">
                         <div class="live-preview">
                             <div class="row">
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="invoice_number" class="form-label">Invoice Number</label>
                                         <input type="text" class="form-control @error('invoice_number') is-invalid @enderror" id="invoice_number" name="invoice_number" value="{{ old('invoice_number', $renewal->invoice_no) }}" placeholder="Ex: Inovie No">
@@ -45,13 +45,14 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="issue_date" class="form-label">Issue Date</label>
-                                        <input type="text" class="form-control @error('issue_date') is-invalid @enderror" id="issue_date" name="issue_date" value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Ex: Issue Date">
-                                        
+                                        <input type="text" class="form-control nepali-date @error('issue_date') is-invalid @enderror" name="issue_date"
+                                            value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Select Issue Date" autocomplete="off"/>
+
                                         @error('issue_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -60,8 +61,9 @@
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="last_expiry_date" class="form-label">Last Expiry Date</label>
-                                        <input type="text" class="form-control @error('last_expiry_date') is-invalid @enderror" id="last_expiry_date" name="last_expiry_date" value="{{ old('last_expiry_date', $renewal->last_expiry_date) }}" placeholder="Ex: Last Expiry Date">
+                                        <label for="last_expiry_date" class="form-label">Expiry Date</label>
+                                        <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" name="last_expiry_date"
+                                            value="{{ old('last_expiry_date', $renewal->last_expiry_date) }}" placeholder="Select Expiry Date" autocomplete="off"/>
                                         
                                         @error('last_expiry_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -69,10 +71,11 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="expiry_date" class="form-label">Expiry Date</label>
-                                        <input type="text" class="form-control @error('expiry_date') is-invalid @enderror" id="expiry_date" name="expiry_date" value="{{ old('expiry_date', $renewal->expiry_date) }}" placeholder="Ex: Expiry Date">
+                                        <input type="text" class="form-control nepali-date @error('expiry_date') is-invalid @enderror" name="expiry_date"
+                                            value="{{ old('expiry_date', $renewal->expiry_date) }}" placeholder="Select Expiry Date" autocomplete="off" readonly/>
                                         
                                         @error('expiry_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -111,7 +114,7 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
 
                                 <div class="col-md-4">
@@ -135,8 +138,13 @@
 
                         <!-- button -->
                         <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                            <button type="button" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Reset</button>
-                            <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Save</button>
+                            <button type="button" class="btn btn-soft-danger waves-effect">
+                                <i class="ri-printer-line align-bottom me-1"></i> Reset
+                            </button>
+                            
+                            <button type="submit" class="btn btn-soft-success btn-success">
+                                <i class="ri-printer-line align-bottom me-1"></i> Update
+                            </button>
                         </div>
                         <!-- button -->
                     </div>
@@ -146,5 +154,9 @@
     </div>
     <!-- Pollution Renewal Detail -->
 @endsection
+
+@push('script_2')
+    <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
+@endpush
 
 

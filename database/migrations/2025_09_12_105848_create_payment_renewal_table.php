@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->foreignId('payment_id')->constrained()->cascadeOnDelete();
             $table->foreignId('renewal_id')->constrained()->cascadeOnDelete();
             $table->decimal('amount', 12, 2)->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -26,6 +26,7 @@ class VehicleCategoryService
 
     public function getById($id)
     {
+        // dd($id);
         return VehicleCategory::findOrFail($id);
     }
 
