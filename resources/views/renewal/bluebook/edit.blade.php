@@ -29,7 +29,7 @@
                 
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Update Bluebook Detail</h4>
+                        <h4 class="card-title mb-0 flex-grow-1">Update Bluebook Detail - {{ $renewal->vehicle->registration_no ?? 'N/A' }}</h4>
                     </div>
                     <!-- end card header -->
 
@@ -69,6 +69,7 @@
                                         
                                         <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" name="last_expiry_date"
                                             value="{{ old('last_expiry_date', $renewal->last_expiry_date) }}" placeholder="Select Expiry Date" autocomplete="off"/>
+                                        
                                         @error('last_expiry_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -110,8 +111,13 @@
 
                         <!-- button -->
                         <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                            <button type="button" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Reset</button>
-                            <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Save</button>
+                            <button type="button" class="btn btn-soft-danger waves-effect">
+                                <i class="ri-printer-line align-bottom me-1"></i> Reset
+                            </button>
+                            
+                            <button type="submit" class="btn btn-soft-success btn-success">
+                                <i class="ri-printer-line align-bottom me-1"></i> Update
+                            </button>
                         </div>
                         <!-- button -->
                     </div>

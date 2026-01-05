@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\InsuranceService;
-use App\Http\Services\VehicleTaxService;
 
 use App\Models\Insurance;
 use App\Models\InsuranceProvider;
@@ -52,20 +52,23 @@ class InsuranceController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'provider_id' => 'required|exists:insurance_providers,id',
-            'policy_number' => 'nullable|string',
-            'issue_date' => 'required|string',
-            'amount' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
-
         try {
-            $this->insuranceService->store($data);
-            return redirect()->back()->with('success', 'Insurance Renewal record created successfully.');
+            $validator = Insurance::validateData($request->all());
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $this->insuranceService->store($validated);
+
+            AppHelper::success('Insurance record updated successfully.');
+
+            return redirect()->back();
+
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -102,20 +105,26 @@ class InsuranceController extends Controller
 
     public function update(Request $request, Insurance $insurance)
     {
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'provider_id' => 'required|exists:insurance_providers,id',
-            'policy_number' => 'nullable|string',
-            'issue_date' => 'required|string',
-            'amount' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
+        try {
+            $validator = Insurance::validateData($request->all());
 
-        $this->insuranceService->update($insurance, $data);
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
 
-        return redirect()->route('admin.renewal.insurance.index')->with('success', 'Insurance updated successfully!');
+            $validated = $validator->validated();
+
+            $this->insuranceService->update($insurance, $validated);
+
+            AppHelper::success('Insurance record updated successfully.');
+
+            return redirect()->route('admin.renewal.insurance.index');
+
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**

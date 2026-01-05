@@ -29,7 +29,7 @@
                 
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
-                        <h4 class="card-title mb-0 flex-grow-1">Update Insurance Detail</h4>
+                        <h4 class="card-title mb-0 flex-grow-1">Update Insurance Detail - {{ $renewal->vehicle->registration_no ?? 'N/A' }}</h4>
                     </div>
                     <!-- end card header -->
 
@@ -50,7 +50,7 @@
                                     </div>
                                </div>
 
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="policy_number" class="form-label">Policy Number</label>
                                         <input type="text" class="form-control @error('policy_number') is-invalid @enderror" id="policy_number" name="policy_number" value="{{ old('policy_number', $renewal->policy_number) }}" placeholder="Enter policy number">
@@ -59,13 +59,14 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="issue_date" class="form-label">Issue Date</label>
-                                        <input type="text" class="form-control @error('issue_date') is-invalid @enderror" id="issue_date" name="issue_date" value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Ex: Issue Date">
-                                        
+                                       <input type="text" class="form-control nepali-date @error('issue_date') is-invalid @enderror" name="issue_date"
+                                            value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Select Issue Date" autocomplete="off"/>
+
                                         @error('issue_date')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -104,8 +105,13 @@
 
                         <!-- button -->
                         <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                            <button type="button" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Reset</button>
-                            <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Save</button>
+                            <button type="button" class="btn btn-soft-danger waves-effect">
+                                <i class="ri-printer-line align-bottom me-1"></i> Reset
+                            </button>
+                            
+                            <button type="submit" class="btn btn-soft-success btn-success">
+                                <i class="ri-printer-line align-bottom me-1"></i> Update
+                            </button>
                         </div>
                         <!-- button -->
                     </div>
@@ -114,8 +120,11 @@
         </div>
     </div>
     <!-- Bluebook Renewal List -->
-
-    
 @endsection
+
+@push('script_2')
+    <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
+@endpush
+
 
 

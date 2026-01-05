@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
+use App\Helpers\AppHelper;
 use App\Models\Bluebook;
 use App\Models\Customer;
 use App\Models\PollutionCheck;
@@ -67,11 +68,14 @@ class PollutionService
             throw new \Exception("Renewal type '{$data['type']}' not found.");
         }
 
+        // Generate the invoice number automatically
+        $invoice_no = AppHelper::generateInvoiceNumber('pollution');
+
         $expiryDate = $this->calculateExpiryDate($data['last_expiry_date'], $data['vehicle_id']);
 
         $pollutionCheck = PollutionCheck::create([
             'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $data['invoice_number'],
+            'invoice_no' => $invoice_no,
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'tax_amount' => $data['tax_amount'],
@@ -109,27 +113,41 @@ class PollutionService
 
         // Determine validity duration
         $categoryName = strtolower($vehicle->vehicleCategory->name ?? '');
+        // dd($categoryName);
 
         if (in_array($categoryName, ['public', 'commercial'])) {
-            $daysToAdd = 180; // 6 months for public/commercial
+            // $daysToAdd = 181; // 6 months for public/commercial
+            $engExpiryDate = Carbon::parse($engIssueDate)
+                ->addMonths(6)
+                ->subDay()
+                ->format('Y-m-d');
+            // dd($engExpiryDate);
         } else {
-            $daysToAdd = 365; // 1 year for private or others
+            // $daysToAdd = 365; // 1 year for private or others
+            $engExpiryDate = Carbon::parse($engIssueDate)
+                ->addYear()
+                ->subDay()
+                ->format('Y-m-d');
         }
 
         // Add days based on category
-        $engExpiryDate = Carbon::parse($engIssueDate)->addDays($daysToAdd)->format('Y-m-d');
+        // $engExpiryDate = Carbon::parse($engIssueDate)->addDays($daysToAdd)->format('Y-m-d');
 
         // Convert back to Nepali date
         $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
+        // dd($nepExpiryDate);
+
+        $nepExpiryDate = Carbon::parse($nepExpiryDate)
+            ->subDay()
+            ->format('Y-m-d');
+        // dd($nepExpiryDate);
 
         // Ensure format YYYY-MM-DD
-        $parts = explode('-', $nepExpiryDate);
-        $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
+        // $parts = explode('-', $nepExpiryDate);
+        // $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
 
         return $nepExpiryDate;
     }
-
-
 
     public function getById($id)
     {
@@ -146,7 +164,6 @@ class PollutionService
         // Update the Bluebook
         $pollutionCheck->update([
             'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $data['invoice_number'],
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'tax_amount' => $data['tax_amount'],

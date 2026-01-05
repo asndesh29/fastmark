@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 
+use App\Helpers\AppHelper;
 use App\Models\Renewal;
 use App\Models\RenewalType;
 use App\Models\RoadPermit;
@@ -60,16 +61,22 @@ class CheckpassService
     {
         // dd($data);
         $renewal_type = RenewalType::where('slug', $data['type'])->first();
+        // dd($renewal_type);
 
         if (!$renewal_type) {
             throw new \Exception("Renewal type '{$data['type']}' not found.");
         }
 
-        $expiryDate = $this->calculateExpiryDate($data['last_expiry_date'], $data['vehicle_id']);
+        // Generate the invoice number automatically
+        $invoice_no = AppHelper::generateInvoiceNumber('jachpass');
+        // dd($invoice_no);
 
-        $roadPermit = VehiclePass::create([
+        $expiryDate = $this->calculateExpiryDate($data['last_expiry_date'], $data['vehicle_id']);
+        // dd($expiryDate);
+
+        $vehiclePass = VehiclePass::create([
             'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $data['invoice_number'],
+            'invoice_no' => $invoice_no,
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'tax_amount' => $data['tax_amount'],
@@ -79,13 +86,13 @@ class CheckpassService
             'status' => $data['status'],
             'remarks' => $data['remarks'],
         ]);
-        // dd($pollutionCheck);
+        // dd($roadPermit);
 
         Renewal::create([
             'vehicle_id' => $data['vehicle_id'],
             'renewal_type_id' => $renewal_type->id,
             'renewable_type' => VehiclePass::class,
-            'renewable_id' => $roadPermit->id,
+            'renewable_id' => $vehiclePass->id,
             'status' => $data['status'],
             'start_date' => $data['last_expiry_date'],
             'expiry_date' => $expiryDate,
@@ -93,7 +100,7 @@ class CheckpassService
             'remarks' => $data['remarks'] ?? null,
         ]);
 
-        return $roadPermit;
+        return $vehiclePass;
 
     }
 
@@ -107,22 +114,38 @@ class CheckpassService
 
         // Determine validity duration
         $categoryName = strtolower($vehicle->vehicleCategory->name ?? '');
+        // dd($categoryName);
 
         if (in_array($categoryName, ['public', 'commercial'])) {
-            $daysToAdd = 180; // 6 months for public/commercial
+            // $daysToAdd = 181; // 6 months for public/commercial
+            $engExpiryDate = Carbon::parse($engIssueDate)
+                ->addMonths(6)
+                ->subDay()
+                ->format('Y-m-d');
+            // dd($engExpiryDate);
         } else {
-            $daysToAdd = 365; // 1 year for private or others
+            // $daysToAdd = 365; // 1 year for private or others
+            $engExpiryDate = Carbon::parse($engIssueDate)
+                ->addYear()
+                ->subDay()
+                ->format('Y-m-d');
         }
 
         // Add days based on category
-        $engExpiryDate = Carbon::parse($engIssueDate)->addDays($daysToAdd)->format('Y-m-d');
+        // $engExpiryDate = Carbon::parse($engIssueDate)->addDays($daysToAdd)->format('Y-m-d');
 
         // Convert back to Nepali date
         $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
+        // dd($nepExpiryDate);
+
+        $nepExpiryDate = Carbon::parse($nepExpiryDate)
+            ->subDay()
+            ->format('Y-m-d');
+        // dd($nepExpiryDate);
 
         // Ensure format YYYY-MM-DD
-        $parts = explode('-', $nepExpiryDate);
-        $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
+        // $parts = explode('-', $nepExpiryDate);
+        // $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
 
         return $nepExpiryDate;
     }

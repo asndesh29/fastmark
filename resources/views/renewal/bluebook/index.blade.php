@@ -127,7 +127,7 @@
                             <input type="text" class="form-control" name="book_number" placeholder="Enter bluebook number">
                         </div> --}}
                         <div class="mb-3">
-                            <label>Issue Date</label>
+                            <label>Issue Date (जारी मिति)</label>
                             <input type="text" class="form-control nepali-date @error('issue_date') is-invalid @enderror" 
                                 name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
 
@@ -136,9 +136,9 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label>Last Expiry Date</label>
+                            <label>Expiry Date (म्याद समाप्त मिति)</label>
                             <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" 
-                                name="last_expiry_date" placeholder="Select Last Expiry Date" autocomplete="off"/>
+                                name="last_expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
 
                             @error('last_expiry_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -234,13 +234,13 @@
         });
 
         // Initialize Nepali datepicker on page load
-        // document.querySelectorAll('.nepali-date').forEach(function(input) {
-        //     if (!input.classList.contains('ndp-initialized')) {
-        //         $(input).NepaliDatePicker({
-        //             container: '#bluebookModal'
-        //         }).addClass('ndp-initialized');
-        //     }
-        // });
+        document.querySelectorAll('.nepali-date').forEach(function(input) {
+            if (!input.classList.contains('ndp-initialized')) {
+                $(input).NepaliDatePicker({
+                    container: '#bluebookModal'
+                }).addClass('ndp-initialized');
+            }
+        });
     });
 
     // AJAX Filter + Pagination

@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('expiry_date');
             $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
             $table->string('remarks')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

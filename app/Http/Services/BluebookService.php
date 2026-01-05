@@ -103,7 +103,7 @@ class BluebookService
         $engIssueDate = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($lastExpiryDate, '-');
         // dd($engIssueDate);
 
-        $engExpiryDate = Carbon::parse($engIssueDate)->addDays(364)->format('Y-m-d');
+        $engExpiryDate = Carbon::parse($engIssueDate)->addDays(365)->format('Y-m-d');
 
         $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
         // dd($nepExpiryDate);

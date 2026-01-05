@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 
+use App\Helpers\AppHelper;
 use App\Models\Renewal;
 use App\Models\RenewalType;
 use App\Models\RoadPermit;
@@ -65,11 +66,14 @@ class VehicleTaxService
             throw new \Exception("Renewal type '{$data['type']}' not found.");
         }
 
+        // Generate the invoice number automatically
+        $invoice_no = AppHelper::generateInvoiceNumber('tax');
+
         $expiryDate = $this->calculateExpiryDate($data['last_expiry_date']);
 
         $roadPermit = VehicleTax::create([
             'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $data['invoice_number'],
+            'invoice_no' => $invoice_no,
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'tax_amount' => $data['tax_amount'],
@@ -96,24 +100,6 @@ class VehicleTaxService
 
     }
 
-    private function calculateExpiryDate($lastExpiryDate)
-    {
-        // Convert Nepali issue date to English (Y-m-d)
-        $engIssueDate = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($lastExpiryDate, '-');
-
-        // Add days based on category
-        $engExpiryDate = Carbon::parse($engIssueDate)->addDays(364)->format('Y-m-d');
-
-        // Convert back to Nepali date
-        $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
-
-        // Ensure format YYYY-MM-DD
-        $parts = explode('-', $nepExpiryDate);
-        $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
-
-        return $nepExpiryDate;
-    }
-
     public function getById($id)
     {
         return VehicleTax::findOrFail($id);
@@ -129,7 +115,6 @@ class VehicleTaxService
         // Update the Bluebook
         $vehicletax->update([
             'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $data['invoice_number'],
             'issue_date' => $data['issue_date'],
             'last_expiry_date' => $data['last_expiry_date'],
             'tax_amount' => $data['tax_amount'],
@@ -169,5 +154,23 @@ class VehicleTaxService
         }
 
         return $vehicletax->delete();
+    }
+
+    private function calculateExpiryDate($lastExpiryDate)
+    {
+        // Convert Nepali issue date to English (Y-m-d)
+        $engIssueDate = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($lastExpiryDate, '-');
+
+        // Add days based on category
+        $engExpiryDate = Carbon::parse($engIssueDate)->addDays(364)->format('Y-m-d');
+
+        // Convert back to Nepali date
+        $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
+
+        // Ensure format YYYY-MM-DD
+        $parts = explode('-', $nepExpiryDate);
+        $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
+
+        return $nepExpiryDate;
     }
 }

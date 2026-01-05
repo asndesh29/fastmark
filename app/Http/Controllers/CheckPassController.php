@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\CheckpassService;
 use App\Models\VehiclePass;
 use Illuminate\Http\Request;
@@ -46,22 +47,22 @@ class CheckPassController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
-
         try {
-            $this->checkpassService->store($data);
-            return redirect()->back()->with('success', 'Road Permit Renewal record created successfully.');
+            $validator = VehiclePass::validateData($request->all());
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $this->checkpassService->store($validated);
+
+            AppHelper::success('Jach Pass record updated successfully.');
+
+            return redirect()->back();
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -91,22 +92,21 @@ class CheckPassController extends Controller
 
     public function update(Request $request, VehiclePass $checkpass)
     {
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
+        $validator = VehiclePass::validateData($request->all());
 
-        $this->checkpassService->update($checkpass, $data);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-        return redirect()->route('admin.renewal.checkpass.index')->with('success', 'Check Pollution updated successfully!');
+        $validated = $validator->validated();
+
+        $this->checkpassService->update($checkpass, $validated);
+
+        AppHelper::success('Jach Pass record updated successfully.');
+
+        return redirect()->route('admin.renewal.checkpass.index');
     }
 
     /**

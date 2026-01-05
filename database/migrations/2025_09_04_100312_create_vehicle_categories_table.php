@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name', 255);
             $table->string('slug', 255)->unique()->nullable();
             $table->boolean('is_active')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

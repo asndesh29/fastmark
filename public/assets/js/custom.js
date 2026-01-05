@@ -79,9 +79,14 @@ document.addEventListener('DOMContentLoaded', function () {
         initializeNepaliDatepicker();
 
         // Optional: Reinitialize datepicker when the modal is opened
-        $('#bluebookModal').on('shown.bs.modal', function () {
-            initializeNepaliDatepicker();
-        });
+        // $('#bluebookModal').on('shown.bs.modal', function () {
+        //     initializeNepaliDatepicker();
+        // });
+
+        $('#bluebookModal, #checkpassModal, #pollutionModal, #insuranceModal, #roadPermitModal, #incomeTaxModal')
+            .on('shown.bs.modal', function () {
+                initializeNepaliDatepicker();
+            });
     });
 
     // Function to initialize Nepali Datepicker

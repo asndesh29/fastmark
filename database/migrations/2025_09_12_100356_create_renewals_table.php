@@ -28,6 +28,7 @@ return new class extends Migration {
 
             // Index for polymorphic lookup optimization
             $table->index(['renewable_type', 'renewable_id']);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

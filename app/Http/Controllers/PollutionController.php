@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\PollutionService;
 use App\Models\PollutionCheck;
 use Illuminate\Http\Request;
@@ -46,22 +47,22 @@ class PollutionController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
-
         try {
-            $this->pollutionService->store($data);
-            return redirect()->back()->with('success', 'Bluebook Renewal record created successfully.');
+            $validator = PollutionCheck::validateData($request->all());
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $this->pollutionService->store($validated);
+
+            AppHelper::success('Pollution Check record updated successfully.');
+
+            return redirect()->back();
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -91,22 +92,21 @@ class PollutionController extends Controller
 
     public function update(Request $request, PollutionCheck $pollution)
     {
-        $data = $request->validate([
-            'vehicle_id' => 'required|exists:vehicles,id',
-            'type' => 'required|string',
-            'invoice_number' => 'required|string|max:255',
-            'issue_date' => 'required|string',
-            'last_expiry_date' => 'nullable|string',
-            'tax_amount' => 'nullable|numeric',
-            'renewal_charge' => 'nullable|numeric',
-            'income_tax' => 'nullable|numeric',
-            'status' => 'required|in:paid,unpaid',
-            'remarks' => 'nullable|string',
-        ]);
+        $validator = PollutionCheck::validateData($request->all());
 
-        $this->pollutionService->update($pollution, $data);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-        return redirect()->route('admin.renewal.pollution.index')->with('success', 'Check Pollution updated successfully!');
+        $validated = $validator->validated();
+
+        $this->pollutionService->update($pollution, $validated);
+
+        AppHelper::success('Pollution Check record updated successfully.');
+
+        return redirect()->route('admin.renewal.pollution.index');
     }
 
     /**
