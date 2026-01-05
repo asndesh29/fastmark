@@ -31,7 +31,7 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="validationDefault01" class="form-label">First name</label>
-                                        <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" placeholder="Ex: Sandesh">
+                                        <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" placeholder="Ex: First Name">
                                         
                                         @error('first_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -42,7 +42,7 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="validationDefault02" class="form-label">Last name</label>
-                                        <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name') }}" placeholder="Ex: Sandesh">
+                                        <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name') }}" placeholder="Ex: Last Name">
                                         
                                         @error('last_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -64,7 +64,7 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Ex: john@ex.com">
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="Ex: john@doe.com">
                                         
                                         @error('email')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -202,7 +202,7 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="permit_no" class="form-label">Permit No</label>
-                                            <input type="text" name="permit_no[]" class="form-control @error('permit_no.*') is-invalid @enderror" placeholder="Ex: Ba 83 Pa 8297">
+                                            <input type="text" name="permit_no[]" class="form-control @error('permit_no.*') is-invalid @enderror" placeholder="Enter Permit Number">
                                         </div>
 
                                         @error('permit_no.*')
@@ -213,14 +213,14 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="chassis_no" class="form-label">Chassis No</label>
-                                            <input type="text" name="chassis_no[]" class="form-control" placeholder="Ex:">
+                                            <input type="text" name="chassis_no[]" class="form-control" placeholder="Enter Chassis Number">
                                         </div>
                                     </div>
 
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="engine_no" class="form-label">Engine Number</label>
-                                            <input type="text" name="engine_no[]" class="form-control" placeholder="Ex: +977-">
+                                            <input type="text" name="engine_no[]" class="form-control" placeholder="Enter Engine Number">
                                         </div>
                                     </div>
 
