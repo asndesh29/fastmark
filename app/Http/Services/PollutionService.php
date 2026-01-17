@@ -105,6 +105,56 @@ class PollutionService
 
     private function calculateExpiryDate($lastExpiryDate, $vehicleId)
     {
+        $vehicle = Vehicle::with('vehicleCategory')->findOrFail($vehicleId);
+        $categoryName = strtolower($vehicle->vehicleCategory->name ?? '');
+
+        // 1. Parse the Nepali Date String
+        $dateParts = explode('-', $lastExpiryDate);
+        $yy = (int) $dateParts[0];
+        $mm = (int) $dateParts[1];
+        $dd = (int) $dateParts[2];
+
+        // 2. Add Duration (6 months or 1 year)
+        if (in_array($categoryName, ['public', 'commercial'])) {
+            $mm += 6;
+        } else {
+            $yy += 1;
+        }
+
+        // Handle Year Overflow (if months > 12)
+        while ($mm > 12) {
+            $mm -= 12;
+            $yy += 1;
+        }
+
+        // 3. Validate day against the new month's max days
+        // Example: If adding 6 months to 01-31 results in 07-31, but Month 07 only has 30 days.
+        $cal = new \App\Generic\GenericDateConverter\Nepali_Calendar();
+        $maxDaysInNewMonth = $cal->getDaysInMonth($yy, $mm);
+
+        if ($dd > $maxDaysInNewMonth) {
+            $dd = $maxDaysInNewMonth;
+        }
+
+        // 4. Subtract 1 day
+        $dd -= 1;
+
+        // Handle Day Underflow (if day becomes 0, go to the last day of the PREVIOUS month)
+        if ($dd <= 0) {
+            $mm -= 1;
+            if ($mm <= 0) {
+                $mm = 12;
+                $yy -= 1;
+            }
+            $dd = $cal->getDaysInMonth($yy, $mm);
+        }
+
+        // 5. Return formatted string
+        return sprintf("%04d-%02d-%02d", $yy, $mm, $dd);
+    }
+
+    private function calculateExpiryDate1($lastExpiryDate, $vehicleId)
+    {
         // Get the vehicle
         $vehicle = Vehicle::with('vehicleCategory')->findOrFail($vehicleId);
 
