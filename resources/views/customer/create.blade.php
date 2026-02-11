@@ -11,8 +11,6 @@
         </div>
     </div>
     <!-- end page title -->
-
-
     
     <div class="row">
         <div class="col-lg-12">
@@ -34,6 +32,17 @@
                                         <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name') }}" placeholder="Ex: First Name">
                                         
                                         @error('first_name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="validationDefault02" class="form-label">Middle name</label>
+                                        <input type="text" class="form-control @error('middle_name') is-invalid @enderror" id="middle_name" name="middle_name" value="{{ old('middle_name') }}" placeholder="Ex: Middle Name">
+                                        
+                                        @error('middle_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>

@@ -19,13 +19,23 @@
                 </div>
             </td>
             <td>
-                <li class="list-inline-item" title="View">
-                    <a href="{{ route('admin.vehicle.show', $vehicle->id) }}">
-                        <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
-                            <i class="ri-eye-fill"></i>
-                        </button>
-                    </a>
-                </li>
+                <ul class="list-inline hstack gap-2 mb-0">
+                    <li class="list-inline-item" title="View">
+                        <a href="{{ route('admin.vehicle.show', $vehicle->id) }}">
+                            <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
+                                <i class="ri-eye-fill"></i>
+                            </button>
+                        </a>
+                    </li>
+
+                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
+                        <a href="{{ route('admin.vehicle.renewal', $vehicle->id) }}">
+                            <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
+                                <i class="ri-add-fill"></i>
+                            </button>
+                        </a>
+                    </li>
+                </ul>
             </td>
         </tr>
     @endforeach

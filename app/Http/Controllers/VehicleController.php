@@ -2,18 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 use App\Helpers\AppHelper;
+use App\Http\Services\RenewalService;
 use App\Http\Services\VehicleService;
+use App\Models\Bluebook;
+use App\Models\PollutionCheck;
+use App\Models\Renewal;
+use App\Models\RenewalType;
 use App\Models\Vehicle;
+use App\Models\VehicleTax;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VehicleController extends Controller
 {
-    protected $vehicleService;
+    protected $vehicleService, $renewalService;
 
-    public function __construct(VehicleService $vehicleService)
+    public function __construct(VehicleService $vehicleService, RenewalService $renewalService)
     {
         $this->vehicleService = $vehicleService;
+        $this->renewalService = $renewalService;
     }
     /**
      * Display a listing of the resource.
@@ -24,7 +34,7 @@ class VehicleController extends Controller
 
         $vehicles = $this->vehicleService->list($request, $perPage);
 
-        // ✅ Handle AJAX filter requests
+        // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('vehicle.partials.table', compact('vehicles'))->render();
             return response()->json(['html' => $html]);
@@ -114,5 +124,62 @@ class VehicleController extends Controller
         $vehicle->save();
 
         return back()->with('success', 'Vehicle status updated successfully.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function renewal(Vehicle $vehicle)
+    {
+        // dd($vehicle);
+        $vehicle = Vehicle::findOrFail($vehicle->id);
+
+        $customer = $vehicle?->owner;
+
+        return view('vehicle.renewal', compact('vehicle', 'customer'));
+    }
+
+    // public function updateRenewal(Request $request, Vehicle $vehicle)
+    // {
+    //     dd($request->all());
+    //     $vehicle = Vehicle::findOrFail($vehicle->id);
+
+    //     $validated = $request->validate([
+    //         'bluebook_expiry' => 'nullable|date',
+    //         'jach_pass_expiry' => 'nullable|date',
+    //         'insurance_expiry' => 'nullable|date',
+    //         'pollution_expiry' => 'nullable|date',
+    //         'road_permit_expiry' => 'nullable|date',
+    //         'vehicle_tax_expiry' => 'nullable|date',
+    //     ]);
+
+    //     $vehicle->update($validated);
+
+    //     return redirect()->back()->with('success', 'Renewals updated successfully.');
+    // }
+
+    public function updateRenewal(Request $request, Vehicle $vehicle)
+    {
+        // dd($request->all());
+        $request->validate([
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'renewals' => 'required|array',
+        ]);
+
+        foreach ($request->renewals as $type) {
+
+            $this->vehicleService->updateRenewal([
+                'vehicle_id' => $vehicle->id,
+                'type' => $type,
+                'issue_date' => $request->$type['issue_date'] ?? null,
+                'last_expiry_date' => $request->$type['last_expiry_date'] ?? null,
+                'status' => $request->$type['status'] ?? 'active',
+                'remarks' => null,
+            ]);
+        }
+
+        AppHelper::success('Selected renewal record updated successfully.');
+
+        return redirect()->back()->with('success', 'Selected renewals updated successfully.');
     }
 }

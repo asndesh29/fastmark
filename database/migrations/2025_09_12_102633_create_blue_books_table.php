@@ -13,10 +13,10 @@ return new class extends Migration {
         Schema::create('blue_books', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
-            $table->string('book_number')->unique();
-            $table->string('issue_date');
-            $table->string('last_expiry_date');
-            $table->string('expiry_date');
+            $table->string('invoice_no')->unique();
+            $table->string('issue_date')->nullable();
+            $table->string('last_expiry_date')->nullable();
+            $table->string('expiry_date')->nullable();
             $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
             $table->string('remarks')->nullable();
             $table->softDeletes();

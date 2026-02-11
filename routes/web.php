@@ -66,8 +66,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/edit/{id}', [VehicleController::class, 'edit'])->name('edit');
             Route::post('/update/{id}', [VehicleController::class, 'update'])->name('update');
             Route::get('show/{vehicle}', [VehicleController::class, 'show'])->name('show');
+            Route::get('{vehicle}/renewal', [VehicleController::class, 'renewal'])->name('renewal');
             Route::delete('/renewal/{id}', [VehicleController::class, 'destroy'])->name('destroy');
             Route::get('status/{vehicle}/{status}', [VehicleController::class, 'status'])->name('status');
+            Route::put('{vehicle}/renewal-update', [VehicleController::class, 'updateRenewal'])->name('update-renewal');
         });
 
         Route::group(['prefix' => 'renewal', 'as' => 'renewal.'], function () {

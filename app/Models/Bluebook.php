@@ -12,7 +12,7 @@ class Bluebook extends Model
     protected $table = 'blue_books';
     protected $fillable = [
         'vehicle_id',
-        'book_number',
+        'invoice_no',
         'issue_date',
         'last_expiry_date',
         'expiry_date',
@@ -57,8 +57,8 @@ class Bluebook extends Model
     {
         $rules = [
             'vehicle_id' => ['required', 'exists:vehicles,id'],
-            'book_number' => ['nullable', 'string', 'max:255'],
-            'issue_date' => ['required', 'string', 'max:255'],
+            'invoice_no' => ['nullable', 'string', 'max:255'],
+            // 'issue_date' => ['required', 'string', 'max:255'],
             'last_expiry_date' => ['required', 'string', 'max:255'],
             'status' => ['required', 'in:paid,unpaid'],
             'remarks' => ['nullable', 'string', 'max:255'],
@@ -66,8 +66,8 @@ class Bluebook extends Model
         ];
 
         $messages = [
-            'issue_date.required' => 'Issue Date is required.',
-            'last_expiry_date.required' => 'Last Expiry Date is required.',
+            // 'issue_date.required' => 'Issue Date is required.',
+            'last_expiry_date.required' => 'Expiry Date is required.',
         ];
 
         return Validator::make($data, $rules, $messages);

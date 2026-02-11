@@ -72,7 +72,6 @@ class RenewalController extends Controller
             'status' => 'nullable|in:pending,approved,rejected',
             'remarks' => 'nullable|string',
         ]);
-        dd($data);
 
         try {
             $this->renewalService->store($data);
@@ -225,5 +224,6 @@ class RenewalController extends Controller
             'is_expired' => Carbon::parse($record->expiry_date)->lt($today)
         ];
     }
+
 
 }

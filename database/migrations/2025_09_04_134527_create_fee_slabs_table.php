@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('vehicle_type_id')->constrained('vehicle_types')->cascadeOnDelete();
             $table->string('min_cc')->nullable();
             $table->string('max_cc')->nullable();
-            $table->decimal('base_fee', 12, 2);
+            $table->decimal('base_fee', 12, 2)->default(0);
             $table->boolean('is_active')->default(true);
             $table->softDeletes();
             $table->timestamps();
