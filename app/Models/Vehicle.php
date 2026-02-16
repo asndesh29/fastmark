@@ -17,7 +17,6 @@ class Vehicle extends Model
         'permit_no',
         'chassis_no',
         'engine_no',
-        'type',
         'engine_cc',
         'capacity',
         'is_active'
@@ -79,18 +78,35 @@ class Vehicle extends Model
         return $this->hasOne(VehiclePass::class)->latestOfMany();
     }
 
-    public static function validateData($data, $vehicleType = null)
+    // Vehicle.php
+
+    public static function validateData($data)
     {
         $rules = [
             'registration_no' => ['required', 'string', 'max:255'],
-            'permit_number' => ['required', 'string', 'max:255'],
+            'permit_no' => ['nullable', 'string', 'max:255'],
+            'chassis_no' => ['nullable', 'string', 'max:255'],
+            'engine_no' => ['nullable', 'string', 'max:255'],
+            'engine_cc' => ['nullable', 'string', 'max:255'],
+            'capacity' => ['nullable', 'integer'],
+            'vehicle_type_id' => ['required', 'exists:vehicle_types,id'],
+            'vehicle_category_id' => ['required', 'exists:vehicle_categories,id'],
         ];
 
         $messages = [
             'registration_no.required' => 'Registration No. is required.',
-            'permit_number.required' => 'Permit No. is required.',
+            'vehicle_type_id.required' => 'Vehicle Type is required.',
+            'vehicle_category_id.required' => 'Vehicle Category is required.',
         ];
 
         return Validator::make($data, $rules, $messages);
     }
+
+    public function isCommercial(): bool
+    {
+        return optional($this->vehicleCategory)->slug === 'commercial';
+    }
+
+
+
 }

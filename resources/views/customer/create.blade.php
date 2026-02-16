@@ -254,15 +254,15 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- button -->
+                        <div class="hstack gap-2 justify-content-end d-print-none mt-2">
+                            <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Save</button>
+                        </div>
+                        <!-- button -->
                     </div>
                 </div>
                 <!-- vehicle -->
-
-                <!-- button -->
-                <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                    <button type="submit" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Save</button>
-                </div>
-                <!-- button -->
             </form>
         </div> 
         <!-- end col -->

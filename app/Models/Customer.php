@@ -131,6 +131,18 @@ class Customer extends Model
 
             'permit_no' => ['nullable', 'array'],
             'permit_no.*' => ['nullable', 'string', 'max:255'],
+
+            'chassis_no' => 'nullable|array',
+            'chassis_no.*' => 'nullable|string|max:255',
+
+            'engine_no' => 'nullable|array',
+            'engine_no.*' => 'nullable|string|max:255',
+
+            'engine_cc' => 'nullable|array',
+            'engine_cc.*' => 'nullable|string|max:255',
+
+            'capacity' => 'nullable|array',
+            'capacity.*' => 'nullable|string|max:255',
         ];
 
         $validator = Validator::make($data, $rules);

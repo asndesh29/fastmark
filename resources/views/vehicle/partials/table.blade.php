@@ -20,6 +20,14 @@
             </td>
             <td>
                 <ul class="list-inline hstack gap-2 mb-0">
+                     <li class="list-inline-item" title="View">
+                        <a href="{{ route('admin.vehicle.edit', $vehicle->id) }}">
+                            <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
+                                <i class="ri-edit-fill"></i>
+                            </button>
+                        </a>
+                    </li>
+
                     <li class="list-inline-item" title="View">
                         <a href="{{ route('admin.vehicle.show', $vehicle->id) }}">
                             <button type="button" class="btn btn-outline-warning btn-sm btn-icon">

@@ -13,18 +13,21 @@ class Bluebook extends Model
     protected $fillable = [
         'vehicle_id',
         'invoice_no',
-        'issue_date',
-        'last_expiry_date',
-        'expiry_date',
-        'status',
+        'issue_date_bs',
+        'issue_date_ad',
+        'expiry_date_bs',
+        'expiry_date_ad',
+        'renewed_expiry_date_bs',
+        'renewed_expiry_date_ad',
+        'payment_status',
         'remarks',
     ];
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'issue_date' => 'string',
-        'last_expiry_date' => 'string',
-        'expiry_date' => 'string',
+        'issue_date_ad' => 'date',
+        'expiry_date_ad' => 'date',
+        'renewed_expiry_date_ad' => 'date',
     ];
 
     public function renewal()
@@ -44,13 +47,13 @@ class Bluebook extends Model
 
     public function scopeExpiringSoon($query, $days = 30)
     {
-        return $query->where('expiry_date', '<=', now()->addDays($days))
-            ->where('expiry_date', '>=', now());
+        return $query->where('expiry_date_bs', '<=', now()->addDays($days))
+            ->where('expiry_date_bs', '>=', now());
     }
 
     public function scopeExpired($query)
     {
-        return $query->where('expiry_date', '<', now());
+        return $query->where('expiry_date_bs', '<', now());
     }
 
     public static function validateData($data)
@@ -59,15 +62,15 @@ class Bluebook extends Model
             'vehicle_id' => ['required', 'exists:vehicles,id'],
             'invoice_no' => ['nullable', 'string', 'max:255'],
             // 'issue_date' => ['required', 'string', 'max:255'],
-            'last_expiry_date' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'in:paid,unpaid'],
-            'remarks' => ['nullable', 'string', 'max:255'],
-            'type' => ['nullable', 'string']
+            'expiry_date_bs' => ['required', 'string', 'max:255'],
+            'payment_status' => ['required', 'in:paid,unpaid'],
+            'remarks' => ['nullable', 'string', 'max:255']
         ];
 
         $messages = [
-            // 'issue_date.required' => 'Issue Date is required.',
-            'last_expiry_date.required' => 'Expiry Date is required.',
+            'vehicle_id.required' => 'Vehicle is required.',
+            'expiry_date_bs.required' => 'Expiry Date is required.',
+            'payment_status.required' => 'Payment Status is required.',
         ];
 
         return Validator::make($data, $rules, $messages);

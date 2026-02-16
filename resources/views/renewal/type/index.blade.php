@@ -36,6 +36,44 @@
                                         @enderror
                                     </div>
                                 </div>
+
+                                {{-- Private Validity --}}
+                                <div class="col-md-4">
+                                    <label class="form-label">Private Validity</label>
+                                    <div class="d-flex gap-2">
+                                        <input type="number"
+                                            name="private_validity_value"
+                                            class="form-control"
+                                            placeholder="Value"
+                                            value="{{ old('private_validity_value') }}">
+
+                                        <select name="private_validity_unit" class="form-select">
+                                            <option value="">Unit</option>
+                                            <option value="days">Days</option>
+                                            <option value="months">Months</option>
+                                            <option value="years">Years</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- Commercial Validity --}}
+                                <div class="col-md-4">
+                                    <label class="form-label">Commercial Validity</label>
+                                    <div class="d-flex gap-2">
+                                        <input type="number"
+                                            name="commercial_validity_value"
+                                            class="form-control"
+                                            placeholder="Value"
+                                            value="{{ old('commercial_validity_value') }}">
+
+                                        <select name="commercial_validity_unit" class="form-select">
+                                            <option value="">Unit</option>
+                                            <option value="days">Days</option>
+                                            <option value="months">Months</option>
+                                            <option value="years">Years</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- button -->

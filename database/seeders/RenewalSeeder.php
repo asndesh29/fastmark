@@ -16,36 +16,64 @@ class RenewalSeeder extends Seeder
         $renewalTypes = [
             [
                 'name' => 'Bluebook',
+                'private_validity_value' => 12,
+                'private_validity_unit' => 'months',
+                'commercial_validity_value' => 12,
+                'commercial_validity_unit' => 'months',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'name' => 'Jach Pass',
+                'name' => 'Vehicle Pass',
+                'commercial_validity_value' => 6,
+                'commercial_validity_unit' => 'months',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'name' => 'Insurance',
+                'private_validity_value' => 12,
+                'private_validity_unit' => 'months',
+                'commercial_validity_value' => 12,
+                'commercial_validity_unit' => 'months',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'name' => 'Pollution',
+                'commercial_validity_value' => 12,
+                'commercial_validity_unit' => 'months',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'name' => 'Road Permit',
+                'commercial_validity_value' => 6,
+                'commercial_validity_unit' => 'months',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'name' => 'Vehicle Tax',
+                'private_validity_value' => 12,
+                'private_validity_unit' => 'months',
+                'commercial_validity_value' => 12,
+                'commercial_validity_unit' => 'months',
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'name' => 'License',
+                'private_validity_value' => 12,
+                'private_validity_unit' => 'months',
+                'commercial_validity_value' => 12,
+                'commercial_validity_unit' => 'months',
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -56,9 +84,13 @@ class RenewalSeeder extends Seeder
 
             RenewalType::create([
                 'name' => $renewal['name'],
-                'is_active' => $renewal['is_active'],
-                'created_at' => $renewal['created_at'],
-                'updated_at' => $renewal['updated_at']
+                'private_validity_value' => $renewal['private_validity_value'] ?? null,
+                'private_validity_unit' => $renewal['private_validity_unit'] ?? null,
+                'commercial_validity_value' => $renewal['commercial_validity_value'] ?? null,
+                'commercial_validity_unit' => $renewal['commercial_validity_unit'] ?? null,
+                'is_active' => $renewal['is_active'] ?? true,
+                'created_at' => $renewal['created_at'] ?? now(),
+                'updated_at' => $renewal['updated_at'] ?? now()
             ]);
         }
     }

@@ -203,7 +203,7 @@ class AppHelper
                 $prefix = 'BB';
                 $model = Bluebook::class;
                 break;
-            case 'jachpass':
+            case 'vehicle-pass':
                 $prefix = 'JP';
                 $model = VehiclePass::class;
                 break;
@@ -278,4 +278,5 @@ class AppHelper
     {
         self::toastr('warning', $message);
     }
+
 }

@@ -14,21 +14,24 @@ class RoadPermit extends Model
     protected $fillable = [
         'vehicle_id',
         'invoice_no',
-        'last_expiry_date',
-        'issue_date',
-        'expiry_date',
+        'issue_date_bs',
+        'issue_date_ad',
+        'expiry_date_bs',
+        'expiry_date_ad',
+        'renewed_expiry_date_bs',
+        'renewed_expiry_date_ad',
         'tax_amount',
         'renewal_charge',
-        'income_tax',
+        'total_amount',
+        'payment_status',
         'remarks',
-        'status'
     ];
 
     protected $casts = [
         'vehicle_id' => 'integer',
-        'last_expiry_date' => 'string',
-        'issue_date' => 'string',
-        'expiry_date' => 'string'
+        'issue_date_ad' => 'date',
+        'expiry_date_ad' => 'date',
+        'renewed_expiry_date_ad' => 'date',
     ];
 
     protected $attributes = [
@@ -71,20 +74,16 @@ class RoadPermit extends Model
 
         $rules = [
             'vehicle_id' => ['required', 'exists:vehicles,id'],
-            'type' => ['nullable', 'string'],
-            'invoice_number' => ['nullable', 'string', 'max:255'],
-            'issue_date' => ['required', 'string', 'max:255'],
-            'last_expiry_date' => ['required', 'string', 'max:255'],
-            'tax_amount' => ['nullable', 'numeric'],
-            'renewal_charge' => ['nullable', 'numeric'],
-            'income_tax' => ['nullable', 'numeric'],
-            'status' => ['required', 'in:paid,unpaid'],
-            'remarks' => ['nullable', 'string', 'max:255'],
+            'invoice_no' => ['nullable', 'string', 'max:255'],
+            'expiry_date_bs' => ['required', 'string', 'max:255'],
+            'payment_status' => ['required', 'in:paid,unpaid'],
+            'remarks' => ['nullable', 'string', 'max:255']
         ];
 
         $messages = [
-            'issue_date.required' => 'Issue Date is required.',
-            'last_expiry_date.required' => 'Last Expiry Date is required.',
+            'vehicle_id.required' => 'Vehicle is required.',
+            'expiry_date_bs.required' => 'Expiry Date is required.',
+            'payment_status.required' => 'Payment Status is required.',
         ];
 
         return Validator::make($data, $rules, $messages);
