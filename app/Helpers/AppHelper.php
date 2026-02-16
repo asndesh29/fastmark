@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Bluebook;
 use App\Models\Insurance;
+use App\Models\Pollution;
 use App\Models\PollutionCheck;
 use App\Models\RenewalType;
 use App\Models\RoadPermit;
@@ -209,13 +210,13 @@ class AppHelper
                 break;
             case 'pollution':
                 $prefix = 'PL';
-                $model = PollutionCheck::class;
+                $model = Pollution::class;
                 break;
             case 'insurance':
                 $prefix = 'IN';
                 $model = Insurance::class;
                 break;
-            case 'roadpermit':
+            case 'road-permit':
                 $prefix = 'RP';
                 $model = RoadPermit::class;
                 break;

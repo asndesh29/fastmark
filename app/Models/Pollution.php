@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
 
-class PollutionCheck extends Model
+class Pollution extends Model
 {
     use SoftDeletes;
     protected $table = 'pollution_checks';
@@ -37,7 +37,6 @@ class PollutionCheck extends Model
     protected $attributes = [
         'tax_amount' => 0,
         'renewal_charge' => 0,
-        'income_tax' => 0,
     ];
 
     public function renewal()

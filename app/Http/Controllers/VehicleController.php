@@ -77,9 +77,9 @@ class VehicleController extends Controller
      */
     public function show(Vehicle $vehicle)
     {
-        // dd($vehicle);
-        $vehicle = Vehicle::findOrFail($vehicle->id);
+        $vehicle = Vehicle::with('renewals.renewalType', 'renewals.renewable')->findOrFail($vehicle->id);
 
+        // dd($vehicle); // optional: check the loaded data
         return view('vehicle.show', compact('vehicle'));
     }
 
@@ -102,12 +102,10 @@ class VehicleController extends Controller
         $vehicle = $this->vehicleService->getById($vehicle->id);
 
         // Validate request
-        $validator = Vehicle::validateData($request->all());
+        $validator = Vehicle::validateData($request->all(), $vehicle->id);
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $validated = $validator->validated();
@@ -118,6 +116,34 @@ class VehicleController extends Controller
         AppHelper::success('Vehicle updated successfully.');
 
         return redirect()->route('admin.vehicle.index');
+    }
+
+    public function update1(Request $request, RenewalType $renewalType)
+    {
+        $renewalType = $this->renewalTypeService->getById($renewalType->id);
+
+        try {
+            $validator = RenewalType::validateData($request->all(), $renewalType->id);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $this->renewalTypeService->update($renewalType, $validated);
+
+            AppHelper::success('Renewal type record updated successfully.');
+
+            return redirect()->route('admin.settings.renewal-type.index');
+
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
+        // $this->renewalTypeService->update($renewalType, $data);
+
+        // return redirect()->route('admin.settings.renewal-type.index')->with('success', 'Renewal Type record updated successfully.');
     }
 
 
@@ -146,7 +172,7 @@ class VehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function renewal(Vehicle $vehicle)
+    public function renewal1(Vehicle $vehicle)
     {
         // dd($vehicle);
         $vehicle = Vehicle::findOrFail($vehicle->id);
@@ -196,7 +222,7 @@ class VehicleController extends Controller
     //     return redirect()->route('admin.vehicle.index')->with('success', 'Vehicle renewal updated successfully.');
     // }
 
-    public function updateRenewal(UpdateVehicleRenewalRequest $request, Vehicle $vehicle)
+    public function updateRenewal2(UpdateVehicleRenewalRequest $request, Vehicle $vehicle)
     {
         foreach ($request->renewals as $type) {
 
@@ -244,6 +270,51 @@ class VehicleController extends Controller
 
         AppHelper::success('Selected renewal record updated successfully.');
 
+        return redirect()->route('admin.vehicle.index');
+    }
+
+
+    public function renewal(Vehicle $vehicle)
+    {
+        // Fetch dynamic data from DB
+        $renewalTypes = RenewalType::all()->pluck('name', 'slug')->toArray();
+
+        $insuranceProviders = InsuranceProvider::all();
+
+        // Generate dynamic $renewalFields
+        $renewalFields = $this->vehicleService->generateRenewalFields($insuranceProviders);
+
+        $customer = $vehicle?->owner;
+
+        return view('vehicle.renewal', compact(
+            'vehicle',
+            'customer',
+            'renewalTypes',
+            'insuranceProviders',
+            'renewalFields'
+        ));
+    }
+
+    public function updateRenewal(UpdateVehicleRenewalRequest $request, Vehicle $vehicle)
+    {
+        foreach ($request->renewals as $type) {
+
+            $data = $request->input($type, []);
+
+            $this->vehicleService->updateRenewal([
+                'vehicle' => $vehicle,
+                'type' => $type,
+                'issue_date_bs' => $data['issue_date_bs'] ?? null,
+                'expiry_date_bs' => $data['expiry_date_bs'] ?? null,
+                'payment_status' => $data['payment_status'] ?? 'unpaid',
+                'remarks' => $data['remarks'] ?? null,
+                'provider_id' => $data['provider_id'] ?? null,
+                'insurance_type' => $data['insurance_type'] ?? null,
+                'policy_number' => $data['policy_number'] ?? null,
+            ]);
+        }
+
+        AppHelper::success('Selected renewal records updated successfully.');
         return redirect()->route('admin.vehicle.index');
     }
 

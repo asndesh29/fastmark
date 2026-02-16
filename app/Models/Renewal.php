@@ -10,6 +10,7 @@ class Renewal extends Model
 {
     use SoftDeletes;
     protected $fillable = [
+        'vehicle_id',
         'renewal_type_id',
         'renewable_type',
         'renewable_id',

@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('renewals', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('vehicle_id')->constrained('vehicles')->cascadeOnDelete();
+            $table->foreignId('vehicle_id')->constrained('vehicles')->cascadeOnDelete();
             $table->foreignId(column: 'renewal_type_id')->constrained('renewal_types')->cascadeOnDelete();
 
             // Polymorphic columns: renewable_type = class name, renewable_id = primary key
@@ -32,12 +32,7 @@ return new class extends Migration {
             // Optional reminder
             $table->date('reminder_date')->nullable();
 
-            $table->enum('status', [
-                'valid',
-                'expired',
-                'renewed',
-                'cancelled'
-            ])->default('valid');
+            $table->enum('status', ['valid', 'expired', 'renewed', 'cancelled'])->default('valid');
 
             $table->boolean('is_paid')->default(false);
 

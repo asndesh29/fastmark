@@ -30,6 +30,15 @@ class RenewalType extends Model
         'is_active' => 'boolean'
     ];
 
+    /**
+     * All renewals for this type
+     */
+    public function renewals()
+    {
+        return $this->hasMany(\App\Models\Renewal::class, 'renewal_type_id');
+    }
+
+
     protected static function boot()
     {
         parent::boot();

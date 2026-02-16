@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
+use App\Models\RenewalType;
 
 class UpdateVehicleRenewalRequest extends FormRequest
 {
@@ -16,25 +16,28 @@ class UpdateVehicleRenewalRequest extends FormRequest
     {
         $rules = [
             'vehicle_id' => ['required', 'exists:vehicles,id'],
-            'renewals' => ['required', 'array', 'min:1'],
+            'renewals' => ['required', 'array'],
+            'renewals.*' => ['string'],
         ];
 
         $renewals = $this->input('renewals', []);
 
         foreach ($renewals as $slug) {
+            $fields = $this->getRenewalFields($slug);
 
-            if ($slug === 'insurance') {
+            foreach ($fields as $field) {
+                $name = $slug . '.' . $field['name'];
 
-                $rules["insurance.provider_id"] = ['required', 'exists:insurance_providers,id'];
-                $rules["insurance.issue_date_bs"] = ['required', 'string'];
-                $rules["insurance.expiry_date_bs"] = ['required', 'string'];
-                $rules["insurance.insurance_type"] = ['required', 'in:general,third,partial'];
-                $rules["insurance.payment_status"] = ['required', 'in:paid,unpaid'];
-
-            } else {
-
-                $rules["{$slug}.expiry_date_bs"] = ['required', 'string'];
-                $rules["{$slug}.payment_status"] = ['required', 'in:paid,unpaid'];
+                switch ($field['type']) {
+                    case 'select':
+                        $rules[$name] = ['required'];
+                        break;
+                    case 'date':
+                        $rules[$name] = ['required', 'string'];
+                        break;
+                    default:
+                        $rules[$name] = ['nullable', 'string'];
+                }
             }
         }
 
@@ -43,14 +46,47 @@ class UpdateVehicleRenewalRequest extends FormRequest
 
     public function messages()
     {
-        return [
+        $messages = [
+            'vehicle_id.required' => 'Vehicle is required.',
+            'vehicle_id.exists' => 'Selected vehicle does not exist.',
             'renewals.required' => 'Please select at least one renewal type.',
-
-            '*.expiry_date_bs.required' => 'Expiry Date is required.',
-            '*.provider_id.required' => 'Provider is required.',
-            '*.insurance_type.required' => 'Insurance Type is required.',
-            '*.issue_date_bs.required' => 'Issue Date is required.',
-            '*.payment_status.required' => 'Payment Status is required.',
+            'renewals.array' => 'Invalid selection of renewal types.',
         ];
+
+        $renewals = $this->input('renewals', []);
+
+        foreach ($renewals as $slug) {
+            $fields = $this->getRenewalFields($slug);
+
+            foreach ($fields as $field) {
+                $name = $slug . '.' . $field['name'];
+                $messages["{$name}.required"] = "{$field['label']} is required for {$slug}.";
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Build dynamic fields for validation
+     */
+    protected function getRenewalFields($slug)
+    {
+        $fields = [];
+
+        // Common fields for all types
+        $fields[] = ['name' => 'expiry_date_bs', 'label' => 'Expiry Date', 'type' => 'date'];
+        $fields[] = ['name' => 'payment_status', 'label' => 'Payment Status', 'type' => 'select'];
+        $fields[] = ['name' => 'remarks', 'label' => 'Remarks', 'type' => 'text'];
+
+        // Special fields for insurance dynamically
+        if ($slug === 'insurance') {
+            $fields[] = ['name' => 'provider_id', 'label' => 'Insurance Provider', 'type' => 'select'];
+            // $fields[] = ['name' => 'issue_date_bs', 'label' => 'Issue Date', 'type' => 'date'];
+            $fields[] = ['name' => 'insurance_type', 'label' => 'Insurance Type', 'type' => 'select'];
+            $fields[] = ['name' => 'policy_number', 'label' => 'Policy Number', 'type' => 'text'];
+        }
+
+        return $fields;
     }
 }

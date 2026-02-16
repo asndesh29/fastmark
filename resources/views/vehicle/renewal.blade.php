@@ -10,189 +10,103 @@
                 </div>
 
                 <div class="card-body">
+                    {{-- Vehicle Info --}}
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label>Vehicle No</label>
-                                <input type="text" class="form-control" name="registration_no"
-                                    placeholder="Select Expiry Date" autocomplete="off"
-                                    value="{{ $vehicle->registration_no }}" />
-                            </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Vehicle No</label>
+                            <input type="text" class="form-control" name="registration_no" autocomplete="off"
+                                value="{{ $vehicle->registration_no }}" readonly/>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label>Owner Name</label>
-                                <input type="text" class="form-control" name="first_name" placeholder="Select Expiry Date"
-                                    autocomplete="off"
-                                    value="{{ $customer->first_name }} {{ $customer->middle_name }} {{ $customer->last_name }}" />
-                            </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Owner Name</label>
+                            <input type="text" class="form-control" name="first_name" autocomplete="off"
+                                value="{{ $customer->first_name }} {{ $customer->middle_name }} {{ $customer->last_name }}" readonly/>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label>Email</label>
-                                <input type="text" 
-                                    class="form-control" 
-                                    name="email"
-                                    autocomplete="off"
-                                    value="{{ $customer->email }}" 
-                                />
-                            </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="email" autocomplete="off"
+                                value="{{ $customer->email }}" readonly/>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label>Phone Number</label>
-                                <input type="text" 
-                                    class="form-control" 
-                                    name="phone_no"
-                                    autocomplete="off"
-                                    value="{{ $customer->phone }}" 
-                                />
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="vehicle_type" class="form-label">Vehicle Type</label>
-                                <select class="form-select mb-3" name="vehicle_type" data-placeholder="Select Type" title="Select Type"
-                                data-choices name="choices-single-default" id="choices-single-default">
-                                    @foreach ($vehicle_types as $vt)
-                                        <option value="{{ $vt->id }}"
-                                            {{ $vehicle->vehicle_type_id == $vt->id ? 'selected' : '' }}>
-                                            {{ $vt->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="vehicle_category" class="form-label">Vehicle Category</label>
-                                <select class="form-select mb-3" name="vehicle_category" data-placeholder="Select Category" title="Select Category"
-                                data-choices name="choices-single-default" id="choices-single-default">
-                                    @foreach ($vehicle_categories as $key => $vc)
-                                        <option value="{{ $vc->id }}"
-                                            {{ $vehicle->vehicle_category_id == $vc->id ? 'selected' : '' }}>
-                                            {{ $vc->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Phone Number</label>
+                            <input type="text" class="form-control" name="phone_no" autocomplete="off"
+                                value="{{ $customer->phone }}" readonly/>
                         </div>
                     </div>
 
+                    {{-- Renewal Form --}}
                     <form method="POST" action="{{ route('admin.vehicle.update-renewal', $vehicle->id) }}">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
-                        
+
                         <div class="row mt-3 pt-3" style="border-top: 1px solid var(--vz-border-color);">
+
                             @foreach($renewalTypes as $slug => $label)
-                                
-                                @if ($slug == 'license')
-                                    @continue
-                                @endif
+                                @if($slug == 'license') @continue @endif
 
                                 <div class="col-md-6">
                                     <div class="card border card-border-light mb-3 p-3">
+
+                                        {{-- Checkbox --}}
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input renewal-checkbox" type="checkbox" name="renewals[]" value="{{ $slug }}"
-                                                id="{{ $slug }}">
+                                            <input class="form-check-input renewal-checkbox" type="checkbox" 
+                                                name="renewals[]" value="{{ $slug }}" id="{{ $slug }}"
+                                                {{ in_array($slug, old('renewals', [])) ? 'checked' : '' }}>
 
                                             <label class="form-check-label fw-bold" for="{{ $slug }}">
                                                 {{ $label }}
                                             </label>
                                         </div>
 
-                                        <div class="renewal-fields" style="display: none;">
+                                        {{-- Renewal Fields --}}
+                                        <div class="renewal-fields" style="{{ in_array($slug, old('renewals', [])) ? 'display:block;' : 'display:none;' }}">
                                             <div class="row">
-                                                @if ($slug == 'insurance')
-                                                    <div class="col-md-4 mb-3">
-                                                        <label>Insurance Provider</label>
-                                                        <select name="insurance[provider_id]" class="form-control">
-                                                            <option value="">Select Provider</option>
-                                                            @foreach($insuranceProviders as $provider)
-                                                                <option value="{{ $provider->id }}">
-                                                                    {{ $provider->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
 
-                                                    <div class="col-md-4 mb-3">
-                                                        <label>Issue Date</label>
-                                                        <input type="text"
-                                                            class="form-control nepali-date 
-                                                            @error('insurance.issue_date_bs') is-invalid @enderror"
-                                                            name="insurance[issue_date_bs]"
-                                                            value="{{ old('insurance.issue_date_bs') }}">
+                                                @php
+                                                    $fields = $renewalFields[$slug] ?? [];
+                                                @endphp
 
-                                                        @error('insurance.issue_date_bs')
+                                                @foreach($fields as $field)
+                                                    <div class="col-md-4 mb-3">
+                                                        <label>{{ $field['label'] }}</label>
+
+                                                        @if($field['type'] === 'select')
+                                                            <select name="{{ $slug }}[{{ $field['name'] }}]" 
+                                                                    class="form-select form-control @error($slug.'.'.$field['name']) is-invalid @enderror">
+                                                                <option value="">Select {{ $field['label'] }}</option>
+
+                                                                @foreach($field['options'] as $value => $optionLabel)
+                                                                    <option value="{{ $value }}" 
+                                                                        {{ old($slug.'.'.$field['name']) == $value ? 'selected' : '' }}>
+                                                                        {{ $optionLabel }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+
+                                                        @elseif($field['type'] === 'date')
+                                                            <input type="text" 
+                                                                class="form-control nepali-date @error($slug.'.'.$field['name']) is-invalid @enderror" 
+                                                                name="{{ $slug }}[{{ $field['name'] }}]" 
+                                                                value="{{ old($slug.'.'.$field['name']) }}"
+                                                                placeholder="Select Date"
+                                                                readonly>
+                                                        @else
+                                                            <input type="text" 
+                                                                class="form-control @error($slug.'.'.$field['name']) is-invalid @enderror" 
+                                                                name="{{ $slug }}[{{ $field['name'] }}]" 
+                                                                value="{{ old($slug.'.'.$field['name']) }}">
+                                                        @endif
+
+                                                        @error($slug.'.'.$field['name'])
                                                             <div class="invalid-feedback">{{ $message }}</div>
                                                         @enderror
                                                     </div>
+                                                @endforeach
 
-                                                    <div class="col-md-4 mb-3">
-                                                        <label>Expiry Date</label>
-                                                        <input type="text"
-                                                            class="form-control nepali-date 
-                                                            @error('insurance.expiry_date_bs') is-invalid @enderror"
-                                                            name="insurance[expiry_date_bs]"
-                                                            value="{{ old('insurance.expiry_date_bs') }}">
-
-                                                        @error('insurance.expiry_date_bs')
-                                                            <div class="invalid-feedback">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-3">
-                                                        <label>Insurance Type</label>
-                                                        @php
-                                                            $types = ['general', 'third', 'partial'];
-                                                        @endphp
-                                                        <select name="insurance[insurance_type]" class="form-control">
-                                                            <option value="">Select Insurance Type</option>
-                                                            @foreach($types as $type)
-                                                                <option value="{{ $type }}">
-                                                                    {{ ucfirst($type) }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-3">
-                                                        <label>Policy Number</label>
-                                                        <input type="text"
-                                                            class="form-control"
-                                                            name="insurance[policy_number]"
-                                                            placeholder="Enter Policy Number"
-                                                            autocomplete="off">
-                                                    </div>
-                                                @endif
-                                            
-                                                @if ($slug != 'insurance')
-                                                    <div class="col-md-4">
-                                                        <label>Expiry Date</label>
-                                                        <input type="text" class="form-control nepali-date @error('expiry_date_bs') is-invalid @enderror"
-                                                            name="{{ $slug }}[expiry_date_bs]" placeholder="Select Expiry Date" autocomplete="off" readonly/>
-                                                    </div>
-                                                @endif
-
-                                                <div class="col-md-4">
-                                                    <label>Status</label>
-                                                    <select name="{{ $slug }}[payment_status]" class="form-control">
-                                                        <option value="paid">Paid</option>
-                                                        <option value="unpaid">Unpaid</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <label>Remarks</label>
-                                                    <input type="text" name="{{ $slug }}[remarks]" class="form-control">
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -210,101 +124,29 @@
             </div>
         </div>
     </div>
-
-
-    {{-- <form method="POST" action="{{ route('admin.vehicle.update-renewal', $vehicle->id) }}">
-        @csrf
-        @method('PUT')
-
-        <input type="hidden" name="vehicle_id" value="{{ $vehicle->id }}">
-
-        @php
-            $renewalTypes = [
-                'bluebook' => 'Bluebook',
-                'pollution' => 'Pollution',
-                'vehicle-tax' => 'Vehicle Tax',
-            ];
-        @endphp
-
-        @foreach($renewalTypes as $slug => $label)
-            <div class="card mb-3 p-3">
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input renewal-checkbox" type="checkbox" name="renewals[]" value="{{ $slug }}"
-                        id="{{ $slug }}">
-
-                    <label class="form-check-label fw-bold" for="{{ $slug }}">
-                        {{ $label }}
-                    </label>
-                </div>
-                <div class="renewal-fields" style="display: none;">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label>Last Expiry Date</label>
-                            <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror"
-                                name="{{ $slug }}[last_expiry_date]" placeholder="Select Expiry Date" autocomplete="off" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label>Status</label>
-                            <select name="{{ $slug }}[status]" class="form-control">
-                                <option value="paid">Paid</option>
-                                <option value="unpaid">Unpaid</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label>Remarks</label>
-                            <input type="text" name="{{ $slug }}[remarks]" class="form-control">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-
-
-        <div class="text-end">
-            <button type="submit" class="btn btn-success">
-                Renew Selected
-            </button>
-        </div>
-    </form> --}}
-
-
-
 @endsection
-
 
 @push('script_2')
     <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
     <script>
-        $(document).ready(function () {
-            // Show/hide fields on checkbox change
-            $('.renewal-checkbox').change(function () {
-                const wrapper = $(this).closest('.card').find('.renewal-fields');
-                if ($(this).is(':checked')) {
-                    wrapper.slideDown(); // show with animation
-                } else {
-                    wrapper.slideUp();   // hide with animation
-                }
-            });
+    $(document).ready(function () {
 
-            // Initialize Nepali Datepicker only on visible fields
-            $('.nepali-date').nepaliDatePicker({
-                ndpYear: true,
-                ndpMonth: true,
-                ndpYearCount: 10,
-                readOnlyInput: true,
-                disableDaysAfter: 5
-            });
-
-            // Form validation on submit
-            $('form').submit(function (e) {
-                if ($('.renewal-checkbox:checked').length === 0) {
-                    alert('Please select at least one renewal type.');
-                    e.preventDefault(); // stop form submission
-                }
-            });
+        // Show/hide fields dynamically
+        $('.renewal-checkbox').change(function () {
+            const wrapper = $(this).closest('.card').find('.renewal-fields');
+            if ($(this).is(':checked')) wrapper.slideDown();
+            else wrapper.slideUp();
         });
+
+        // Initialize Nepali Datepicker
+        $('.nepali-date').nepaliDatePicker({
+            ndpYear: true,
+            ndpMonth: true,
+            ndpYearCount: 10,
+            readOnlyInput: true,
+            disableDaysAfter: 5
+        });
+
+    });
     </script>
 @endpush

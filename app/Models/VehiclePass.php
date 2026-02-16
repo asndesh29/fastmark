@@ -37,7 +37,6 @@ class VehiclePass extends Model
     protected $attributes = [
         'tax_amount' => 0,
         'renewal_charge' => 0,
-        'income_tax' => 0,
     ];
 
     public function renewal()
