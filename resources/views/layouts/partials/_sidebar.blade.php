@@ -58,14 +58,6 @@
                     </a>
                 </li>
 
-                <!-- Renewal -->
-                {{-- <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.renewal.index') }}">
-                        <i class="ri-honour-line"></i> <span data-key="t-widgets">Renew</span>
-                    </a>
-                </li> --}}
-                <!-- Renewal -->
-
                 <!-- Customers -->
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ Request::is('admin/customer/*') ? 'active' : '' }}" href="#sidebarCustomer" data-bs-toggle="collapse" role="button" aria-expanded="{{ Route::is('admin.customer.*') ? 'true' : 'false' }}"  aria-controls="sidebarCustomer">
@@ -178,6 +170,41 @@
                     </div>
                 </li>
                 <!-- Settings -->
+
+                <!-- Report -->
+                <li class="nav-item">
+                    <a href="{{ route('admin.report.index') }}" 
+                        class="nav-link {{ Request::is('admin/report') ? 'active' : '' }}" 
+                        data-key="t-analytics">
+                        <i class="ri-honour-line"></i> 
+                        <span data-key="t-widgets">Report</span>
+                    </a>
+                </li>
+
+                <!-- Vehicles -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ Request::is('admin/report/*') ? 'active' : '' }}" href="#sidebarReport" data-bs-toggle="collapse" role="button" aria-expanded="{{ Route::is('admin.report.*') ? 'true' : 'false' }}"  aria-controls="sidebarReport">
+                        <i class="ri-dashboard-2-line"></i> 
+                        <span data-key="t-dashboards">Report</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ Route::is('admin.report.*') ? 'show' : '' }}" id="sidebarReport">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.report.index') }}" class="nav-link {{ Request::is('admin/report') ? 'active' : '' }}" data-key="t-analytics"> Vehicle Report </a>
+                            </li>
+
+                             <li class="nav-item">
+                                <a href="{{ route('admin.report.renewals.expiry') }}" 
+                                    class="nav-link {{ Request::is('admin/report/renewals-expiry') ? 'active' : '' }}" 
+                                    data-key="t-analytics"> 
+                                    Renewal Expiry Report 
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Vehicles -->
+                <!-- Report -->
 
                 
                 <!-- end Dashboard Menu -->

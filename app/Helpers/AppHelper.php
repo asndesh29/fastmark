@@ -4,7 +4,9 @@ namespace App\Helpers;
 
 use App\Models\Bluebook;
 use App\Models\Insurance;
+use App\Models\Pollution;
 use App\Models\PollutionCheck;
+use App\Models\RenewalType;
 use App\Models\RoadPermit;
 use App\Models\VehiclePass;
 use App\Models\VehicleTax;
@@ -157,6 +159,40 @@ class AppHelper
      * @param string $type Document type (e.g., 'bluebook', 'jachpass', etc.)
      * @return string
      */
+    public static function generateInvoiceNumber1(string $type)
+    {
+        // Fetch the renewal type from DB
+        $renewalType = RenewalType::where('slug', $type)->first();
+
+        if (!$renewalType) {
+            throw new \Exception("Invalid document type '{$type}'");
+        }
+
+        // Dynamically determine the model class and prefix
+        $modelClass = $renewalType->name; // assume your renewal_types table has a 'model_class' column
+        $prefix = strtoupper(substr($renewalType->name, 0, 2)); // first 2 letters of the name
+
+        // Get the current year
+        $year = date('Y');
+
+        // Get latest invoice for this type
+        $lastInvoice = $modelClass::latest('id')->first();
+
+        // Determine which column holds the invoice number dynamically
+        // You can store this info in the DB too, or fallback to default 'book_number'
+        $invoiceColumn = $renewalType->invoice_column ?? 'book_number';
+
+        $serial = 1; // default serial
+        if ($lastInvoice && isset($lastInvoice->$invoiceColumn)) {
+            // Get last 4 digits of invoice
+            $serial = (int) substr($lastInvoice->$invoiceColumn, -4) + 1;
+        }
+
+        $serialFormatted = str_pad($serial, 4, '0', STR_PAD_LEFT);
+
+        return "{$prefix}-{$year}-{$serialFormatted}";
+    }
+
     public static function generateInvoiceNumber($type)
     {
         // dd($type);
@@ -168,23 +204,23 @@ class AppHelper
                 $prefix = 'BB';
                 $model = Bluebook::class;
                 break;
-            case 'jachpass':
+            case 'vehicle-pass':
                 $prefix = 'JP';
                 $model = VehiclePass::class;
                 break;
             case 'pollution':
                 $prefix = 'PL';
-                $model = PollutionCheck::class;
+                $model = Pollution::class;
                 break;
             case 'insurance':
                 $prefix = 'IN';
                 $model = Insurance::class;
                 break;
-            case 'roadpermit':
+            case 'road-permit':
                 $prefix = 'RP';
                 $model = RoadPermit::class;
                 break;
-            case 'tax':
+            case 'vehicle-tax':
                 $prefix = 'TX';
                 $model = VehicleTax::class;
                 break;
@@ -192,13 +228,13 @@ class AppHelper
                 throw new \Exception("Invalid document type '{$type}'");
         }
 
-        $year = date('Y');  // Current year
+        $year = date(format: 'Y');  // Current year
         $lastInvoice = $model::latest('id')->first();  // Get the latest invoice for this type
         // dd($lastInvoice);
 
         // If there's no existing invoice, start with 1
         if ($type == 'bluebook') {
-            $serial = $lastInvoice ? (int) substr($lastInvoice->book_number, -4) + 1 : 1;
+            $serial = $lastInvoice ? (int) substr($lastInvoice->invoice_no, -4) + 1 : 1;
         } elseif ($type == 'insurance') {
             $serial = $lastInvoice ? (int) substr($lastInvoice->policy_number, -4) + 1 : 1;
         } else {
@@ -243,4 +279,5 @@ class AppHelper
     {
         self::toastr('warning', $message);
     }
+
 }

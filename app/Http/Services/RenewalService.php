@@ -24,11 +24,11 @@ class RenewalService
         $perPage = $perPage ?? config('default_pagination', 10);
 
         $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'Renewals'])
-        ->when($request->search, function ($query) use ($keywords) {
-            foreach ($keywords as $word) {
-                $query->orWhere('name', 'like', "%{$word}%");
-            }
-        })->orderBy('created_at', 'desc')->paginate($perPage);
+            ->when($request->search, function ($query) use ($keywords) {
+                foreach ($keywords as $word) {
+                    $query->orWhere('name', 'like', "%{$word}%");
+                }
+            })->orderBy('created_at', 'desc')->paginate($perPage);
 
         return $vehicles;
     }
@@ -84,7 +84,7 @@ class RenewalService
 
     public function store(array $data)
     {
-        // dd($data);
+        dd($data);
         DB::beginTransaction();
 
         try {
@@ -106,63 +106,63 @@ class RenewalService
             // Step 1: Create the specific renewable record
             switch ($data['type']) {
                 case 'bluebook':
-                $renewable = Bluebook::create([
-                    'vehicle_id' => $data['vehicle_id'],
-                    'book_number' => $data['book_number'],
-                    'issue_date' => $data['issue_date'],
-                    'last_renewed_at' => $data['last_renewed_at'] ?? null,
-                    'expiry_date' => $data['expiry_date'],
-                    'status' => $data['status'] ?? 'pending',
-                    'remarks' => $data['remarks'] ?? null,
-                ]);
-                break;
+                    $renewable = Bluebook::create([
+                        'vehicle_id' => $data['vehicle_id'],
+                        'book_number' => $data['book_number'],
+                        'issue_date' => $data['issue_date'],
+                        'last_renewed_at' => $data['last_renewed_at'] ?? null,
+                        'expiry_date' => $data['expiry_date'],
+                        'status' => $data['status'] ?? 'pending',
+                        'remarks' => $data['remarks'] ?? null,
+                    ]);
+                    break;
 
-            case 'road_permit':
-                $renewable = RoadPermit::create([
-                    'vehicle_id' => $data['vehicle_id'],
-                    'permit_number' => $data['permit_number'],
-                    'issue_date' => $data['issue_date'],
-                    'expiry_date' => $data['expiry_date'],
-                    'status' => $data['status'] ?? 'pending',
-                    'remarks' => $data['remarks'] ?? null,
-                ]);
-                break;
+                case 'road_permit':
+                    $renewable = RoadPermit::create([
+                        'vehicle_id' => $data['vehicle_id'],
+                        'permit_number' => $data['permit_number'],
+                        'issue_date' => $data['issue_date'],
+                        'expiry_date' => $data['expiry_date'],
+                        'status' => $data['status'] ?? 'pending',
+                        'remarks' => $data['remarks'] ?? null,
+                    ]);
+                    break;
 
-            case 'pollution':
-                $renewable = PollutionCheck::create([
-                    'vehicle_id' => $data['vehicle_id'],
-                    'certificate_number' => $data['certificate_number'],
-                    'check_date' => $data['check_date'],
-                    'issue_date' => $data['issue_date'],
-                    'expiry_date' => $data['expiry_date'],
-                    'status' => $data['status'] ?? 'pending',
-                    'remarks' => $data['remarks'] ?? null,
-                ]);
-                break;
+                case 'pollution':
+                    $renewable = PollutionCheck::create([
+                        'vehicle_id' => $data['vehicle_id'],
+                        'certificate_number' => $data['certificate_number'],
+                        'check_date' => $data['check_date'],
+                        'issue_date' => $data['issue_date'],
+                        'expiry_date' => $data['expiry_date'],
+                        'status' => $data['status'] ?? 'pending',
+                        'remarks' => $data['remarks'] ?? null,
+                    ]);
+                    break;
 
-            case 'check_pass':
-                $renewable = VehiclePass::create([
-                    'vehicle_id' => $data['vehicle_id'],
-                    'issue_date' => $data['issue_date'],
-                    'expiry_date' => $data['expiry_date'],
-                    'inspection_result' => $data['inspection_result'],
-                    // 'status' => $data['status'] ?? 'pending',
-                    'remarks' => $data['remarks'] ?? null,
-                ]);
-                break;
+                case 'check_pass':
+                    $renewable = VehiclePass::create([
+                        'vehicle_id' => $data['vehicle_id'],
+                        'issue_date' => $data['issue_date'],
+                        'expiry_date' => $data['expiry_date'],
+                        'inspection_result' => $data['inspection_result'],
+                        // 'status' => $data['status'] ?? 'pending',
+                        'remarks' => $data['remarks'] ?? null,
+                    ]);
+                    break;
 
-             case 'insurance':
-                $renewable = Insurance::create([
-                    'vehicle_id' => $data['vehicle_id'],
-                    'provider_id' => $data['provider_id'],
-                    'policy_number' => $data['policy_number'],
-                    'issue_date' => $data['issue_date'],
-                    'expiry_date' => $data['expiry_date'],
-                    'amount' => $data['amount'],
-                    // 'status' => $data['status'] ?? 'pending',
-                    'remarks' => $data['remarks'] ?? null,
-                ]);
-                break;
+                case 'insurance':
+                    $renewable = Insurance::create([
+                        'vehicle_id' => $data['vehicle_id'],
+                        'provider_id' => $data['provider_id'],
+                        'policy_number' => $data['policy_number'],
+                        'issue_date' => $data['issue_date'],
+                        'expiry_date' => $data['expiry_date'],
+                        'amount' => $data['amount'],
+                        // 'status' => $data['status'] ?? 'pending',
+                        'remarks' => $data['remarks'] ?? null,
+                    ]);
+                    break;
 
                 default:
                     throw new \Exception("Invalid renewal type.");

@@ -3,26 +3,34 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
 
 class Renewal extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'vehicle_id',
         'renewal_type_id',
         'renewable_type',
         'renewable_id',
-        'start_date',
-        'expiry_date',
+
+        'start_date_bs',
+        'start_date_ad',
+        'expiry_date_bs',
+        'expiry_date_ad',
+
         'reminder_date',
         'remarks',
         'status',
+        'is_paid',
     ];
 
-    public function vehicle()
-    {
-        return $this->belongsTo(Vehicle::class);
-    }
+
+    // public function vehicle()
+    // {
+    //     return $this->belongsTo(Vehicle::class);
+    // }
 
     public function customer()
     {
@@ -63,5 +71,11 @@ class Renewal extends Model
 
         return Validator::make($data, $rules, $messages);
     }
+
+    public function getVehicleAttribute()
+    {
+        return $this->renewable?->vehicle;
+    }
+
 
 }

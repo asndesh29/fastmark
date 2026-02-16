@@ -48,7 +48,7 @@ class InsuranceProviderController extends Controller
 
         $this->insuranceProviderService->store($data);
 
-        return redirect()->route('admin.providers.index')->with('success', 'Insurance Provider record created successfully.');
+        return redirect()->route('admin.settings.insurance-provider.index')->with('success', 'Insurance Provider record created successfully.');
     }
 
     /**
@@ -66,7 +66,7 @@ class InsuranceProviderController extends Controller
     {
         $provider = $this->insuranceProviderService->getById($insuranceProvider->id);
 
-        return view('providers.edit', compact('provider'));
+        return view('admin.settings.insurance-provider.edit', compact('provider'));
     }
 
     /**
@@ -85,7 +85,7 @@ class InsuranceProviderController extends Controller
 
         $this->insuranceProviderService->update($provider, $data);
 
-        return redirect()->route('admin.insurance-provider.index')->with('success', 'Insurance provider record updated successfully.');
+        return redirect()->route('admin.settings.insurance-provider.index')->with('success', 'Insurance provider record updated successfully.');
     }
 
     public function status(InsuranceProvider $insuranceProvider, $status)

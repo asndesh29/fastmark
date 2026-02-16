@@ -77,16 +77,49 @@ class Customer extends Model
         });
     }
 
+    // public static function validateData($data)
+    // {
+    //     $rules = [
+    //         // Customer fields
+    //         'first_name' => ['required', 'string', 'max:255'],
+    //         'last_name' => ['required', 'string', 'max:255'],
+    //         'email' => ['nullable', 'email'],
+    //         'phone' => ['nullable', 'string'],
+
+    //         // Vehicle arrays
+    //         'vehicle_types' => ['required', 'array', 'min:1'],
+    //         'vehicle_types.*' => ['required', 'integer', 'exists:vehicle_types,id'],
+
+    //         'vehicle_categories' => ['required', 'array'],
+    //         'vehicle_categories.*' => ['required', 'integer', 'exists:vehicle_categories,id'],
+
+    //         'registration_no' => ['required', 'array'],
+    //         'registration_no.*' => ['required', 'string', 'max:255'],
+
+    //         'permit_no' => ['required_if:commercial', 'array'],
+    //         'permit_no.*' => ['required', 'string', 'max:255'],
+    //         // 'permit_no' => ['required_if:commercial', 'nullable', 'string', 'max:255'],
+    //     ];
+
+    //     $messages = [
+    //         'first_name.required' => 'First name is required.',
+    //         'last_name.required' => 'Last name is required.',
+    //         'vehicle_types.*.required' => 'Vehicle type is required.',
+    //         'registration_no.*.required' => 'Registration number is required.',
+    //         'permit_no.*.required' => 'Permit number is required.',
+    //     ];
+
+    //     return Validator::make($data, $rules, $messages);
+    // }
+
     public static function validateData($data)
     {
         $rules = [
-            // Customer fields
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email'],
             'phone' => ['nullable', 'string'],
 
-            // Vehicle arrays
             'vehicle_types' => ['required', 'array', 'min:1'],
             'vehicle_types.*' => ['required', 'integer', 'exists:vehicle_types,id'],
 
@@ -96,18 +129,49 @@ class Customer extends Model
             'registration_no' => ['required', 'array'],
             'registration_no.*' => ['required', 'string', 'max:255'],
 
-            'permit_no' => ['required', 'array'],
-            'permit_no.*' => ['required', 'string', 'max:255'],
+            'permit_no' => ['nullable', 'array'],
+            'permit_no.*' => ['nullable', 'string', 'max:255'],
+
+            'chassis_no' => 'nullable|array',
+            'chassis_no.*' => 'nullable|string|max:255',
+
+            'engine_no' => 'nullable|array',
+            'engine_no.*' => 'nullable|string|max:255',
+
+            'engine_cc' => 'nullable|array',
+            'engine_cc.*' => 'nullable|string|max:255',
+
+            'capacity' => 'nullable|array',
+            'capacity.*' => 'nullable|string|max:255',
         ];
 
-        $messages = [
-            'first_name.required' => 'First name is required.',
-            'last_name.required' => 'Last name is required.',
-            'vehicle_types.*.required' => 'Vehicle type is required.',
-            'registration_no.*.required' => 'Registration number is required.',
-            'permit_no.*.required' => 'Permit number is required.',
-        ];
+        $validator = Validator::make($data, $rules);
 
-        return Validator::make($data, $rules, $messages);
+        $validator->after(function ($validator) use ($data) {
+
+            if (!empty($data['vehicle_categories'])) {
+
+                // Get all selected categories at once
+                $categories = VehicleCategory::whereIn('id', $data['vehicle_categories'])
+                    ->pluck('slug', 'id'); // [id => slug]
+
+                foreach ($data['vehicle_categories'] as $index => $categoryId) {
+
+                    $slug = $categories[$categoryId] ?? null;
+
+                    if ($slug === 'commercial') {
+
+                        if (empty($data['permit_no'][$index])) {
+                            $validator->errors()->add(
+                                "permit_no.$index",
+                                'Permit number is required for commercial vehicles.'
+                            );
+                        }
+                    }
+                }
+            }
+        });
+
+        return $validator;
     }
 }

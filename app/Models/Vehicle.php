@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
 
 class Vehicle extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
+        'vehicle_id',
         'customer_id',
         'vehicle_type_id',
         'vehicle_category_id',
@@ -15,13 +18,13 @@ class Vehicle extends Model
         'permit_no',
         'chassis_no',
         'engine_no',
-        'type',
         'engine_cc',
         'capacity',
         'is_active'
     ];
 
     protected $casts = [
+        'vehicle_id' => 'integer',
         'customer_id' => 'integer',
         'vehicle_type_id' => 'integer',
         'vehicle_category_id' => 'integer'
@@ -42,6 +45,11 @@ class Vehicle extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
+    // public function renewals()
+    // {
+    //     return $this->morphMany(Renewal::class, 'renewable');
+    // }
+
     public function renewals()
     {
         return $this->hasMany(Renewal::class);
@@ -54,7 +62,7 @@ class Vehicle extends Model
 
     public function pollution()
     {
-        return $this->hasOne(PollutionCheck::class)->latestOfMany();
+        return $this->hasOne(Pollution::class)->latestOfMany();
     }
 
     public function roadPermit()
@@ -77,18 +85,40 @@ class Vehicle extends Model
         return $this->hasOne(VehiclePass::class)->latestOfMany();
     }
 
-    public static function validateData($data, $vehicleType = null)
+    public static function validateData($data, $id = null)
     {
         $rules = [
             'registration_no' => ['required', 'string', 'max:255'],
-            'permit_number' => ['required', 'string', 'max:255'],
+            'permit_no' => [
+                'nullable',
+                'string',
+                'max:255',
+                // Make permit_no required if vehicle_category_id is, for example, 1 (Commercial)
+                'required_if:vehicle_category_id,2'
+            ],
+            'chassis_no' => ['nullable', 'string', 'max:255'],
+            'engine_no' => ['nullable', 'string', 'max:255'],
+            'engine_cc' => ['nullable', 'string', 'max:255'],
+            'capacity' => ['nullable', 'integer'],
+            'vehicle_type_id' => ['required', 'exists:vehicle_types,id'],
+            'vehicle_category_id' => ['required', 'exists:vehicle_categories,id'],
         ];
 
         $messages = [
             'registration_no.required' => 'Registration No. is required.',
-            'permit_number.required' => 'Permit No. is required.',
+            'permit_no.required_if' => 'Permit Number is required.',
+            'vehicle_type_id.required' => 'Vehicle Type is required.',
+            'vehicle_category_id.required' => 'Vehicle Category is required.',
         ];
 
         return Validator::make($data, $rules, $messages);
     }
+
+    public function isCommercial(): bool
+    {
+        return optional($this->vehicleCategory)->slug === 'commercial';
+    }
+
+
+
 }

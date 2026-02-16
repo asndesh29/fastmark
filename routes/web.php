@@ -6,10 +6,10 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FeeSlabController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\InsuranceProviderController;
-use App\Http\Controllers\LicenseController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\PollutionController;
 use App\Http\Controllers\RenewalController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenewalTypeController;
 use App\Http\Controllers\RoadPermitController;
@@ -39,6 +39,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
+        Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
+            // Vehicle Report
+            Route::get('/', [ReportController::class, 'index'])->name('index');
+            Route::get('vehicles/export', [ReportController::class, 'exportVehicles'])->name('vehicles.export');
+            // Renewal Expiry Report
+            Route::get('renewals-expiry', [ReportController::class, 'renewalExpiry'])->name('renewals.expiry');
+            Route::get('renewals-expiry/export', [ReportController::class, 'exportRenewalExpiry'])->name('renewals.expiry.export');
+        });
+
         Route::group(['prefix' => 'module', 'as' => 'module.'], function () {
             Route::get('/', [ModuleController::class, 'index'])->name('index');
             Route::get('add-new', [ModuleController::class, 'create'])->name('create');
@@ -63,11 +72,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', [VehicleController::class, 'index'])->name('index');
             Route::get('add-new', [VehicleController::class, 'create'])->name('create');
             Route::post('store', [VehicleController::class, 'store'])->name('store');
-            Route::get('/edit/{id}', [VehicleController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [VehicleController::class, 'update'])->name('update');
+            Route::get('/edit/{vehicle}', [VehicleController::class, 'edit'])->name('edit');
+            Route::put('/update/{vehicle}', [VehicleController::class, 'update'])->name('update');
             Route::get('show/{vehicle}', [VehicleController::class, 'show'])->name('show');
+            Route::get('{vehicle}/renewal', [VehicleController::class, 'renewal'])->name('renewal');
             Route::delete('/renewal/{id}', [VehicleController::class, 'destroy'])->name('destroy');
             Route::get('status/{vehicle}/{status}', [VehicleController::class, 'status'])->name('status');
+            Route::put('{vehicle}/renewal-update', [VehicleController::class, 'updateRenewal'])->name('update-renewal');
         });
 
         Route::group(['prefix' => 'renewal', 'as' => 'renewal.'], function () {

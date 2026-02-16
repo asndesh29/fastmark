@@ -14,10 +14,22 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 255);
             $table->string('slug', 255)->unique()->nullable();
+
+            $table->enum('target_type', ['vehicle', 'customer']);
+
+            // Private validity
+            $table->integer('private_validity_value')->nullable();
+            $table->enum('private_validity_unit', ['days', 'months', 'years'])->nullable();
+
+            // Commercial validity
+            $table->integer('commercial_validity_value')->nullable();
+            $table->enum('commercial_validity_unit', ['days', 'months', 'years'])->nullable();
+
             $table->boolean('is_active')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });
+
     }
 
     /**

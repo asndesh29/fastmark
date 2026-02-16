@@ -158,7 +158,7 @@
                         <div class="text-center">
                             <p class="mb-0">&copy;
                                 <script>document.write(new Date().getFullYear())</script> Fast Mark. Designed <i
-                                    class="mdi mdi-heart text-danger"></i> by Yantra.
+                                    class="mdi mdi-heart text-danger"></i> by VajraSoft Tech.
                             </p>
                         </div>
                     </div>

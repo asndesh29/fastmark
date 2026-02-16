@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\RenewalTypeService;
 use App\Models\RenewalType;
 
@@ -38,18 +39,29 @@ class RenewalTypeController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
+        try {
+            $validator = RenewalType::validateData($request->all());
 
-        $this->renewalTypeService->store($data);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
-        return back();
+            $validated = $validator->validated();
+
+            $this->renewalTypeService->store($validated);
+
+            AppHelper::success('Renewal type record created successfully.');
+
+            return redirect()->back();
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function edit(RenewalType $renewalType)
     {
         $renewal_type = RenewalType::where('id', $renewalType->id)->first();
+        // dd($renewal_type);
         return view('renewal.type.edit', compact('renewal_type'));
     }
 
@@ -57,13 +69,28 @@ class RenewalTypeController extends Controller
     {
         $renewalType = $this->renewalTypeService->getById($renewalType->id);
 
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        try {
+            $validator = RenewalType::validateData($request->all(), $renewalType->id);
 
-        $this->renewalTypeService->update($renewalType, $data);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
-        return redirect()->route('admin.settings.renewal-type.index')->with('success', 'Renewal Type record updated successfully.');
+            $validated = $validator->validated();
+
+            $this->renewalTypeService->update($renewalType, $validated);
+
+            AppHelper::success('Renewal type record updated successfully.');
+
+            return redirect()->route('admin.settings.renewal-type.index');
+
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
+        // $this->renewalTypeService->update($renewalType, $data);
+
+        // return redirect()->route('admin.settings.renewal-type.index')->with('success', 'Renewal Type record updated successfully.');
     }
 
     public function destroy(RenewalType $renewalType)

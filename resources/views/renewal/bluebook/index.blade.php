@@ -126,7 +126,7 @@
                             <label>Book Number</label>
                             <input type="text" class="form-control" name="book_number" placeholder="Enter bluebook number">
                         </div> --}}
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label>Issue Date (जारी मिति)</label>
                             <input type="text" class="form-control nepali-date @error('issue_date') is-invalid @enderror" 
                                 name="issue_date" placeholder="Select Issue Date" autocomplete="off"/>
@@ -134,7 +134,7 @@
                             @error('issue_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> --}}
                         <div class="mb-3">
                             <label>Expiry Date (म्याद समाप्त मिति)</label>
                             <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" 

@@ -14,12 +14,33 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('license_type_id')->constrained('license_type')->cascadeOnDelete();
-            $table->string('license_number');
-            $table->string('issue_date')->nullable();
-            $table->string('expiry_date')->nullable();
-            $table->string('last_expiry_date')->nullable();
-            $table->decimal('amount', 12, 2)->default(0);
-            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
+
+            $table->string('invoice_no')->nullable()->index();
+            $table->string('license_number')->nullable();
+
+            $table->string('issue_date_bs')->nullable();
+            $table->date('issue_date_ad')->nullable();
+
+            $table->string('expiry_date_bs')->nullable();
+            $table->date('expiry_date_ad')->nullable();
+
+            $table->string('renewed_expiry_date_bs')->nullable();
+            $table->date('renewed_expiry_date_ad')->nullable();
+
+            $table->decimal('tax_amount', 12, 2)->default(0);
+            $table->decimal('renewal_charge', 12, 2)->default(0);
+            $table->decimal('total_amount', 12, 2)->virtualAs(
+                'tax_amount + renewal_charge'
+            );
+
+            $table->enum('payment_status', ['paid', 'unpaid', 'partial'])
+                ->default('unpaid')
+                ->index();
+            $table->string('remarks')->nullable();
+
+            // Indexing for performance
+            $table->index('customer_id');
+
             $table->softDeletes();
             $table->timestamps();
         });
