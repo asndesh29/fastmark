@@ -16,10 +16,10 @@
                             <tr>
                                 <th>#</th>
                                 <th>Renewal Type</th>
-                                <th>Issue Date</th>
-                                <th>Last Expiry Date</th>
+                                {{-- <th>Issue Date</th> --}}
                                 <th>Expiry Date</th>
-                                <th>Status</th>
+                                <th>Renewal Status</th>
+                                <th>Payment Status</th>
                                 <th>Remarks</th>
                             </tr>
                         </thead>
@@ -29,13 +29,23 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $renewal->renewalType->name ?? '—' }}</td>
-                                        <td>{{ $renewal->renewable->issue_date ?? '-' }}</td>
-                                        <td>{{ $renewal->start_date }}</td>
-                                        <td>{{ $renewal->expiry_date }}</td>
+                                        <td>{{ $renewal->renewable->expiry_date_bs ?? '-' }}</td>
+                                        {{-- <td>{{ $renewal->start_date }}</td>
+                                        <td>{{ $renewal->expiry_date }}</td> --}}
                                         <td>
-                                            <span class="badge bg-{{ $renewal->status == 'paid' ? 'success' : 'danger' }}">
-                                                {{ ucfirst($renewal->status) }}
-                                            </span>
+                                            @if($renewal)
+                                                <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
+                                                    {{ ucfirst($renewal->status) }}
+                                                </span>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if($renewal)
+                                                <span class="badge bg-{{ $renewal->is_paid == 1 ? 'success' : 'danger' }}">
+                                                    {{ ucfirst($renewal->is_paid == 1 ? 'Paid' : 'Unpaid' ) }}
+                                                </span>
+                                            @endif
                                         </td>
                                         <td>{{ $renewal->remarks ?? '—' }}</td>
                                     </tr>

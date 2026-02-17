@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AppHelper;
 use App\Http\Services\InsuranceProviderService;
 use App\Models\InsuranceProvider;
 use Illuminate\Http\Request;
@@ -48,6 +49,8 @@ class InsuranceProviderController extends Controller
 
         $this->insuranceProviderService->store($data);
 
+        AppHelper::success('Insurance Provider created successfully.');
+
         return redirect()->route('admin.settings.insurance-provider.index')->with('success', 'Insurance Provider record created successfully.');
     }
 
@@ -66,7 +69,7 @@ class InsuranceProviderController extends Controller
     {
         $provider = $this->insuranceProviderService->getById($insuranceProvider->id);
 
-        return view('admin.settings.insurance-provider.edit', compact('provider'));
+        return view('providers.edit', compact('provider'));
     }
 
     /**
@@ -84,6 +87,8 @@ class InsuranceProviderController extends Controller
         ]);
 
         $this->insuranceProviderService->update($provider, $data);
+
+        AppHelper::success('Insurance Provider updated successfully.');
 
         return redirect()->route('admin.settings.insurance-provider.index')->with('success', 'Insurance provider record updated successfully.');
     }
@@ -110,7 +115,9 @@ class InsuranceProviderController extends Controller
 
         $insurance_provider->delete();
 
-        return back();
+        AppHelper::success('Insurance Provider deleted successfully.');
+
+        return redirect()->route('admin.settings.insurance-provider.index');
     }
 
 }

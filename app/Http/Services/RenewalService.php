@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 use App\Models\Bluebook;
 use App\Models\Customer;
+use App\Models\Pollution;
 use App\Models\Renewal;
 use App\Models\Vehicle;
 use App\Models\VehicleType;
@@ -129,7 +130,7 @@ class RenewalService
                     break;
 
                 case 'pollution':
-                    $renewable = PollutionCheck::create([
+                    $renewable = Pollution::create([
                         'vehicle_id' => $data['vehicle_id'],
                         'certificate_number' => $data['certificate_number'],
                         'check_date' => $data['check_date'],

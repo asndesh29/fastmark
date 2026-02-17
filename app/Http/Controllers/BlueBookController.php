@@ -7,6 +7,7 @@ use App\Http\Services\BluebookService;
 use App\Http\Services\RenewalService;
 use App\Http\Services\VehicleService;
 use App\Models\Bluebook;
+use App\Services\BaseRenewalService;
 use Illuminate\Http\Request;
 
 class BlueBookController extends Controller
@@ -50,24 +51,30 @@ class BlueBookController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Bluebook::validateData($request->all());
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         try {
-            $validator = Bluebook::validateData($request->all());
-
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            $validated = $validator->validated();
-
-            $this->bluebookService->store($validated);
+            $bluebook = $this->bluebookService->store(
+                $validator->validated()
+            );
 
             AppHelper::success('Bluebook renewal record created successfully.');
 
             return redirect()->back();
+
         } catch (\Throwable $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+
+            report($e); // log error
+
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong. Please try again.');
         }
     }
 
@@ -99,9 +106,7 @@ class BlueBookController extends Controller
         $validator = Bluebook::validateData($request->all());
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $validated = $validator->validated();
@@ -111,6 +116,21 @@ class BlueBookController extends Controller
         AppHelper::success('Bluebook record updated successfully.');
 
         return redirect()->route('admin.renewal.bluebook.index');
+    }
+
+    public function update1(Request $request, Bluebook $bluebook)
+    {
+        $validated = $request->validate([
+            'expiry_date_bs' => 'required',
+            'payment_status' => 'required',
+            'type' => 'required'
+        ]);
+
+        $service = app(BaseRenewalService::class);
+
+        $service->renew($bluebook, $validated);
+
+        return back()->with('success', 'Bluebook renewed successfully.');
     }
 
     /**
