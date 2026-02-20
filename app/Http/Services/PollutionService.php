@@ -19,44 +19,56 @@ class PollutionService
 {
     public function list(Request $request, $perPage = null)
     {
-        $keywords = explode(' ', $request->search ?? '');
+        // dd($request->all());
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'pollution.renewal'])
-            ->when($request->customer, function ($query, $customer) {
-                $query->whereHas('owner', function ($q) use ($customer) {
-                    $q->where('first_name', 'like', "%{$customer}%")
-                        ->orWhere('last_name', 'like', "%{$customer}%");
+        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'pollution.latestRenewal'])
+
+            // Filter by Customer Name
+            ->when($request->filled('customer'), function ($query) use ($request) {
+                $query->whereHas('owner', function ($q) use ($request) {
+                    $q->where('first_name', 'like', "%{$request->customer}%")
+                        ->orWhere('last_name', 'like', "%{$request->customer}%");
                 });
             })
-            ->when($request->registration_no, function ($query, $registration_no) {
-                $query->where('registration_no', 'like', "%{$registration_no}%");
+
+            // Filter by Registration Number
+            ->when($request->filled('registration_no'), function ($query) use ($request) {
+                $query->where('registration_no', 'like', "%{$request->registration_no}%");
             })
-            ->when($request->invoice, function ($query, $invoice) {
-                $query->whereHas('pollution', function ($q) use ($invoice) {
-                    $q->where('invoice_no', 'like', "%{$invoice}%");
+
+            // Filter by Invoice Number
+            ->when($request->filled('invoice'), function ($query) use ($request) {
+                $query->whereHas('pollution', function ($q) use ($request) {
+                    $q->where('invoice_no', 'like', "%{$request->invoice}%");
                 });
             })
-            ->when($request->last_expiry_date, function ($query, $date) {
-                $query->whereHas('pollution', function ($q) use ($date) {
-                    $q->whereDate('last_expiry_date', $date);
+
+            // Filter by Vehicle Type
+            ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
+                $query->where('vehicle_type_id', $request->vehicle_type_id);
+            })
+
+            // Filter by Expiry Date (BS)
+            ->when($request->filled('expiry_date_bs'), function ($query) use ($request) {
+                $query->whereHas('pollution', function ($q) use ($request) {
+                    $q->where('expiry_date_bs', $request->expiry_date_bs);
                 });
             })
-            ->when($request->new_expiry_date, function ($query, $date) {
-                $query->whereHas('pollution', function ($q) use ($date) {
-                    $q->whereDate('expiry_date', $date);
+
+            // Filter by Payment Status
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->whereHas('pollution', function ($q) use ($request) {
+                    $q->where('payment_status', strtolower($request->status));
                 });
             })
-            ->when($request->status && $request->status !== 'all', function ($query, $status) {
-                $query->whereHas('pollution.renewal', function ($q) use ($status) {
-                    $q->where('status', strtolower($status));
-                });
-            })
+
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 
         return $vehicles;
     }
+
 
     public function store(array $data)
     {

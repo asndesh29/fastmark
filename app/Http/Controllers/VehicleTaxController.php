@@ -6,6 +6,7 @@ use App\Helpers\AppHelper;
 use App\Http\Services\VehicleTaxService;
 
 use App\Models\VehicleTax;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
 class VehicleTaxController extends Controller
@@ -25,12 +26,14 @@ class VehicleTaxController extends Controller
 
         $renewal_lists = $this->vehicleTaxService->list($request, $perPage);
 
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
         if ($request->ajax()) {
             $html = view('renewal.vehicle-tax.partials.table', compact('renewal_lists'))->render();
             return response()->json(['html' => $html]);
         }
 
-        return view('renewal.vehicle-tax.index', compact('renewal_lists'));
+        return view('renewal.vehicle-tax.index', compact('renewal_lists', 'vehicle_types'));
     }
 
     public function index1(Request $request)

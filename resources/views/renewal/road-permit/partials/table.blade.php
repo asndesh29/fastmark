@@ -2,7 +2,7 @@
     @foreach ($renewal_lists as $key => $vehicle)
         @php
             $roadpermit = $vehicle->roadPermit;
-            $renewal = $roadpermit?->renewal;
+            $renewal = $roadpermit?->latestRenewal;
         @endphp
         <tr>
             <td>{{ $key + $renewal_lists->firstItem() }}</td>
@@ -11,12 +11,10 @@
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
             <td>{{ $roadpermit->expiry_date_bs ?? '-' }}</td>
-            {{-- <td>{{ $roadpermit->expiry_date ?? '-' }}</td>
-            <td>{{ $renewal ? 'Renewed' : 'No Renewal' }}</td> --}}
             <td>
                 @if($renewal)
-                    <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
-                        {{ ucfirst($renewal->status) }}
+                    <span class="badge bg-{{ $renewal->is_expired ? 'danger' : 'success' }}">
+                        {{ $renewal->is_expired ? 'Expired' : ucfirst($renewal->status) }}
                     </span>
                 @endif
             </td>
@@ -24,7 +22,7 @@
             <td>
                 @if($renewal)
                     <span class="badge bg-{{ $renewal->is_paid == 1 ? 'success' : 'danger' }}">
-                        {{ ucfirst($renewal->is_paid == 1 ? 'Paid' : 'Unpaid' ) }}
+                        {{ ucfirst($renewal->is_paid == 1 ? 'Paid' : 'Unpaid') }}
                     </span>
                 @endif
             </td>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Http\Services\PollutionService;
 use App\Models\Pollution;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
 class PollutionController extends Controller
@@ -24,13 +25,15 @@ class PollutionController extends Controller
 
         $renewal_lists = $this->pollutionService->list($request, $perPage);
 
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
         // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('renewal.pollution.partials.table', compact('renewal_lists'))->render();
             return response()->json(['html' => $html]);
         }
 
-        return view('renewal.pollution.index', compact('renewal_lists'));
+        return view('renewal.pollution.index', compact('renewal_lists', 'vehicle_types'));
     }
 
     /**

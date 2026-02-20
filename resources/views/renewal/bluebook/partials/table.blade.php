@@ -2,17 +2,16 @@
     @foreach ($renewal_lists as $key => $vehicle)
         @php
             $bluebook = $vehicle->bluebook;
-            $renewal = $bluebook?->renewals?->sortByDesc('id')->first();
+            $renewal = $bluebook?->latestRenewal;
         @endphp
         <tr>
             <td>{{ $key + $renewal_lists->firstItem() }}</td>
+            <td>{{ $bluebook->invoice_no ?? '-' }}</td>
             <td>{{ $vehicle->owner->first_name }} {{ $vehicle->owner->last_name }}</td>
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
             <td>{{ $bluebook->expiry_date_bs ?? '-' }}</td>
-            {{-- <td>{{ $bluebook->expiry_date ?? '-' }}</td> --}}
-            {{-- <td>{{ $renewal ? 'Renewed' : 'No Renewal' }}</td> --}}
-            <td>
+           <td>
                 @if($renewal)
                     <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
                         {{ ucfirst($renewal->status) }}

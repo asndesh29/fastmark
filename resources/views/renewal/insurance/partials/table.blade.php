@@ -2,17 +2,16 @@
     @foreach ($renewal_lists as $key => $vehicle)
         @php
             $insurance = $vehicle->insurance;
-            $renewal = $insurance?->renewal;
+            $renewal = $insurance?->latestRenewal;
         @endphp
         <tr>
             <td>{{ $key + $renewal_lists->firstItem() }}</td>
+            <td>{{ $insurance->invoice_no ?? '-' }}</td>
+            <td>{{ $insurance->provider?->name ?? 'N/A' }}</td>
             <td>{{ $vehicle->owner->first_name }} {{ $vehicle->owner->last_name }}</td>
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
-            <td>{{ $insurance->renewed_expiry_date_bs ?? '-' }}</td>
-            {{-- <td>{{ $insurance->expiry_date ?? '-' }}</td>
-            <td>{{ $renewal ? 'Renewed' : 'No Renewal' }}</td> --}}
-           
+            <td>{{ $insurance->expiry_date_bs ?? '-' }}</td>
             <td>
                 @if($renewal)
                     <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">

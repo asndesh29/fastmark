@@ -53,49 +53,24 @@ class Insurance extends Model
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function scopeExpiringSoon($query, $days = 30)
+    public function provider()
     {
-        return $query->where('expiry_date', '<=', now()->addDays($days))
-            ->where('expiry_date', '>=', now());
+        return $this->belongsTo(InsuranceProvider::class, 'provider_id');
     }
 
-    public function scopeExpired($query)
-    {
-        return $query->where('expiry_date', '<', now());
-    }
-
-    public function providers()
-    {
-        return $this->belongsTo(InsuranceProvider::class);
-    }
-
-    public static function validateData($data)
+    public static function validateData($data, $id = null)
     {
         $data['amount'] = $data['amount'] ?? 0;
 
-        // $rules = [
-        //     'vehicle_id' => ['required', 'exists:vehicles,id'],
-        //     'type' => ['nullable', 'string'],
-        //     'provider_id' => ['required', 'exists:insurance_providers,id'],
-        //     'policy_number' => ['nullable', 'string', 'max:255'],
-        //     'issue_date' => ['required', 'string', 'max:255'],
-        //     'expiry_date' => ['nullable', 'string', 'max:255'],
-        //     'amount' => ['nullable', 'numeric'],
-        //     'status' => ['required', 'in:paid,unpaid'],
-        //     'remarks' => ['nullable', 'string', 'max:255'],
-        // ];
-
-        // $messages = [
-        //     'issue_date.required' => 'Issue Date is required.',
-        // ];
-
         $rules = [
             'vehicle_id' => ['required', 'exists:vehicles,id'],
+            'renewable_type' => ['required', 'string', 'max:255'],
             'provider_id' => ['required', 'exists:insurance_providers,id'],
             'invoice_no' => ['nullable', 'string', 'max:255'],
             'expiry_date_bs' => ['required', 'string', 'max:255'],
-            'insurance_type' => ['required', 'in:general, third'],
+            'insurance_type' => ['required', 'in:general,third'],
             'policy_number' => ['nullable', 'string', 'max:255'],
+            'renewal_charge' => ['nullable', 'string', 'max:255'],
             'payment_status' => ['required', 'in:paid,unpaid'],
             'remarks' => ['nullable', 'string', 'max:255']
         ];
@@ -109,5 +84,10 @@ class Insurance extends Model
         ];
 
         return Validator::make($data, $rules, $messages);
+    }
+
+    public function latestRenewal()
+    {
+        return $this->morphOne(Renewal::class, 'renewable')->latestOfMany();
     }
 }

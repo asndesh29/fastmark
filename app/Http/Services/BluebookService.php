@@ -17,39 +17,53 @@ class BluebookService
 {
     public function list(Request $request, $perPage = null)
     {
-        $keywords = explode(' ', $request->search ?? '');
+        // dd($request->all());
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'bluebook.renewals'])
-            ->when($request->customer, function ($query, $customer) {
-                $query->whereHas('owner', function ($q) use ($customer) {
-                    $q->where('first_name', 'like', "%{$customer}%")
-                        ->orWhere('last_name', 'like', "%{$customer}%");
+        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'bluebook.latestRenewal'])
+
+            // Filter by Customer Name
+            ->when($request->filled('customer'), function ($query) use ($request) {
+                $query->whereHas('owner', function ($q) use ($request) {
+                    $q->where('first_name', 'like', "%{$request->customer}%")
+                        ->orWhere('last_name', 'like', "%{$request->customer}%");
                 });
             })
-            ->when($request->registration_no, function ($query, $registration_no) {
-                $query->where('registration_no', 'like', "%{$registration_no}%");
+
+            // Filter by Registration Number
+            ->when($request->filled('registration_no'), function ($query) use ($request) {
+                $query->where('registration_no', 'like', "%{$request->registration_no}%");
             })
-            ->when($request->expiry_date_bs, function ($query, $date) {
-                $query->whereHas('bluebook', function ($q) use ($date) {
-                    $q->whereDate('expiry_date_bs', $date);
+
+            // Filter by Invoice Number
+            ->when($request->filled('invoice'), function ($query) use ($request) {
+                $query->whereHas('bluebook', function ($q) use ($request) {
+                    $q->where('invoice_no', 'like', "%{$request->invoice}%");
                 });
             })
-            // ->when($request->new_expiry_date, function ($query, $date) {
-            //     $query->whereHas('bluebook', function ($q) use ($date) {
-            //         $q->whereDate('expiry_date', $date);
-            //     });
-            // })
-            ->when($request->status && $request->status !== 'all', function ($query, $status) {
-                $query->whereHas('bluebook.renewals', function ($q) use ($status) {
-                    $q->where('status', strtolower($status));
+
+            // Filter by Vehicle Type
+            ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
+                $query->where('vehicle_type_id', $request->vehicle_type_id);
+            })
+
+            // Filter by Expiry Date (BS)
+            ->when($request->filled('expiry_date_bs'), function ($query) use ($request) {
+                $query->whereHas('bluebook', function ($q) use ($request) {
+                    $q->where('expiry_date_bs', $request->expiry_date_bs);
                 });
             })
+
+            // Filter by Payment Status
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->whereHas('bluebook', function ($q) use ($request) {
+                    $q->where('payment_status', strtolower($request->status));
+                });
+            })
+
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
-
-        // Append filters to the pagination links
-        // $vehicles->appends($request->all());
+        // dd($vehicles);
 
         return $vehicles;
     }

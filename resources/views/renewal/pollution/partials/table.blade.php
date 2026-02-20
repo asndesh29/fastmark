@@ -2,7 +2,7 @@
     @foreach ($renewal_lists as $key => $vehicle)
         @php
             $pollution = $vehicle->pollution;
-            $renewal = $pollution?->renewal;
+            $renewal = $pollution?->latestRenewal;
         @endphp
         <tr>
             <td>{{ $key + $renewal_lists->firstItem() }}</td>

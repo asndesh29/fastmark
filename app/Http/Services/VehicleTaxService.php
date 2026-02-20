@@ -16,42 +16,6 @@ use Illuminate\Support\Facades\DB;
 
 class VehicleTaxService
 {
-    public function list1(Request $request, $perPage = null)
-    {
-        $keywords = explode(' ', $request->search ?? '');
-        $perPage = $perPage ?? config('default_pagination', 10);
-
-        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'vehicleTax.renewal'])
-            ->when($request->customer, function ($query, $customer) {
-                $query->whereHas('owner', function ($q) use ($customer) {
-                    $q->where('first_name', 'like', "%{$customer}%")
-                        ->orWhere('last_name', 'like', "%{$customer}%");
-                });
-            })
-            ->when($request->registration_no, function ($query, $registration_no) {
-                $query->where('registration_no', 'like', "%{$registration_no}%");
-            })
-            ->when($request->invoice, function ($query, $invoice) {
-                $query->whereHas('vehicleTax', function ($q) use ($invoice) {
-                    $q->where('invoice_no', 'like', "%{$invoice}%");
-                });
-            })
-            ->when($request->expiry_date_bs, function ($query, $date) {
-                $query->whereHas('vehicleTax', function ($q) use ($date) {
-                    $q->whereDate('expiry_date_bs', $date);
-                });
-            })
-            ->when($request->status && $request->status !== 'all', function ($query, $status) {
-                $query->whereHas('vehicleTax.renewal', function ($q) use ($status) {
-                    $q->where('status', strtolower($status));
-                });
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
-
-        return $vehicles;
-    }
-
     public function list(Request $request, $perPage = null)
     {
         // dd($request->all());
@@ -79,6 +43,11 @@ class VehicleTaxService
                 });
             })
 
+            // Filter by Vehicle Type
+            ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
+                $query->where('vehicle_type_id', $request->vehicle_type_id);
+            })
+
             // Filter by Expiry Date (BS)
             ->when($request->filled('expiry_date_bs'), function ($query) use ($request) {
                 $query->whereHas('vehicleTax', function ($q) use ($request) {
@@ -98,7 +67,6 @@ class VehicleTaxService
 
         return $vehicles;
     }
-
 
     public function store(array $data)
     {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Http\Services\CheckpassService;
 use App\Models\VehiclePass;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
 class CheckPassController extends Controller
@@ -24,13 +25,15 @@ class CheckPassController extends Controller
 
         $renewal_lists = $this->checkpassService->list($request, $perPage);
 
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
         // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('renewal.check-pass.partials.table', compact('renewal_lists'))->render();
             return response()->json(['html' => $html]);
         }
 
-        return view('renewal.check-pass.index', compact('renewal_lists'));
+        return view('renewal.check-pass.index', compact('renewal_lists', 'vehicle_types'));
     }
 
     /**

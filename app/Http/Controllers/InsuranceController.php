@@ -8,6 +8,7 @@ use App\Http\Services\InsuranceService;
 use App\Models\Insurance;
 use App\Models\InsuranceProvider;
 use App\Models\VehicleTax;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
 class InsuranceController extends Controller
@@ -27,15 +28,17 @@ class InsuranceController extends Controller
 
         $renewal_lists = $this->insuranceService->list($request, $perPage);
 
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
+        $providers = InsuranceProvider::where('is_active', true)->get();
+
         // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('renewal.insurance.partials.table', compact('renewal_lists'))->render();
             return response()->json(['html' => $html]);
         }
 
-        $providers = InsuranceProvider::where('is_active', true)->get();
-
-        return view('renewal.insurance.index', compact('renewal_lists', 'providers'));
+        return view('renewal.insurance.index', compact('renewal_lists', 'providers', 'vehicle_types'));
     }
 
     /**
@@ -51,26 +54,22 @@ class InsuranceController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        $validator = Insurance::validateData($request->all());
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
         try {
-            $validator = Insurance::validateData($request->all());
+            $this->insuranceService->store($validator->validated());
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            $validated = $validator->validated();
-
-            $this->insuranceService->store($validated);
-
-            AppHelper::success('Insurance record updated successfully.');
+            AppHelper::success('Insurance record created successfully.');
 
             return redirect()->back();
 
         } catch (\Throwable $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            report($e); // log error
+            return back()->withInput()->with('error', 'Something went wrong. Please try again.');
         }
     }
 
@@ -105,26 +104,21 @@ class InsuranceController extends Controller
 
     public function update(Request $request, Insurance $insurance)
     {
-        try {
-            $validator = Insurance::validateData($request->all());
+        $validator = Insurance::validateData($request->all(), $insurance->id);
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            $validated = $validator->validated();
-
-            $this->insuranceService->update($insurance, $validated);
-
-            AppHelper::success('Insurance record updated successfully.');
-
-            return redirect()->route('admin.renewal.insurance.index');
-
-        } catch (\Throwable $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
+
+        $validated = $validator->validated();
+
+        $this->insuranceService->update($insurance, $validated);
+
+        AppHelper::success('Insurance record updated successfully.');
+
+        return redirect()->route('admin.renewal.insurance.index');
     }
 
     /**

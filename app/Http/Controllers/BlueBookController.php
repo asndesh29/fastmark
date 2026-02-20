@@ -7,6 +7,7 @@ use App\Http\Services\BluebookService;
 use App\Http\Services\RenewalService;
 use App\Http\Services\VehicleService;
 use App\Models\Bluebook;
+use App\Models\VehicleType;
 use App\Services\BaseRenewalService;
 use Illuminate\Http\Request;
 
@@ -29,13 +30,15 @@ class BlueBookController extends Controller
 
         $renewal_lists = $this->bluebookService->list($request, $perPage);
 
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
         // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('renewal.bluebook.partials.table', compact('renewal_lists'))->render();
             return response()->json(['html' => $html]);
         }
 
-        return view('renewal.bluebook.index', compact('renewal_lists'));
+        return view('renewal.bluebook.index', compact('renewal_lists', 'vehicle_types'));
     }
 
     /**

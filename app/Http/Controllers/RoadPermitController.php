@@ -7,6 +7,7 @@ use App\Http\Services\PollutionService;
 use App\Http\Services\RoadpermitService;
 use App\Models\PollutionCheck;
 use App\Models\RoadPermit;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 
 class RoadPermitController extends Controller
@@ -26,13 +27,15 @@ class RoadPermitController extends Controller
 
         $renewal_lists = $this->roadpermitService->list($request, $perPage);
 
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
         // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('renewal.road-permit.partials.table', compact('renewal_lists'))->render();
             return response()->json(['html' => $html]);
         }
 
-        return view('renewal.road-permit.index', compact('renewal_lists'));
+        return view('renewal.road-permit.index', compact('renewal_lists', 'vehicle_types'));
     }
 
     /**

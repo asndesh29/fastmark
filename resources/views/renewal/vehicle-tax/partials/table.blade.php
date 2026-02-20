@@ -10,11 +10,11 @@
             <td>{{ $vehicle->owner->first_name }} {{ $vehicle->owner->last_name }}</td>
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
-            <td>{{ $vehicle_tax->expiry_date_bs ?? '-' }}</td>  
-            <td> 
+            <td>{{ $vehicle_tax->expiry_date_bs ?? '-' }}</td>
+            <td>
                 @if($renewal)
-                    <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
-                        {{ ucfirst($renewal->status) }}
+                    <span class="badge bg-{{ $renewal->is_expired ? 'danger' : 'success' }}">
+                        {{ $renewal->is_expired ? 'Expired' : ucfirst($renewal->status) }}
                     </span>
                 @endif
             </td>
@@ -22,7 +22,7 @@
             <td>
                 @if($renewal)
                     <span class="badge bg-{{ $renewal->is_paid == 1 ? 'success' : 'danger' }}">
-                        {{ ucfirst($renewal->is_paid == 1 ? 'Paid' : 'Unpaid' ) }}
+                        {{ ucfirst($renewal->is_paid == 1 ? 'Paid' : 'Unpaid') }}
                     </span>
                 @endif
             </td>
@@ -30,9 +30,7 @@
                 <ul class="list-inline hstack gap-2 mb-0">
                     <li class="list-inline-item" title="Add Renewal">
                         <button type="button" class="btn btn-outline-danger btn-sm btn-icon addBtn"
-                                data-vehicle-id="{{ $vehicle->id }}"
-                                data-bs-toggle="modal"
-                                data-bs-target="#vehicletaxModal">
+                            data-vehicle-id="{{ $vehicle->id }}" data-bs-toggle="modal" data-bs-target="#vehicletaxModal">
                             <i class="ri-add-fill"></i>
                         </button>
                     </li>
@@ -63,8 +61,7 @@
         <td colspan="10" class="text-center">
             <div class="noresult text-center">
                 <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
-                            colors="primary:#121331,secondary:#08a88a"
-                            style="width:75px;height:75px"></lord-icon>
+                    colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
                 <h5 class="mt-2">Sorry! No Result Found</h5>
                 <p class="text-muted mb-0">No matching records found.</p>
             </div>

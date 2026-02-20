@@ -10,9 +10,7 @@
             <td>{{ $vehicle->owner->first_name }} {{ $vehicle->owner->last_name }}</td>
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
-            <td>{{ $vehiclepass->renewed_expiry_date_bs ?? '-' }}</td>
-            {{-- <td>{{ $vehiclepass->expiry_date ?? '-' }}</td> --}}
-            {{-- <td>{{ $renewal ? 'Renewed' : 'No Renewal' }}</td> --}}
+            <td>{{ $vehiclepass->expiry_date_bs ?? '-' }}</td>
             <td>
                 @if($renewal)
                     <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
