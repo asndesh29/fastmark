@@ -96,8 +96,8 @@
                                             <th>Customer</th>
                                             <th>Vehicle Type</th>
                                             <th>Registration No</th>
-                                            <th>Last Expiry Date</th>
-                                            <th>New Expiry Date</th>
+                                            <th>Expiry Date</th>
+                                            {{-- <th>New Expiry Date</th> --}}
                                             <th>Renewal</th>
                                             <th>Payment</th>
                                             <th>Actions</th>
@@ -122,7 +122,7 @@
             <form id="pollutionForm" method="POST" action="{{ route('admin.renewal.pollution.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
-                <input type="hidden" name="type" value="pollution">
+                <input type="hidden" name="renewable_type" value="pollution">
 
                 <div class="modal-content">
                     <div class="modal-header">
@@ -135,15 +135,15 @@
                             <label>Invoice Number</label>
                             <input type="text" class="form-control" name="invoice_number" placeholder="Enter invoice number">
                         </div> --}}
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label>Issue Date</label>
                             <input type="text" class="form-control nepali-date" name="issue_date"
                                     placeholder="Select Issue Date" autocomplete="off"/>
-                        </div>
+                        </div> --}}
                         <div class="mb-3">
-                            <label>Last Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="last_expiry_date"
-                                    placeholder="Select Last Expiry Date" autocomplete="off"/>
+                            <label>Expiry Date</label>
+                            <input type="text" class="form-control nepali-date" name="expiry_date_bs"
+                                    placeholder="Select Expiry Date" autocomplete="off"/>
                         </div>
                         {{-- <div class="mb-3">
                             <label>Tax Amount</label>
@@ -161,7 +161,7 @@
                         </div> --}}
                         <div class="mb-3">
                             <label>Status</label>
-                            <select class="form-select" name="status">
+                            <select class="form-select" name="payment_status">
                                 <option value="paid">Paid</option>
                                 <option value="unpaid">Unpaid</option>
                             </select>
@@ -195,20 +195,20 @@
             clearErrorMessages();
 
             // Check if there are validation errors for required fields
-            const issueDate = form.querySelector('input[name="issue_date"]');
-            const lastExpiryDate = form.querySelector('input[name="last_expiry_date"]');
+            // const issueDate = form.querySelector('input[name="issue_date"]');
+            const expiryDate = form.querySelector('input[name="expiry_date_bs"]');
 
             let hasError = false;
 
             // Validate Issue Date
-            if (!issueDate.value) {
-                showError(issueDate, 'Issue Date is required.');
-                hasError = true;
-            }
+            // if (!issueDate.value) {
+            //     showError(issueDate, 'Issue Date is required.');
+            //     hasError = true;
+            // }
 
             // Validate Last Expiry Date
-            if (!lastExpiryDate.value) {
-                showError(lastExpiryDate, 'Last Expiry Date is required.');
+            if (!expiryDate.value) {
+                showError(expiryDate, 'Expiry Date is required.');
                 hasError = true;
             }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
@@ -27,10 +28,10 @@ class Renewal extends Model
     ];
 
 
-    // public function vehicle()
-    // {
-    //     return $this->belongsTo(Vehicle::class);
-    // }
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
 
     public function customer()
     {
@@ -76,6 +77,14 @@ class Renewal extends Model
     {
         return $this->renewable?->vehicle;
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($renewal) {
+            $renewal->reminder_date = Carbon::parse($renewal->expiry_date_ad)->subDays(7);
+        });
+    }
+
 
 
 }

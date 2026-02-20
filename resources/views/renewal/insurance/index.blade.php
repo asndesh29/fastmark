@@ -87,8 +87,8 @@
                                             <th>Customer</th>
                                             <th>Vehicle Type</th>
                                             <th>Registration No</th>
-                                            <th>Issue Date</th>
-                                            <th>New Expiry Date</th>
+                                            <th>Expiry Date</th>
+                                            {{-- <th>New Expiry Date</th> --}}
                                             <th>Renewal</th>
                                             <th>Payment</th>
                                             <th>Actions</th>

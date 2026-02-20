@@ -30,10 +30,10 @@ class Bluebook extends Model
         'renewed_expiry_date_ad' => 'date',
     ];
 
-    public function renewal()
-    {
-        return $this->morphOne(Renewal::class, 'renewable');
-    }
+    // public function renewal()
+    // {
+    //     return $this->morphOne(Renewal::class, 'renewable');
+    // }
 
     public function renewals()
     {
@@ -61,7 +61,7 @@ class Bluebook extends Model
         $rules = [
             'vehicle_id' => ['required', 'exists:vehicles,id'],
             'invoice_no' => ['nullable', 'string', 'max:255'],
-            // 'issue_date' => ['required', 'string', 'max:255'],
+            'renewable_type' => ['required', 'string', 'max:255'],
             'expiry_date_bs' => ['required', 'string', 'max:255'],
             'payment_status' => ['required', 'in:paid,unpaid'],
             'remarks' => ['nullable', 'string', 'max:255']
@@ -74,5 +74,10 @@ class Bluebook extends Model
         ];
 
         return Validator::make($data, $rules, $messages);
+    }
+
+    public function latestRenewal()
+    {
+        return $this->morphOne(Renewal::class, 'renewable')->latestOfMany();
     }
 }

@@ -2,20 +2,28 @@
     @foreach ($renewal_lists as $key => $vehicle)
         @php
             $bluebook = $vehicle->bluebook;
-            $renewal = $bluebook?->renewal;
+            $renewal = $bluebook?->renewals?->sortByDesc('id')->first();
         @endphp
         <tr>
             <td>{{ $key + $renewal_lists->firstItem() }}</td>
             <td>{{ $vehicle->owner->first_name }} {{ $vehicle->owner->last_name }}</td>
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
-            <td>{{ $bluebook->last_expiry_date ?? '-' }}</td>
-            <td>{{ $bluebook->expiry_date ?? '-' }}</td>
-            <td>{{ $renewal ? 'Renewed' : 'No Renewal' }}</td>
+            <td>{{ $bluebook->expiry_date_bs ?? '-' }}</td>
+            {{-- <td>{{ $bluebook->expiry_date ?? '-' }}</td> --}}
+            {{-- <td>{{ $renewal ? 'Renewed' : 'No Renewal' }}</td> --}}
             <td>
                 @if($renewal)
-                    <span class="badge bg-{{ $renewal->status == 'paid' ? 'success' : 'danger' }}">
+                    <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
                         {{ ucfirst($renewal->status) }}
+                    </span>
+                @endif
+            </td>
+
+            <td>
+                @if($renewal)
+                    <span class="badge bg-{{ $renewal->is_paid == 1 ? 'success' : 'danger' }}">
+                        {{ ucfirst($renewal->is_paid == 1 ? 'Paid' : 'Unpaid' ) }}
                     </span>
                 @endif
             </td>

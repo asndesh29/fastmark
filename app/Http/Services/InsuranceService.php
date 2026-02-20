@@ -11,6 +11,7 @@ use App\Models\RenewalType;
 use App\Models\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InsuranceService
 {
@@ -55,67 +56,63 @@ class InsuranceService
         return $vehicles;
     }
 
-
     public function store(array $data)
     {
-        // dd($data);
-        $renewal_type = RenewalType::where('slug', $data['type'])->first();
-        // dd($renewal_type);
+        DB::beginTransaction();
 
-        if (!$renewal_type) {
-            throw new \Exception("Renewal type '{$data['type']}' not found.");
+        try {
+
+            // Get renewal type
+            $renewalType = RenewalType::where('slug', $data['renewable_type'])
+                ->firstOrFail();
+
+            // Get vehicle
+            $vehicle = Vehicle::findOrFail($data['vehicle_id']);
+
+            // Generate book number
+            $invoiceNumber = AppHelper::generateInvoiceNumber('insurance');
+
+            // Calculate expiry using dynamic validity
+            $expiryData = $this->calculateExpiryDate(
+                $data['expiry_date_bs'],
+                $renewalType,
+                $vehicle
+            );
+            // dd($expiryData);
+
+            // Create Vehicle Pass
+            $vehiclePass = Insurance::create([
+                'vehicle_id' => $vehicle->id,
+                'invoice_no' => $invoiceNumber,
+                'expiry_date_bs' => $data['expiry_date_bs'],
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'payment_status' => $data['payment_status'],
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            // Create Renewal using relationship (cleaner)
+            $vehiclePass->renewals()->create([
+                'vehicle_id' => $vehicle->id,
+                'renewal_type_id' => $renewalType->id,
+                'status' => 'renewed',
+                'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                'start_date_bs' => $expiryData['start_bs'],
+                'expiry_date_bs' => $expiryData['expiry_bs'],
+                'start_date_ad' => $expiryData['start_ad'],
+                'expiry_date_ad' => $expiryData['expiry_ad'],
+                'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            DB::commit();
+
+            return $vehiclePass;
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-
-        // Generate the invoice number automatically
-        $policy_number = AppHelper::generateInvoiceNumber('insurance');
-        // dd($policy_number);
-
-        $expiryDate = $this->calculateExpiryDate($data['issue_date']);
-        // dd($expiryDate);
-
-        $insurance = Insurance::create([
-            'vehicle_id' => $data['vehicle_id'],
-            'provider_id' => $data['provider_id'],
-            'policy_number' => $policy_number,
-            'issue_date' => $data['issue_date'],
-            'amount' => $data['amount'],
-            'expiry_date' => $expiryDate,
-            'status' => $data['status'],
-            'remarks' => $data['remarks'],
-        ]);
-
-        Renewal::create([
-            'vehicle_id' => $data['vehicle_id'],
-            'renewal_type_id' => $renewal_type->id,
-            'renewable_type' => Insurance::class,
-            'renewable_id' => $insurance->id,
-            'status' => $data['status'],
-            'start_date' => $data['issue_date'],
-            'expiry_date' => $expiryDate,
-            'reminder_date' => Carbon::parse($expiryDate)->subDays(7),
-            'remarks' => $data['remarks'] ?? null,
-        ]);
-
-        return $insurance;
-
-    }
-
-    private function calculateExpiryDate($lastExpiryDate)
-    {
-        // Convert Nepali issue date to English (Y-m-d)
-        $engIssueDate = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($lastExpiryDate, '-');
-
-        // Add days based on category
-        $engExpiryDate = Carbon::parse($engIssueDate)->addDays(364)->format('Y-m-d');
-
-        // Convert back to Nepali date
-        $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
-
-        // Ensure format YYYY-MM-DD
-        $parts = explode('-', $nepExpiryDate);
-        $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
-
-        return $nepExpiryDate;
     }
 
     public function getById($id)
@@ -126,41 +123,53 @@ class InsuranceService
     public function update(Insurance $insurance, array $data)
     {
         // dd($data);
-        // Find the renewal type
-        $renewalType = RenewalType::where('slug', $data['type'])->firstOrFail();
+        DB::beginTransaction();
 
-        $expiryDate = $this->calculateExpiryDate($data['issue_date']);
-        // dd($expiryDate);
+        try {
 
-        // Update the Bluebook
-        $insurance->update([
-            'vehicle_id' => $data['vehicle_id'],
-            'provider_id' => $data['provider_id'],
-            'issue_date' => $data['issue_date'],
-            'amount' => $data['amount'],
-            'expiry_date' => $expiryDate,
-            'status' => $data['status'],
-            'remarks' => $data['remarks'],
-        ]);
+            $renewalType = RenewalType::where('slug', $data['renewable_type'])
+                ->firstOrFail();
 
-        // Update or create the related Renewal
-        Renewal::updateOrCreate(
-            [
-                'renewable_id' => $insurance->id,
-                'renewable_type' => Insurance::class,
-            ],
-            [
-                'vehicle_id' => $data['vehicle_id'],
-                'renewal_type_id' => $renewalType->id,
-                'status' => $data['status'],
-                'start_date' => $data['issue_date'],
-                'expiry_date' => $expiryDate,
-                'reminder_date' => Carbon::parse($expiryDate)->subDays(7),
+            $vehicle = $insurance->vehicle;
+
+            // Calculate expiry using dynamic validity
+            $expiryData = $this->calculateExpiryDate(
+                $data['expiry_date_bs'],
+                $renewalType,
+                $vehicle
+            );
+
+            // Update Bluebook
+            $insurance->update([
+                'expiry_date_bs' => $data['expiry_date_bs'],
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'payment_status' => $data['payment_status'],
                 'remarks' => $data['remarks'] ?? null,
-            ]
-        );
+            ]);
 
-        return $insurance->fresh();
+            // Create Renewal History Record
+            $insurance->renewals()->create([
+                'vehicle_id' => $vehicle->id,
+                'renewal_type_id' => $renewalType->id,
+                'status' => 'renewed',
+                'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                'start_date_bs' => $expiryData['start_bs'],
+                'expiry_date_bs' => $expiryData['expiry_bs'],
+                'start_date_ad' => $expiryData['start_ad'],
+                'expiry_date_ad' => $expiryData['expiry_ad'],
+                'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            DB::commit();
+
+            return $insurance->fresh();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function delete($id)
@@ -172,5 +181,42 @@ class InsuranceService
         }
 
         return $insurance->delete();
+    }
+
+    private function calculateExpiryDate($startDateBs, $renewalType, $vehicle)
+    {
+        if (!$startDateBs) {
+            return null;
+        }
+
+        $startAd = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep(
+            $startDateBs,
+            '-'
+        );
+        // dd($startAd);
+
+        $date = Carbon::parse($startAd);
+        // dd($date);
+
+        $validity = $renewalType->getValidityForVehicle($vehicle);
+
+        if (!empty($validity['value']) && !empty($validity['unit'])) {
+            $date->add($validity['unit'], $validity['value'])->subDay();
+        }
+
+        $expiryAd = $date->format('Y-m-d');
+
+        $expiryBs = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep(
+            $expiryAd,
+            '-'
+        );
+
+        return [
+            'start_ad' => $startAd,
+            'issue_ad' => $startAd,
+            'expiry_ad' => $expiryAd,
+            'start_bs' => $startDateBs,
+            'expiry_bs' => $expiryBs,
+        ];
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Http\Services\PollutionService;
-use App\Models\PollutionCheck;
+use App\Models\Pollution;
 use Illuminate\Http\Request;
 
 class PollutionController extends Controller
@@ -48,7 +48,7 @@ class PollutionController extends Controller
     {
         // dd($request->all());
         try {
-            $validator = PollutionCheck::validateData($request->all());
+            $validator = Pollution::validateData($request->all());
 
             if ($validator->fails()) {
                 return redirect()->back()
@@ -71,7 +71,7 @@ class PollutionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PollutionCheck $pollution)
+    public function show(Pollution $pollution)
     {
         // Eager load renewals and their types
         $pollution->load('renewals.renewalType', 'vehicle');
@@ -82,7 +82,7 @@ class PollutionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PollutionCheck $pollution)
+    public function edit(Pollution $pollution)
     {
         // dd($pollutionCheck);
         $renewal = $this->pollutionService->getById($pollution->id);
@@ -90,9 +90,10 @@ class PollutionController extends Controller
         return view('renewal.pollution.edit', compact('renewal'));
     }
 
-    public function update(Request $request, PollutionCheck $pollution)
+    public function update(Request $request, Pollution $pollution)
     {
-        $validator = PollutionCheck::validateData($request->all());
+        // dd($request->all());
+        $validator = Pollution::validateData($request->all());
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -112,7 +113,7 @@ class PollutionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PollutionCheck $pollution)
+    public function destroy(Pollution $pollution)
     {
 
     }

@@ -167,6 +167,16 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+
+                                @if ($providers->hasPages())
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="d-flex justify-content-end">
+                                                {!! $providers->links('pagination::bootstrap-5') !!}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
                             </table>
                         </div>
                     </div>

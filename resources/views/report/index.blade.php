@@ -60,39 +60,25 @@
                                         <label>Status</label>
                                         <select name="status" class="form-select">
                                             <option value="">All</option>
-                                            <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Active</option>
-                                            <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactive</option>
+                                            <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Active
+                                            </option>
+                                            <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactive
+                                            </option>
                                         </select>
                                     </div>
 
                                     <div class="col-xxl-2 col-sm-4">
                                         <label>From Date</label>
-                                       <input type="text"
-                                            id="from_date"
-                                            name="from_date"
-                                            class="form-control nepali-date"
-                                            value="{{ request('from_date') }}"
-                                            placeholder="YYYY-MM-DD"
-                                            autocomplete="off"
-                                            autocorrect="off"
-                                            autocapitalize="off"
-                                            spellcheck="false"
-                                            readonly>
+                                        <input type="text" id="from_date" name="from_date" class="form-control nepali-date"
+                                            value="{{ request('from_date') }}" placeholder="YYYY-MM-DD" autocomplete="off"
+                                            autocorrect="off" autocapitalize="off" spellcheck="false" readonly>
                                     </div>
 
                                     <div class="col-xxl-2 col-sm-4">
                                         <label>To Date</label>
-                                        <input type="text"
-                                            id="to_date"
-                                            name="to_date"
-                                            class="form-control nepali-date"
-                                            value="{{ request('to_date') }}"
-                                            placeholder="YYYY-MM-DD"
-                                            autocomplete="off"
-                                            autocorrect="off"
-                                            autocapitalize="off"
-                                            spellcheck="false"
-                                            readonly>
+                                        <input type="text" id="to_date" name="to_date" class="form-control nepali-date"
+                                            value="{{ request('to_date') }}" placeholder="YYYY-MM-DD" autocomplete="off"
+                                            autocorrect="off" autocapitalize="off" spellcheck="false" readonly>
                                     </div>
 
                                     <div class="col-auto pt-4">
@@ -152,7 +138,7 @@
                 </div>
             </div>
             <!-- customer -->
-        </div> 
+        </div>
         <!-- end col -->
     </div>
 @endsection
@@ -172,4 +158,3 @@
         });
     </script>
 @endpush
-

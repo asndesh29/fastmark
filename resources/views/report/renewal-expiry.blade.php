@@ -112,6 +112,7 @@
                             <table class="table align-middle">
                                 <thead class="table-light text-muted">
                                     <tr>
+                                        <th>S.No.</th>
                                         <th>Vehicle</th>
                                         <th>Renewal Type</th>
                                         <th>Start Date</th>
@@ -121,10 +122,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($renewals as $renewal)
+                                    @forelse($renewals as $key => $renewal)
                                         @php
                                             $today = \Carbon\Carbon::today();
-                                            $expiry = \Carbon\Carbon::parse($renewal->expiry_date);
+                                            $expiry = \Carbon\Carbon::parse($renewal->expiry_date_ad)->startOfDay();
                                             $daysLeft = $today->diffInDays($expiry, false);
                                         @endphp
 
@@ -133,10 +134,11 @@
                                             @elseif($daysLeft <= 7) table-warning
                                             @endif
                                         ">
+                                            <td>{{ $key + $renewals->firstItem() }}</td>
                                             <td>{{ $renewal->vehicle?->registration_no }}</td>
                                             <td>{{ $renewal->renewalType?->name }}</td>
-                                            <td>{{ $renewal->start_date }}</td>
-                                            <td>{{ $renewal->expiry_date }}</td>
+                                            <td>{{ $renewal->start_date_bs }}</td>
+                                            <td>{{ $renewal->expiry_date_bs }}</td>
                                             <td>{{ ucfirst($renewal->status) }}</td>
                                             <td>
                                                 @if($daysLeft < 0)
@@ -150,7 +152,6 @@
                                                 @endif
                                             </td>
                                         </tr>
-
                                     @empty
                                         <tr>
                                             <td colspan="6" class="text-center">No records found</td>
@@ -159,7 +160,17 @@
                                 </tbody>
                             </table>
 
-                            {{ $renewals->withQueryString()->links() }}
+                            {{-- {{ $renewals->withQueryString()->links() }} --}}
+
+                            @if ($renewals->hasPages())
+                                <tr>
+                                    <td colspan="10">
+                                        <div class="d-flex justify-content-end">
+                                            {!! $renewals->links('pagination::bootstrap-5') !!}
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
                         </div>
                     </div>
                 </div>

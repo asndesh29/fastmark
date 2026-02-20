@@ -47,18 +47,18 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xxl-2 col-sm-12">
+                                {{-- <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
                                         <input type="text" class="form-control"
                                                placeholder="Last Expiry Date">
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
                                         <input type="text" class="form-control"
-                                               placeholder="New Expiry Date">
+                                               placeholder="Expiry Date">
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
                                 </div>
@@ -87,8 +87,8 @@
                                             <th>Customer</th>
                                             <th>Vehicle Type</th>
                                             <th>Registration No</th>
-                                            <th>Last Expiry Date</th>
-                                            <th>New Expiry Date</th>
+                                            <th>Expiry Date</th>
+                                            {{-- <th>New Expiry Date</th> --}}
                                             <th>Renewal</th>
                                             <th>Payment</th>
                                             <th>Actions</th>
@@ -113,7 +113,7 @@
             <form id="bluebookForm" method="POST" action="{{ route('admin.renewal.bluebook.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
-                <input type="hidden" name="type" value="bluebook">
+                <input type="hidden" name="renewable_type" value="bluebook">
 
                 <div class="modal-content">
                     <div class="modal-header">
@@ -137,16 +137,16 @@
                         </div> --}}
                         <div class="mb-3">
                             <label>Expiry Date (म्याद समाप्त मिति)</label>
-                            <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" 
-                                name="last_expiry_date" placeholder="Select Expiry Date" autocomplete="off"/>
+                            <input type="text" class="form-control nepali-date @error('expiry_date_bs') is-invalid @enderror" 
+                                name="expiry_date_bs" placeholder="Select Expiry Date" autocomplete="off"/>
 
-                            @error('last_expiry_date')
+                            @error('expiry_date_bs')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
-                            <select class="form-select mb-3" name="status">
+                            <select class="form-select mb-3" name="payment_status">
                                 <option value="paid">Paid</option>
                                 <option value="unpaid">Unpaid</option>
                             </select>
@@ -181,19 +181,19 @@
 
             // Check if there are validation errors for required fields
             const issueDate = form.querySelector('input[name="issue_date"]');
-            const lastExpiryDate = form.querySelector('input[name="last_expiry_date"]');
+            const expiryDate = form.querySelector('input[name="expiry_date_bs"]');
 
             let hasError = false;
 
             // Validate Issue Date
-            if (!issueDate.value) {
-                showError(issueDate, 'Issue Date is required.');
-                hasError = true;
-            }
+            // if (!issueDate.value) {
+            //     showError(issueDate, 'Issue Date is required.');
+            //     hasError = true;
+            // }
 
             // Validate Last Expiry Date
-            if (!lastExpiryDate.value) {
-                showError(lastExpiryDate, 'Last Expiry Date is required.');
+            if (!expiryDate.value) {
+                showError(expiryDate, 'Expiry Date is required.');
                 hasError = true;
             }
 

@@ -33,46 +33,44 @@
                             <div class="row g-3">
                                 <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="Search for invoice">
+                                        <input type="text" class="form-control" placeholder="Search for invoice">
                                         <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
 
                                 <div class="col-xxl-3 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="Search for customer">
-                                        <i class="ri-search-line search-icon"></i>
-                                    </div>
-                                </div>
-
-                                <div class="col-xxl-3 col-sm-12">
-                                    <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="Search for registration no">
+                                        <input type="text" class="form-control" placeholder="Search for customer">
                                         <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
 
                                 <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="Last Expiry Date">
+                                        <input type="text" class="form-control" placeholder="Search for registration no">
+                                        <i class="ri-search-line search-icon"></i>
+                                    </div>
+                                </div>
+
+                                {{-- <div class="col-xxl-2 col-sm-12">
+                                    <div class="search-box">
+                                        <input type="text" class="form-control" placeholder="Last Expiry Date">
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="New Expiry Date">
+                                        <input type="text" id="expiry_date_bs" name="expiry_date_bs"
+                                            class="form-control nepali-date" value="{{ request('expiry_date_bs') }}"
+                                            placeholder="YYYY-MM-DD" autocomplete="off" autocorrect="off"
+                                            autocapitalize="off" spellcheck="false" />
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
                                 </div>
 
                                 <div class="col-xxl-2 col-sm-4">
-                                    <select class="form-select" id="idStatus">
+                                    <select class="form-select" id="payment_status">
                                         <option value="all" selected>All</option>
                                         <option value="unpaid">Unpaid</option>
                                         <option value="paid">Paid</option>
@@ -96,8 +94,8 @@
                                             <th>Customer</th>
                                             <th>Vehicle Type</th>
                                             <th>Registration No</th>
-                                            <th>Last Expiry Date</th>
-                                            <th>New Expiry Date</th>
+                                            <th>Expiry Date</th>
+                                            {{-- <th>New Expiry Date</th> --}}
                                             <th>Renewal</th>
                                             <th>Payment</th>
                                             <th>Actions</th>
@@ -116,34 +114,33 @@
     </div>
 
     <!-- Road Permit Modal -->
-    <div class="modal fade" id="vehicletaxModal" tabindex="-1" aria-labelledby="vehicletaxModal"
-            aria-hidden="true">
+    <div class="modal fade" id="vehicletaxModal" tabindex="-1" aria-labelledby="vehicletaxModal" aria-hidden="true">
         <div class="modal-dialog">
             <form id="vehicletaxForm" method="POST" action="{{ route('admin.renewal.vehicle-tax.store') }}">
                 @csrf
                 <input type="hidden" name="vehicle_id">
-                <input type="hidden" name="type" value="vehicle-tax">
+                <input type="hidden" name="renewable_type" value="vehicle-tax">
 
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Add Vehicle Tax Renewal</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         {{-- <div class="mb-3">
                             <label>Invoice Number</label>
-                            <input type="text" class="form-control" name="invoice_number" placeholder="Enter invoice number">
-                        </div> --}}
+                            <input type="text" class="form-control" name="invoice_number"
+                                placeholder="Enter invoice number">
+                        </div>
                         <div class="mb-3">
                             <label>Issue Date</label>
                             <input type="text" class="form-control nepali-date" name="issue_date"
-                                    placeholder="Select Issue Date" autocomplete="off"/>
-                        </div>
+                                placeholder="Select Issue Date" autocomplete="off" />
+                        </div> --}}
                         <div class="mb-3">
-                            <label>Last Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="last_expiry_date"
-                                    placeholder="Select Last Expiry Date" autocomplete="off"/>
+                            <label>Expiry Date</label>
+                            <input type="text" class="form-control nepali-date" name="expiry_date_bs"
+                                placeholder="Select Expiry Date" readonly />
                         </div>
                         {{-- <div class="mb-3">
                             <label>Tax Amount</label>
@@ -152,16 +149,18 @@
 
                         <div class="mb-3">
                             <label>Renewal Charge</label>
-                            <input type="text" class="form-control" name="renewal_charge" placeholder="Enter renewal charge">
+                            <input type="text" class="form-control" name="renewal_charge"
+                                placeholder="Enter renewal charge">
                         </div>
 
                         <div class="mb-3">
                             <label>Income Tax</label>
-                            <input type="number" min="0" max="999999999.99" class="form-control" name="income_tax" placeholder="Enter income tax amount">
+                            <input type="number" min="0" max="999999999.99" class="form-control" name="income_tax"
+                                placeholder="Enter income tax amount">
                         </div> --}}
                         <div class="mb-3">
                             <label>Status</label>
-                            <select class="form-select" name="status">
+                            <select class="form-select" name="payment_status">
                                 <option value="paid">Paid</option>
                                 <option value="unpaid">Unpaid</option>
                             </select>
@@ -181,115 +180,148 @@
 @endsection
 
 @push('script_2')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Dynamically set vehicle_id in modal
-        const modal = document.getElementById('vehicletaxModal');
-        const vehicleInput = modal.querySelector('input[name="vehicle_id"]');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
 
-         // Prevent modal from closing if form validation fails
-        const form = document.getElementById('vehicletaxForm');
-        form.addEventListener('submit', function (e) {
-            // Clear any previous error messages
-            clearErrorMessages();
+            /* ================================
+               1. Initialize Nepali Date Picker
+               ================================ */
 
-            // Check if there are validation errors for required fields
-            const issueDate = form.querySelector('input[name="issue_date"]');
-            const lastExpiryDate = form.querySelector('input[name="last_expiry_date"]');
-
-            let hasError = false;
-
-            // Validate Issue Date
-            if (!issueDate.value) {
-                showError(issueDate, 'Issue Date is required.');
-                hasError = true;
-            }
-
-            // Validate Last Expiry Date
-            if (!lastExpiryDate.value) {
-                showError(lastExpiryDate, 'Last Expiry Date is required.');
-                hasError = true;
-            }
-
-            // If there are errors, prevent form submission
-            if (hasError) {
-                e.preventDefault();
-            }
-        });
-
-        // Show error message below the input field
-        function showError(input, message) {
-            input.classList.add('is-invalid');  // Adds Bootstrap invalid styling
-            const errorDiv = document.createElement('div');
-            errorDiv.classList.add('invalid-feedback');
-            errorDiv.textContent = message;
-            input.parentElement.appendChild(errorDiv);  // Add error message below the input
-        }
-
-        // Clear all error messages
-        function clearErrorMessages() {
-            const errorMessages = form.querySelectorAll('.invalid-feedback');
-            errorMessages.forEach(function(error) {
-                error.remove();  // Remove error message
+            // For normal page inputs (like filter field)
+            $('.nepali-date').each(function () {
+                if (!$(this).hasClass('ndp-initialized')) {
+                    $(this).nepaliDatePicker({
+                        ndpYear: true,
+                        ndpMonth: true,
+                        ndpYearCount: 20
+                    });
+                    $(this).addClass('ndp-initialized');
+                }
             });
 
-            // Remove invalid class from all inputs
-            const inputs = form.querySelectorAll('.form-control');
-            inputs.forEach(function(input) {
-                input.classList.remove('is-invalid');
-            });
-        }
 
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.addBtn')) {
-                const btn = e.target.closest('.addBtn');
-                vehicleInput.value = btn.getAttribute('data-vehicle-id');
-            }
-        });
+            /* ================================
+               2. Reinitialize inside Modal
+               ================================ */
 
-        // Initialize Nepali datepicker on page load
-        document.querySelectorAll('.nepali-date').forEach(function(input) {
-            if (!input.classList.contains('ndp-initialized')) {
-                $(input).NepaliDatePicker({
-                    container: '#vehicletaxModal'
-                }).addClass('ndp-initialized');
-            }
-        });
-    });
-
-    // AJAX Filter + Pagination
-    function SearchData(page = 1) {
-        const invoice = document.querySelector('input[placeholder="Search for invoice"]').value;
-        const customer = document.querySelector('input[placeholder="Search for customer"]').value;
-        const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
-        const last_expiry_date = document.querySelector('input[placeholder="Last Expiry Date"]').value;
-        const new_expiry_date = document.querySelector('input[placeholder="New Expiry Date"]').value;
-        const status = document.getElementById('idStatus').value;
-
-        const params = { invoice, customer, registration_no, last_expiry_date, new_expiry_date, status, page };
-
-        const tbody = document.getElementById('renewalTableBody');
-        tbody.innerHTML = `<tr><td colspan="10" class="text-center p-4">Loading...</td></tr>`;
-
-        fetch(`{{ route('admin.renewal.vehicle-tax.index') }}?${new URLSearchParams(params)}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            tbody.innerHTML = data.html;
-
-            // Re-bind pagination links
-            document.querySelectorAll('.pagination a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = new URL(this.href).searchParams.get('page');
-                    SearchData(page);
+            $('#vehicletaxModal').on('shown.bs.modal', function () {
+                $(this).find('.nepali-date').each(function () {
+                    if (!$(this).hasClass('ndp-initialized')) {
+                        $(this).nepaliDatePicker({
+                            ndpYear: true,
+                            ndpMonth: true,
+                            ndpYearCount: 20
+                        });
+                        $(this).addClass('ndp-initialized');
+                    }
                 });
             });
-        })
-        .catch(() => {
-            tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Error loading data</td></tr>`;
+
+
+            /* ================================
+               3. Modal Vehicle ID Setup
+               ================================ */
+
+            const modal = document.getElementById('vehicletaxModal');
+            const vehicleInput = modal.querySelector('input[name="vehicle_id"]');
+
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.addBtn')) {
+                    const btn = e.target.closest('.addBtn');
+                    vehicleInput.value = btn.getAttribute('data-vehicle-id');
+                }
+            });
+
+
+            /* ================================
+               4. Form Validation
+               ================================ */
+
+            const form = document.getElementById('vehicletaxForm');
+
+            form.addEventListener('submit', function (e) {
+                clearErrorMessages();
+
+                const expiryDate = form.querySelector('input[name="expiry_date_bs"]');
+                let hasError = false;
+
+                if (!expiryDate.value) {
+                    showError(expiryDate, 'Expiry Date is required.');
+                    hasError = true;
+                }
+
+                if (hasError) {
+                    e.preventDefault();
+                }
+            });
+
+            function showError(input, message) {
+                input.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('invalid-feedback');
+                errorDiv.textContent = message;
+                input.parentElement.appendChild(errorDiv);
+            }
+
+            function clearErrorMessages() {
+                const errorMessages = form.querySelectorAll('.invalid-feedback');
+                errorMessages.forEach(function (error) {
+                    error.remove();
+                });
+
+                const inputs = form.querySelectorAll('.form-control');
+                inputs.forEach(function (input) {
+                    input.classList.remove('is-invalid');
+                });
+            }
+
         });
-    }
-</script>
+
+        // AJAX Filter + Pagination
+        function SearchData(page = 1) {
+            const invoice = document.querySelector('input[placeholder="Search for invoice"]').value;
+            const customer = document.querySelector('input[placeholder="Search for customer"]').value;
+            const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
+            const expiry_date_bs = document.getElementById('expiry_date_bs').value;
+            const status = document.getElementById('payment_status').value;
+
+            const params = {
+                invoice,
+                customer,
+                registration_no,
+                expiry_date_bs,
+                status,
+                page
+            };
+
+            const tbody = document.getElementById('renewalTableBody');
+            tbody.innerHTML = `<tr>
+                    <td colspan="10" class="text-center p-4">Loading...</td>
+                </tr>`;
+
+            fetch(`{{ route('admin.renewal.vehicle-tax.index') }}?${new URLSearchParams(params)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = data.html;
+
+                    // Re-bind pagination links
+                    document.querySelectorAll('.pagination a').forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const page = new URL(this.href).searchParams.get('page');
+                            SearchData(page);
+                        });
+                    });
+                })
+                .catch(() => {
+                    tbody.innerHTML = `<tr>
+                    <td colspan="10" class="text-center text-danger">
+                        Error loading data
+                    </td>
+                </tr>`;
+                });
+        }
+    </script>
 @endpush
