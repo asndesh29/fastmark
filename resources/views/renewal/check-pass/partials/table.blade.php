@@ -2,7 +2,7 @@
     @foreach ($renewal_lists as $key => $vehicle)
         @php
             $vehiclepass = $vehicle->vehiclePass;
-            $renewal = $vehiclepass?->renewal;
+            $renewal = $vehiclepass?->renewals?->sortByDesc('id')->first();
         @endphp
         <tr>
             <td>{{ $key + $renewal_lists->firstItem() }}</td>

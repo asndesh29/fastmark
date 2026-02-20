@@ -2,7 +2,7 @@
     @foreach ($renewal_lists as $key => $vehicle)
         @php
             $vehicle_tax = $vehicle->vehicleTax;
-            $renewal = $vehicle_tax?->renewal;
+            $renewal = $vehicle_tax?->latestRenewal;
         @endphp
         <tr>
             <td>{{ $key + $renewal_lists->firstItem() }}</td>
@@ -10,10 +10,7 @@
             <td>{{ $vehicle->owner->first_name }} {{ $vehicle->owner->last_name }}</td>
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
-            <td>{{ $vehicle_tax->expiry_date_bs ?? '-' }}</td>
-            {{-- <td>{{ $vehicle_tax->expiry_date ?? '-' }}</td>
-            <td>{{ $renewal ? 'Renewed' : 'No Renewal' }}</td>--}}
-            
+            <td>{{ $vehicle_tax->expiry_date_bs ?? '-' }}</td>  
             <td> 
                 @if($renewal)
                     <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">

@@ -6,6 +6,7 @@ use App\Generic\GenericDateConverter\GenericDateConvertHelper;
 use App\Helpers\AppHelper;
 use App\Models\Bluebook;
 use App\Models\Customer;
+use App\Models\Pollution;
 use App\Models\PollutionCheck;
 use App\Models\Renewal;
 use App\Models\RenewalType;
@@ -57,191 +58,121 @@ class PollutionService
         return $vehicles;
     }
 
-
-
     public function store(array $data)
     {
         // dd($data);
-        $renewal_type = RenewalType::where('slug', $data['type'])->first();
+        DB::beginTransaction();
 
-        if (!$renewal_type) {
-            throw new \Exception("Renewal type '{$data['type']}' not found.");
+        try {
+
+            // Get renewal type
+            $renewalType = RenewalType::where('slug', $data['renewable_type'])
+                ->firstOrFail();
+
+            // Get vehicle
+            $vehicle = Vehicle::findOrFail($data['vehicle_id']);
+
+            // Generate book number
+            $invoiceNumber = AppHelper::generateInvoiceNumber('pollution');
+
+            // Calculate expiry using dynamic validity
+            $expiryData = $this->calculateExpiryDate(
+                $data['expiry_date_bs'],
+                $renewalType,
+                $vehicle
+            );
+            // dd($expiryData);
+
+            // Create Pollution
+            $pollution = Pollution::create([
+                'vehicle_id' => $vehicle->id,
+                'invoice_no' => $invoiceNumber,
+                'expiry_date_bs' => $data['expiry_date_bs'],
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'payment_status' => $data['payment_status'],
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            // Create Renewal using relationship (cleaner)
+            $pollution->renewals()->create([
+                'vehicle_id' => $vehicle->id,
+                'renewal_type_id' => $renewalType->id,
+                'status' => 'renewed',
+                'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                'start_date_bs' => $expiryData['start_bs'],
+                'expiry_date_bs' => $expiryData['expiry_bs'],
+                'start_date_ad' => $expiryData['start_ad'],
+                'expiry_date_ad' => $expiryData['expiry_ad'],
+                'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            DB::commit();
+
+            return $pollution->fresh();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-
-        // Generate the invoice number automatically
-        $invoice_no = AppHelper::generateInvoiceNumber('pollution');
-
-        $expiryDate = $this->calculateExpiryDate($data['last_expiry_date'], $data['vehicle_id']);
-
-        $pollutionCheck = PollutionCheck::create([
-            'vehicle_id' => $data['vehicle_id'],
-            'invoice_no' => $invoice_no,
-            'issue_date' => $data['issue_date'],
-            'last_expiry_date' => $data['last_expiry_date'],
-            'tax_amount' => $data['tax_amount'],
-            'renewal_charge' => $data['renewal_charge'],
-            'income_tax' => $data['income_tax'],
-            'expiry_date' => $expiryDate,
-            'status' => $data['status'],
-            'remarks' => $data['remarks'],
-        ]);
-        // dd($pollutionCheck);
-
-        Renewal::create([
-            'vehicle_id' => $data['vehicle_id'],
-            'renewal_type_id' => $renewal_type->id,
-            'renewable_type' => PollutionCheck::class,
-            'renewable_id' => $pollutionCheck->id,
-            'status' => $data['status'],
-            'start_date' => $data['last_expiry_date'],
-            'expiry_date' => $expiryDate,
-            'reminder_date' => Carbon::parse($expiryDate)->subDays(7),
-            'remarks' => $data['remarks'] ?? null,
-        ]);
-
-        return $pollutionCheck;
-
-    }
-
-    private function calculateExpiryDate($lastExpiryDate, $vehicleId)
-    {
-        $vehicle = Vehicle::with('vehicleCategory')->findOrFail($vehicleId);
-        $categoryName = strtolower($vehicle->vehicleCategory->name ?? '');
-
-        // 1. Parse the Nepali Date String
-        $dateParts = explode('-', $lastExpiryDate);
-        $yy = (int) $dateParts[0];
-        $mm = (int) $dateParts[1];
-        $dd = (int) $dateParts[2];
-
-        // 2. Add Duration (6 months or 1 year)
-        if (in_array($categoryName, ['public', 'commercial'])) {
-            $mm += 6;
-        } else {
-            $yy += 1;
-        }
-
-        // Handle Year Overflow (if months > 12)
-        while ($mm > 12) {
-            $mm -= 12;
-            $yy += 1;
-        }
-
-        // 3. Validate day against the new month's max days
-        // Example: If adding 6 months to 01-31 results in 07-31, but Month 07 only has 30 days.
-        $cal = new \App\Generic\GenericDateConverter\Nepali_Calendar();
-        $maxDaysInNewMonth = $cal->getDaysInMonth($yy, $mm);
-
-        if ($dd > $maxDaysInNewMonth) {
-            $dd = $maxDaysInNewMonth;
-        }
-
-        // 4. Subtract 1 day
-        $dd -= 1;
-
-        // Handle Day Underflow (if day becomes 0, go to the last day of the PREVIOUS month)
-        if ($dd <= 0) {
-            $mm -= 1;
-            if ($mm <= 0) {
-                $mm = 12;
-                $yy -= 1;
-            }
-            $dd = $cal->getDaysInMonth($yy, $mm);
-        }
-
-        // 5. Return formatted string
-        return sprintf("%04d-%02d-%02d", $yy, $mm, $dd);
-    }
-
-    private function calculateExpiryDate1($lastExpiryDate, $vehicleId)
-    {
-        // Get the vehicle
-        $vehicle = Vehicle::with('vehicleCategory')->findOrFail($vehicleId);
-
-        // Convert Nepali issue date to English (Y-m-d)
-        $engIssueDate = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($lastExpiryDate, '-');
-
-        // Determine validity duration
-        $categoryName = strtolower($vehicle->vehicleCategory->name ?? '');
-        // dd($categoryName);
-
-        if (in_array($categoryName, ['public', 'commercial'])) {
-            // $daysToAdd = 181; // 6 months for public/commercial
-            $engExpiryDate = Carbon::parse($engIssueDate)
-                ->addMonths(6)
-                ->subDay()
-                ->format('Y-m-d');
-            // dd($engExpiryDate);
-        } else {
-            // $daysToAdd = 365; // 1 year for private or others
-            $engExpiryDate = Carbon::parse($engIssueDate)
-                ->addYear()
-                ->subDay()
-                ->format('Y-m-d');
-        }
-
-        // Add days based on category
-        // $engExpiryDate = Carbon::parse($engIssueDate)->addDays($daysToAdd)->format('Y-m-d');
-
-        // Convert back to Nepali date
-        $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
-        // dd($nepExpiryDate);
-
-        $nepExpiryDate = Carbon::parse($nepExpiryDate)
-            ->subDay()
-            ->format('Y-m-d');
-        // dd($nepExpiryDate);
-
-        // Ensure format YYYY-MM-DD
-        // $parts = explode('-', $nepExpiryDate);
-        // $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
-
-        return $nepExpiryDate;
     }
 
     public function getById($id)
     {
-        return PollutionCheck::findOrFail($id);
+        return Pollution::findOrFail($id);
     }
 
-    public function update(PollutionCheck $pollutionCheck, array $data)
+    public function update(Pollution $pollution, array $data)
     {
-        // Find the renewal type
-        $renewalType = RenewalType::where('slug', $data['type'])->firstOrFail();
+        // dd($data);
+        DB::beginTransaction();
 
-        $expiryDate = $this->calculateExpiryDate($data['last_expiry_date'], $data['vehicle_id']);
+        try {
 
-        // Update the Bluebook
-        $pollutionCheck->update([
-            'vehicle_id' => $data['vehicle_id'],
-            'issue_date' => $data['issue_date'],
-            'last_expiry_date' => $data['last_expiry_date'],
-            'tax_amount' => $data['tax_amount'],
-            'renewal_charge' => $data['renewal_charge'],
-            'income_tax' => $data['income_tax'],
-            'expiry_date' => $expiryDate,
-            'status' => $data['status'],
-            'remarks' => $data['remarks'],
-        ]);
+            $renewalType = RenewalType::where('slug', $data['renewable_type'])
+                ->firstOrFail();
 
-        // Update or create the related Renewal
-        Renewal::updateOrCreate(
-            [
-                'renewable_id' => $pollutionCheck->id,
-                'renewable_type' => PollutionCheck::class,
-            ],
-            [
-                'vehicle_id' => $data['vehicle_id'],
-                'renewal_type_id' => $renewalType->id,
-                'status' => $data['status'],
-                'start_date' => $data['issue_date'],
-                'expiry_date' => $expiryDate,
-                'reminder_date' => Carbon::parse($expiryDate)->subDays(7),
+            $vehicle = $pollution->vehicle; // get related vehicle
+
+            // Calculate expiry using dynamic validity
+            $expiryData = $this->calculateExpiryDate(
+                $data['expiry_date_bs'],
+                $renewalType,
+                $vehicle
+            );
+
+            // Update Pollution
+            $pollution->update([
+                'expiry_date_bs' => $data['expiry_date_bs'],
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'payment_status' => $data['payment_status'],
                 'remarks' => $data['remarks'] ?? null,
-            ]
-        );
+            ]);
 
-        return $pollutionCheck->fresh();
+            // Create Renewal History Record
+            $pollution->renewals()->create([
+                'vehicle_id' => $vehicle->id,
+                'renewal_type_id' => $renewalType->id,
+                'status' => 'renewed',
+                'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                'start_date_bs' => $expiryData['start_bs'],
+                'expiry_date_bs' => $expiryData['expiry_bs'],
+                'start_date_ad' => $expiryData['start_ad'],
+                'expiry_date_ad' => $expiryData['expiry_ad'],
+                'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            DB::commit();
+
+            return $pollution->fresh();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function delete($id)
@@ -253,5 +184,42 @@ class PollutionService
         }
 
         return $pollutionCheck->delete();
+    }
+
+    private function calculateExpiryDate($startDateBs, $renewalType, $vehicle)
+    {
+        if (!$startDateBs) {
+            return null;
+        }
+
+        $startAd = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep(
+            $startDateBs,
+            '-'
+        );
+        // dd($startAd);
+
+        $date = Carbon::parse($startAd);
+        // dd($date);
+
+        $validity = $renewalType->getValidityForVehicle($vehicle);
+
+        if (!empty($validity['value']) && !empty($validity['unit'])) {
+            $date->add($validity['unit'], $validity['value'])->subDay();
+        }
+
+        $expiryAd = $date->format('Y-m-d');
+
+        $expiryBs = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep(
+            $expiryAd,
+            '-'
+        );
+
+        return [
+            'start_ad' => $startAd,
+            'issue_ad' => $startAd,
+            'expiry_ad' => $expiryAd,
+            'start_bs' => $startDateBs,
+            'expiry_bs' => $expiryBs,
+        ];
     }
 }

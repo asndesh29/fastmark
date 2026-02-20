@@ -30,16 +30,16 @@ class BluebookService
             ->when($request->registration_no, function ($query, $registration_no) {
                 $query->where('registration_no', 'like', "%{$registration_no}%");
             })
-            ->when($request->last_expiry_date, function ($query, $date) {
+            ->when($request->expiry_date_bs, function ($query, $date) {
                 $query->whereHas('bluebook', function ($q) use ($date) {
-                    $q->whereDate('last_expiry_date', $date);
+                    $q->whereDate('expiry_date_bs', $date);
                 });
             })
-            ->when($request->new_expiry_date, function ($query, $date) {
-                $query->whereHas('bluebook', function ($q) use ($date) {
-                    $q->whereDate('expiry_date', $date);
-                });
-            })
+            // ->when($request->new_expiry_date, function ($query, $date) {
+            //     $query->whereHas('bluebook', function ($q) use ($date) {
+            //         $q->whereDate('expiry_date', $date);
+            //     });
+            // })
             ->when($request->status && $request->status !== 'all', function ($query, $status) {
                 $query->whereHas('bluebook.renewals', function ($q) use ($status) {
                     $q->where('status', strtolower($status));
@@ -53,8 +53,6 @@ class BluebookService
 
         return $vehicles;
     }
-
-
 
     public function store(array $data)
     {
@@ -70,7 +68,7 @@ class BluebookService
             $vehicle = Vehicle::findOrFail($data['vehicle_id']);
 
             // Generate book number
-            $bookNumber = AppHelper::generateInvoiceNumber('bluebook');
+            $invoiceNumber = AppHelper::generateInvoiceNumber($renewalType->slug ?? 'bluebook');
 
             // Calculate expiry using dynamic validity
             $expiryData = $this->calculateExpiryDate(
@@ -82,10 +80,13 @@ class BluebookService
             // Create Bluebook
             $bluebook = Bluebook::create([
                 'vehicle_id' => $vehicle->id,
-                'book_number' => $bookNumber,
-                'expiry_date_bs' => $data['expiry_date_bs'],
-                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
-                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'invoice_no' => $invoiceNumber,
+                'issue_date_bs' => $data['issue_date_bs'] ?? null,
+                'issue_date_ad' => $expiryData['start_ad'] ?? null,
+                'expiry_date_bs' => $data['expiry_date_bs'] ?? null,
+                'expiry_date_ad' => $expiryData['start_ad'] ?? null,
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'] ?? null,
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'] ?? null,
                 'payment_status' => $data['payment_status'],
                 'remarks' => $data['remarks'] ?? null,
             ]);
@@ -114,23 +115,6 @@ class BluebookService
         }
     }
 
-    // private function calculateExpiryDate($lastExpiryDate)
-    // {
-    //     $engIssueDate = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($lastExpiryDate, '-');
-    //     // dd($engIssueDate);
-
-    //     $engExpiryDate = Carbon::parse($engIssueDate)->addDays(365)->format('Y-m-d');
-
-    //     $nepExpiryDate = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($engExpiryDate, '-');
-    //     // dd($nepExpiryDate);
-
-    //     $parts = explode('-', $nepExpiryDate);
-    //     $nepExpiryDate = sprintf('%04d-%02d-%02d', $parts[0], $parts[1], $parts[2]);
-
-    //     return $nepExpiryDate;
-    // }
-
-
     public function getById($id)
     {
         return Bluebook::findOrFail($id);
@@ -156,7 +140,14 @@ class BluebookService
 
             // Update Bluebook
             $bluebook->update([
+                // 'expiry_date_bs' => $data['expiry_date_bs'],
+                // 'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                // 'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+
+                'issue_date_bs' => $data['issue_date_bs'] ?? null,
+                'issue_date_ad' => $expiryData['start_ad'],
                 'expiry_date_bs' => $data['expiry_date_bs'],
+                'expiry_date_ad' => $expiryData['start_ad'],
                 'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
                 'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
                 'payment_status' => $data['payment_status'],
@@ -200,15 +191,10 @@ class BluebookService
 
     private function calculateExpiryDate($startDateBs, $renewalType, $vehicle)
     {
-        if (!$startDateBs) {
-            return null;
-        }
+        if (!$startDateBs)
+            return [];
 
-        $startAd = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep(
-            $startDateBs,
-            '-'
-        );
-
+        $startAd = GenericDateConvertHelper::convertNepaliDateToEnglishYMDWithSep($startDateBs, '-');
         $date = Carbon::parse($startAd);
 
         $validity = $renewalType->getValidityForVehicle($vehicle);
@@ -218,11 +204,7 @@ class BluebookService
         }
 
         $expiryAd = $date->format('Y-m-d');
-
-        $expiryBs = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep(
-            $expiryAd,
-            '-'
-        );
+        $expiryBs = GenericDateConvertHelper::convertEnglishDateToNepaliYMDWithSep($expiryAd, '-');
 
         return [
             'start_ad' => $startAd,
@@ -232,5 +214,4 @@ class BluebookService
             'expiry_bs' => $expiryBs,
         ];
     }
-
 }

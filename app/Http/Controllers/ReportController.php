@@ -69,13 +69,13 @@ class ReportController extends Controller
 
         // Filter by date range
         if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('expiry_date', [
+            $query->whereBetween('expiry_date_bs', [
                 $request->from_date,
                 $request->to_date
             ]);
         }
 
-        $renewals = $query->orderBy('expiry_date', 'asc')->paginate(20);
+        $renewals = $query->orderBy('expiry_date_bs', 'asc')->paginate(20);
 
         return view('report.renewal-expiry', compact(
             'renewals',

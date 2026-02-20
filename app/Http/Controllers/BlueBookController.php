@@ -118,21 +118,6 @@ class BlueBookController extends Controller
         return redirect()->route('admin.renewal.bluebook.index');
     }
 
-    public function update1(Request $request, Bluebook $bluebook)
-    {
-        $validated = $request->validate([
-            'expiry_date_bs' => 'required',
-            'payment_status' => 'required',
-            'type' => 'required'
-        ]);
-
-        $service = app(BaseRenewalService::class);
-
-        $service->renew($bluebook, $validated);
-
-        return back()->with('success', 'Bluebook renewed successfully.');
-    }
-
     /**
      * Remove the specified resource from storage.
      */

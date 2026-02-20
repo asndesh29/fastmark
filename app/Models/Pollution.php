@@ -74,6 +74,7 @@ class Pollution extends Model
         $rules = [
             'vehicle_id' => ['required', 'exists:vehicles,id'],
             'invoice_no' => ['nullable', 'string', 'max:255'],
+            'renewable_type' => ['required', 'string', 'max:255'],
             'expiry_date_bs' => ['required', 'string', 'max:255'],
             'payment_status' => ['required', 'in:paid,unpaid'],
             'remarks' => ['nullable', 'string', 'max:255']

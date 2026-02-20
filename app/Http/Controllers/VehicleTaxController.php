@@ -25,6 +25,20 @@ class VehicleTaxController extends Controller
 
         $renewal_lists = $this->vehicleTaxService->list($request, $perPage);
 
+        if ($request->ajax()) {
+            $html = view('renewal.vehicle-tax.partials.table', compact('renewal_lists'))->render();
+            return response()->json(['html' => $html]);
+        }
+
+        return view('renewal.vehicle-tax.index', compact('renewal_lists'));
+    }
+
+    public function index1(Request $request)
+    {
+        $perPage = $request->show_limit ?? config('default_pagination', 10);
+
+        $renewal_lists = $this->vehicleTaxService->list($request, $perPage);
+
         // Handle AJAX filter requests
         if ($request->ajax()) {
             $html = view('renewal.vehicle-tax.partials.table', compact('renewal_lists'))->render();

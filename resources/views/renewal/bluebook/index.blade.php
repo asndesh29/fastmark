@@ -47,18 +47,18 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xxl-2 col-sm-12">
+                                {{-- <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
                                         <input type="text" class="form-control"
                                                placeholder="Last Expiry Date">
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
                                         <input type="text" class="form-control"
-                                               placeholder="New Expiry Date">
+                                               placeholder="Expiry Date">
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
                                 </div>

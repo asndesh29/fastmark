@@ -25,7 +25,7 @@
             <form action="{{ route('admin.renewal.road-permit.update', $renewal->id) }}" method="POST">
                 @csrf
                 <input type="hidden" name="vehicle_id" value="{{ $renewal->vehicle_id }}">
-                <input type="hidden" name="type" value="road-permit">
+                <input type="hidden" name="renewable_type" value="road-permit">
                 
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
@@ -45,7 +45,7 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div> --}}
+                                </div>
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
@@ -57,15 +57,16 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div>  --}}
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="last_expiry_date" class="form-label">Expiry Date</label>
-                                        <input type="text" class="form-control nepali-date @error('last_expiry_date') is-invalid @enderror" name="last_expiry_date"
-                                            value="{{ old('last_expiry_date', $renewal->last_expiry_date) }}" placeholder="Select Expiry Date" autocomplete="off"/>
+                                        <label for="expiry_date_bs" class="form-label">Expiry Date</label>
+                                        <input type="text" class="form-control nepali-date @error('expiry_date_bs') is-invalid @enderror" name="expiry_date_bs"
+                                            value="{{ old('expiry_date_bs', $renewal->expiry_date_bs) }}" 
+                                            placeholder="Select Expiry Date" readonly />
                                         
-                                        @error('last_expiry_date')
+                                        @error('expiry_date_bs')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -120,9 +121,9 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label>Status</label>
-                                        <select class="form-select" name="status">
-                                            <option value="paid" {{ $renewal->status === 'paid' ? 'selected' : '' }}>Paid</option>
-                                            <option value="unpaid" {{ $renewal->status === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                        <select class="form-select" name="payment_status">
+                                            <option value="paid" {{ $renewal->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="unpaid" {{ $renewal->payment_status === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
                                         </select>
                                     </div>
                                 </div>

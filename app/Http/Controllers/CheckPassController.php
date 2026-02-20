@@ -46,25 +46,28 @@ class CheckPassController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        $validator = VehiclePass::validateData($request->all());
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         try {
-            $validator = VehiclePass::validateData($request->all());
+            $this->checkpassService->store($validator->validated());
 
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            $validated = $validator->validated();
-
-            $this->checkpassService->store($validated);
-
-            AppHelper::success('Jach Pass record updated successfully.');
+            AppHelper::success('Jach Pass record created successfully.');
 
             return redirect()->back();
+
         } catch (\Throwable $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+
+            report($e); // log error
+
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong. Please try again.');
         }
     }
 
