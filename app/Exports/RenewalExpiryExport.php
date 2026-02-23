@@ -25,13 +25,13 @@ class RenewalExpiryExport implements FromCollection, WithHeadings, WithMapping
         }
 
         if (!empty($this->filters['from_date']) && !empty($this->filters['to_date'])) {
-            $query->whereBetween('expiry_date', [
+            $query->whereBetween('expiry_date_bs', [
                 $this->filters['from_date'],
                 $this->filters['to_date']
             ]);
         }
 
-        return $query->orderBy('expiry_date', 'asc')->get();
+        return $query->orderBy('expiry_date_bs', 'asc')->get();
     }
 
     public function headings(): array
@@ -47,11 +47,12 @@ class RenewalExpiryExport implements FromCollection, WithHeadings, WithMapping
 
     public function map($renewal): array
     {
+        // dd($renewal);
         return [
             $renewal->vehicle?->registration_no,
             $renewal->renewalType?->name,
-            $renewal->start_date,
-            $renewal->expiry_date,
+            $renewal->start_date_bs,
+            $renewal->expiry_date_bs,
             $renewal->status,
         ];
     }

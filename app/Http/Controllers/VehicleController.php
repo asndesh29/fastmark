@@ -79,8 +79,13 @@ class VehicleController extends Controller
     {
         $vehicle = Vehicle::with('renewals.renewalType', 'renewals.renewable')->findOrFail($vehicle->id);
 
-        // dd($vehicle); // optional: check the loaded data
-        return view('vehicle.show', compact('vehicle'));
+        $renewals = $vehicle->renewals()
+            ->with(['renewalType', 'renewable'])
+            ->latest()
+            ->paginate(10);
+
+        // dd($vehicle);
+        return view('vehicle.show', compact('renewals', 'vehicle'));
     }
 
     /**

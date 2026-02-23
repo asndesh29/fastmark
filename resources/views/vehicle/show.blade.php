@@ -24,10 +24,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if($vehicle->renewals->count())
-                                @foreach($vehicle->renewals as $key => $renewal)
+                            @if($renewals->count())
+                                @foreach($renewals as $key => $renewal)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $renewals->firstItem() + $loop->index }}</td>
                                         <td>{{ $renewal->renewalType->name ?? '—' }}</td>
                                         <td>{{ $renewal->renewable->expiry_date_bs ?? '-' }}</td>
                                         {{-- <td>{{ $renewal->start_date }}</td>
@@ -60,6 +60,16 @@
                                 </div>
                             @endif
                         </tbody>
+
+                        @if ($renewals->hasPages())
+    <tr>
+        <td colspan="6">
+            <div class="d-flex justify-content-end">
+                {{ $renewals->links('pagination::bootstrap-5') }}
+            </div>
+        </td>
+    </tr>
+@endif
                     </table>
                 </div>
             </div>
