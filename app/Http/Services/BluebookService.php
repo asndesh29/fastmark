@@ -136,6 +136,7 @@ class BluebookService
 
     public function update(Bluebook $bluebook, array $data)
     {
+        // dd($data);
         DB::beginTransaction();
 
         try {
@@ -169,7 +170,7 @@ class BluebookService
             ]);
 
             // Create Renewal History Record
-            $bluebook->renewals()->create([
+            $bluebook->renewals()->update([
                 'vehicle_id' => $vehicle->id,
                 'renewal_type_id' => $renewalType->id,
                 'status' => 'renewed',

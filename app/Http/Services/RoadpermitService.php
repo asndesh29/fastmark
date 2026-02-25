@@ -21,6 +21,11 @@ class RoadpermitService
 
         $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'roadPermit.latestRenewal'])
 
+            // Only Commercial Vehicles
+            ->whereHas('vehicleType', function ($q) {
+                $q->where('name', 'Commercial');
+            })
+
             // Filter by Customer Name
             ->when($request->filled('customer'), function ($query) use ($request) {
                 $query->whereHas('owner', function ($q) use ($request) {

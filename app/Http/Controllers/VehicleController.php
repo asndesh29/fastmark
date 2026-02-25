@@ -302,6 +302,7 @@ class VehicleController extends Controller
 
     public function updateRenewal(UpdateVehicleRenewalRequest $request, Vehicle $vehicle)
     {
+        // dd($request->all());
         foreach ($request->renewals as $type) {
 
             $data = $request->input($type, []);

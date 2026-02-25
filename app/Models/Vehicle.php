@@ -45,6 +45,11 @@ class Vehicle extends Model
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
+    public function getOwnerFullNameAttribute()
+    {
+        return $this->owner ? "{$this->owner->first_name} {$this->owner->middle_name} {$this->owner->last_name}" : '-';
+    }
+
     // public function renewals()
     // {
     //     return $this->morphMany(Renewal::class, 'renewable');
@@ -118,7 +123,6 @@ class Vehicle extends Model
     {
         return optional($this->vehicleCategory)->slug === 'commercial';
     }
-
 
 
 }

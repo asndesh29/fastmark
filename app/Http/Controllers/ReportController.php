@@ -60,33 +60,35 @@ class ReportController extends Controller
     {
         $renewalTypes = RenewalType::where('is_active', true)->get();
 
-        $query = Renewal::with(['vehicle', 'renewalType']);
+        $vehicles = Vehicle::with(['renewals.renewalType', 'owner'])
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $q->where('registration_no', 'like', '%' . $request->search . '%');
+            })
+            ->when($request->filled('renewal_type_id'), function ($q) use ($request) {
+                $q->whereHas('renewals', function ($sub) use ($request) {
+                    $sub->where('renewal_type_id', $request->renewal_type_id);
+                });
+            })
+            ->when($request->filled('from_date') && $request->filled('to_date'), function ($q) use ($request) {
+                $q->whereHas('renewals', function ($sub) use ($request) {
+                    $sub->whereBetween('expiry_date_bs', [
+                        $request->from_date,
+                        $request->to_date
+                    ]);
+                });
+            })
+            ->paginate(20)
+            ->withQueryString();
 
-        // Filter by renewal type
-        if ($request->filled('renewal_type_id')) {
-            $query->where('renewal_type_id', $request->renewal_type_id);
-        }
-
-        // Filter by date range
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('expiry_date_bs', [
-                $request->from_date,
-                $request->to_date
-            ]);
-        }
-
-        $renewals = $query->orderBy('expiry_date_bs', 'asc')->paginate(20);
-
-        return view('report.renewal-expiry', compact(
-            'renewals',
-            'renewalTypes'
-        ));
+        return view('report.renewal-expiry', compact('vehicles', 'renewalTypes'));
     }
 
     public function exportRenewalExpiry(Request $request)
     {
+        $filters = $request->only(['renewal_type_id', 'from_date', 'to_date']);
+
         return Excel::download(
-            new RenewalExpiryExport($request->all()),
+            new RenewalExpiryExport($filters),
             'renewal-expiry-report.xlsx'
         );
     }

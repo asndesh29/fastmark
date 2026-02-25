@@ -18,10 +18,19 @@ class CheckpassService
 {
     public function list(Request $request, $perPage = null)
     {
-        // dd($request->all());
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'vehiclePass.latestRenewal'])
+        $vehicles = Vehicle::with([
+            'owner',
+            'vehicleCategory',
+            'vehicleType',
+            'vehiclePass.latestRenewal'
+        ])
+
+            // Only Commercial Vehicles
+            ->whereHas('vehicleType', function ($q) {
+                $q->where('name', 'Commercial');
+            })
 
             // Filter by Customer Name
             ->when($request->filled('customer'), function ($query) use ($request) {
@@ -43,7 +52,7 @@ class CheckpassService
                 });
             })
 
-            // Filter by Vehicle Type
+            // Filter by Vehicle Type (if dropdown used)
             ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
                 $query->where('vehicle_type_id', $request->vehicle_type_id);
             })
