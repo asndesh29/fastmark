@@ -27,6 +27,13 @@
             <div class="card-body">
                 <form method="GET" action="{{ route('admin.report.renewals.expiry') }}">
                     <div class="row g-3">
+                        <div class="col-xxl-3 col-sm-4">
+                            <label>Vehicle Registration No</label>
+                            <input type="text" name="registration_no" class="form-control"
+                                value="{{ request('registration_no') }}" placeholder="Enter Vehicle No">
+                        </div>
+
+
                         <div class="col-xxl-3 col-sm-12">
                             <label>Renewal Type</label>
                             <select name="renewal_type_id" class="form-select">
@@ -43,13 +50,13 @@
                         <div class="col-xxl-2 col-sm-4">
                             <label>From Date</label>
                             <input type="text" name="from_date" class="form-control nepali-date"
-                                   value="{{ request('from_date') }}" placeholder="YYYY-MM-DD" readonly>
+                                   value="{{ request('from_date') }}" placeholder="YYYY-MM-DD">
                         </div>
 
                         <div class="col-xxl-2 col-sm-4">
                             <label>To Date</label>
                             <input type="text" name="to_date" class="form-control nepali-date"
-                                   value="{{ request('to_date') }}" placeholder="YYYY-MM-DD" readonly>
+                                   value="{{ request('to_date') }}" placeholder="YYYY-MM-DD">
                         </div>
 
                         <div class="col-auto pt-4">
@@ -95,6 +102,8 @@
                                     $typesToShow = request('renewal_type_id')
                                         ? $renewalTypes->where('id', request('renewal_type_id'))
                                         : $renewalTypes;
+
+                                    $typesToShow = $typesToShow->where('slug', '!=', 'license');
                                 @endphp
 
                                 @foreach($typesToShow as $type)
@@ -104,7 +113,24 @@
                         </thead>
                         <tbody>
                             @forelse($vehicles as $vehicle)
-                                <tr>
+
+                                @php
+                                    // Check if any renewal of this vehicle is expired
+                                    $isRowExpired = false;
+
+                                    foreach ($typesToShow as $type) {
+                                        $renewalCheck = $vehicle->renewals
+                                            ->where('renewal_type_id', $type->id)
+                                            ->first();
+
+                                        if ($renewalCheck && $renewalCheck->expiry_status === 'expired') {
+                                            $isRowExpired = true;
+                                            break;
+                                        }
+                                    }
+                                @endphp
+
+                                <tr class="{{ $isRowExpired ? 'table-danger' : '' }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $vehicle->registration_no }}</td>
                                     <td>{{ substr($vehicle->registration_no, -4) }}</td>
@@ -117,9 +143,24 @@
                                                 ->where('renewal_type_id', $type->id)
                                                 ->first();
                                         @endphp
-                                        <td>{{ $renewal?->start_date_bs ?? '-' }}</td>
+
+                                        <td>
+                                            {{ $renewal?->start_date_bs ?? '-' }}
+
+                                            @if($renewal && $renewal->expiry_days !== null)
+
+                                                @if($renewal->expiry_status === 'warning')
+                                                    <br>
+                                                    <span class="badge bg-warning">
+                                                        {{ $renewal->expiry_days }} days left
+                                                    </span>
+                                                @endif
+
+                                            @endif
+                                        </td>
                                     @endforeach
                                 </tr>
+
                             @empty
                                 <tr>
                                     <td colspan="{{ 5 + count($typesToShow) }}" class="text-center">

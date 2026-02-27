@@ -32,22 +32,47 @@
                             <!-- Filters -->
                             <div class="row g-3">
                                 <div class="col-xxl-3 col-sm-12">
+                                    <label>Vehicle Type</label>
+                                    <select name="vehicle_type_id" class="form-select">
+                                        <option value="">All</option>
+                                        @foreach($vehicle_types as $type)
+                                            <option value="{{ $type->id }}" {{ request('vehicle_type_id') == $type->id ? 'selected' : '' }}>
+                                                {{ $type->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-xxl-2 col-sm-12">
+                                    <label>Vehicle Category</label>
+                                    <select name="vehicle_category_id" class="form-select">
+                                        <option value="">All</option>
+                                        @foreach($vehicle_categories as $cat)
+                                            <option value="{{ $cat->id }}" {{ request('vehicle_category_id') == $cat->id ? 'selected' : '' }}>
+                                                {{ $cat->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-xxl-3 col-sm-12">
+                                    <label>Customer</label>
                                     <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="Search for customer">
+                                        <input type="text" class="form-control" placeholder="Search for customer">
                                         <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
 
-                                <div class="col-xxl-3 col-sm-12">
+                                <div class="col-xxl-2 col-sm-12">
+                                    <label>Vehicle Registration No</label>
                                     <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="Search for registration no">
+                                        <input type="text" class="form-control" placeholder="Search for registration no">
                                         <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
 
                                 <div class="col-xxl-2 col-sm-4">
+                                    <label>Vehicle Status</label>
                                     <select class="form-select" id="idStatus">
                                         <option value="all" selected>All</option>
                                         <option value="1">Active</option>
@@ -55,11 +80,11 @@
                                     </select>
                                 </div>
 
-                                <div class="col-auto">
+                                {{-- <div class="col-auto">
                                     <button type="button" class="btn btn-primary w-100" onclick="SearchData();">
                                         <i class="ri-equalizer-fill me-1 align-bottom"></i> Filters
                                     </button>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <!-- Table -->
@@ -94,37 +119,88 @@
 @push('script_2')
     <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
 
-<script>
-    // AJAX Filter + Pagination
-    function SearchData(page = 1) {
-        const customer = document.querySelector('input[placeholder="Search for customer"]').value;
-        const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
-        const status = document.getElementById('idStatus').value;
+    <script>
+        // AJAX Filter + Pagination
+        function SearchData1(page = 1) {
+            const customer = document.querySelector('input[placeholder="Search for customer"]').value;
+            const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
+            const status = document.getElementById('idStatus').value;
 
-        const params = { customer, registration_no, status, page };
+            const params = { customer, registration_no, status, page };
 
-        const tbody = document.getElementById('renewalTableBody');
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-4">Loading...</td></tr>`;
+            const tbody = document.getElementById('renewalTableBody');
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center p-4">Loading...</td></tr>`;
 
-        fetch(`{{ route('admin.vehicle.index') }}?${new URLSearchParams(params)}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            tbody.innerHTML = data.html;
+            fetch(`{{ route('admin.vehicle.index') }}?${new URLSearchParams(params)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = data.html;
 
-            // Re-bind pagination links
-            document.querySelectorAll('.pagination a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = new URL(this.href).searchParams.get('page');
-                    SearchData(page);
+                    // Re-bind pagination links
+                    document.querySelectorAll('.pagination a').forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const page = new URL(this.href).searchParams.get('page');
+                            SearchData(page);
+                        });
+                    });
+                })
+                .catch(() => {
+                    tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Error loading data</td></tr>`;
+                });
+        }
+
+        // Function to fetch filtered data
+        function SearchData(page = 1) {
+            // Grab all filter values
+            const vehicle_type_id = document.querySelector('select[name="vehicle_type_id"]').value;
+            const vehicle_category_id = document.querySelector('select[name="vehicle_category_id"]').value;
+            const customer = document.querySelector('input[placeholder="Search for customer"]').value;
+            const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
+            const status = document.getElementById('idStatus').value;
+
+            const params = { vehicle_type_id, vehicle_category_id, customer, registration_no, status, page };
+
+            const tbody = document.getElementById('renewalTableBody');
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center p-4">Loading...</td></tr>`;
+
+            fetch(`{{ route('admin.vehicle.index') }}?${new URLSearchParams(params)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = data.html;
+
+                    // Re-bind pagination links
+                    document.querySelectorAll('.pagination a').forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const page = new URL(this.href).searchParams.get('page');
+                            SearchData(page);
+                        });
+                    });
+                })
+                .catch(() => {
+                    tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Error loading data</td></tr>`;
+                });
+        }
+
+        // Automatically trigger filter when dropdowns change
+        document.querySelectorAll('select[name="vehicle_type_id"], select[name="vehicle_category_id"], #idStatus')
+            .forEach(el => {
+                el.addEventListener('change', function () {
+                    SearchData(); // Fetch filtered data
                 });
             });
-        })
-        .catch(() => {
-            tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Error loading data</td></tr>`;
-        });
-    }
-</script>
+
+        // Optionally, trigger on input change (for instant search)
+        document.querySelectorAll('input[placeholder="Search for customer"], input[placeholder="Search for registration no"]')
+            .forEach(el => {
+                el.addEventListener('input', function () {
+                    SearchData();
+                });
+            });
+    </script>
 @endpush

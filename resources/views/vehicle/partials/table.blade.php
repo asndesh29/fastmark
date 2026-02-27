@@ -20,7 +20,7 @@
             </td>
             <td>
                 <ul class="list-inline hstack gap-2 mb-0">
-                     <li class="list-inline-item" title="View">
+                     <li class="list-inline-item" title="Edit">
                         <a href="{{ route('admin.vehicle.edit', $vehicle->id) }}">
                             <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
                                 <i class="ri-edit-fill"></i>
@@ -36,7 +36,7 @@
                         </a>
                     </li>
 
-                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
+                    <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Renew">
                         <a href="{{ route('admin.vehicle.renewal', $vehicle->id) }}">
                             <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
                                 <i class="ri-add-fill"></i>

@@ -3,8 +3,19 @@
         @php
             $insurance = $vehicle->insurance;
             $renewal = $insurance?->latestRenewal;
+
+            $rowClass = '';
+
+            if ($renewal) {
+                if ($renewal->is_expired) {
+                    $rowClass = 'table-danger'; // 🔴 Expired
+                } elseif ($renewal->days_remaining !== null && $renewal->days_remaining <= 7) {
+                    $rowClass = 'table-warning'; // 🟡 Expiring soon
+                }
+            }
         @endphp
-        <tr>
+
+        <tr class="{{ $rowClass }}">
             <td>{{ $key + $renewal_lists->firstItem() }}</td>
             <td>{{ $insurance->invoice_no ?? '-' }}</td>
             <td>{{ $insurance->provider?->name ?? 'N/A' }}</td>
@@ -12,32 +23,40 @@
             <td>{{ $vehicle->vehicleType->name }}</td>
             <td>{{ $vehicle->registration_no }}</td>
             <td>{{ $insurance->expiry_date_bs ?? '-' }}</td>
+
+            {{-- Renewal Status --}}
             <td>
                 @if($renewal)
-                    <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
-                        {{ ucfirst($renewal->status) }}
+                    <span class="badge 
+                        bg-{{ 
+                            $renewal->display_status == 'expired' ? 'danger' :
+                            ($renewal->display_status == 'renewed' ? 'success' : 'secondary')
+                        }}">
+                        {{ ucfirst($renewal->display_status) }}
                     </span>
+
+                    {{-- Show expiry days only if expired OR <= 7 days --}}
+                    @if($renewal->days_remaining !== null && $renewal->days_remaining <= 7)
+                        <br>
+                        <span class="badge bg-warning">
+                            {{ $renewal->days_remaining }} days left
+                        </span>
+                    @endif
                 @endif
             </td>
 
+            {{-- Payment Status --}}
             <td>
                 @if($renewal)
                     <span class="badge bg-{{ $renewal->is_paid == 1 ? 'success' : 'danger' }}">
-                        {{ ucfirst($renewal->is_paid == 1 ? 'Paid' : 'Unpaid' ) }}
+                        {{ $renewal->is_paid == 1 ? 'Paid' : 'Unpaid' }}
                     </span>
                 @endif
             </td>
+
+            {{-- Actions --}}
             <td>
                 <ul class="list-inline hstack gap-2 mb-0">
-                    <li class="list-inline-item" title="Add Renewal">
-                        <button type="button" class="btn btn-outline-danger btn-sm btn-icon addBtn"
-                                data-vehicle-id="{{ $vehicle->id }}"
-                                data-bs-toggle="modal"
-                                data-bs-target="#insuranceModal">
-                            <i class="ri-add-fill"></i>
-                        </button>
-                    </li>
-
                     @if($insurance)
                         <li class="list-inline-item" title="Edit">
                             <a href="{{ route('admin.renewal.insurance.edit', $insurance->id) }}">
@@ -46,26 +65,15 @@
                                 </button>
                             </a>
                         </li>
-                        {{-- <li class="list-inline-item" title="View">
-                            <a href="{{ route('admin.renewal.insurance.show', $insurance->id) }}">
-                                <button type="button" class="btn btn-outline-warning btn-sm btn-icon">
-                                    <i class="ri-eye-fill"></i>
-                                </button>
-                            </a>
-                        </li> --}}
                     @endif
                 </ul>
             </td>
         </tr>
     @endforeach
 @else
-    <!-- No result found message -->
     <tr>
-        <td colspan="9" class="text-center">
+        <td colspan="10" class="text-center">
             <div class="noresult text-center">
-                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
-                            colors="primary:#121331,secondary:#08a88a"
-                            style="width:75px;height:75px"></lord-icon>
                 <h5 class="mt-2">Sorry! No Result Found</h5>
                 <p class="text-muted mb-0">No matching records found.</p>
             </div>
@@ -75,7 +83,7 @@
 
 @if ($renewal_lists->hasPages())
     <tr>
-        <td colspan="9">
+        <td colspan="10">
             <div class="d-flex justify-content-end">
                 {!! $renewal_lists->links('pagination::bootstrap-5') !!}
             </div>

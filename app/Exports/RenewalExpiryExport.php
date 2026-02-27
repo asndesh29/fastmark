@@ -17,7 +17,9 @@ class RenewalExpiryExport implements FromCollection, WithHeadings, WithMapping
     public function __construct($filters = [])
     {
         $this->filters = $filters;
-        $this->renewalTypes = RenewalType::where('is_active', true)->get();
+        $this->renewalTypes = RenewalType::where('is_active', true)
+            ->where('slug', '!=', 'license') // match blade
+            ->get();
     }
 
     public function collection()
@@ -31,8 +33,12 @@ class RenewalExpiryExport implements FromCollection, WithHeadings, WithMapping
             });
         }
 
-        // Filter by date range
-        if (!empty($this->filters['from_date']) && !empty($this->filters['to_date'])) {
+        // Apply date filter ONLY if renewal type selected
+        if (
+            !empty($this->filters['renewal_type_id']) &&
+            !empty($this->filters['from_date']) &&
+            !empty($this->filters['to_date'])
+        ) {
             $query->whereHas('renewals', function ($sub) {
                 $sub->whereBetween('expiry_date_bs', [
                     $this->filters['from_date'],
@@ -46,56 +52,87 @@ class RenewalExpiryExport implements FromCollection, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        $baseHeaders = ['Vehicle No', 'Vehicle Code', 'Owner Name', 'Mobile'];
+        $headers = ['Vehicle No', 'Vehicle Code', 'Owner Name', 'Mobile'];
 
         if (!empty($this->filters['renewal_type_id'])) {
-            $type = $this->renewalTypes->firstWhere('id', $this->filters['renewal_type_id']);
-            $baseHeaders[] = $type->name;
-            $baseHeaders[] = 'Expiry Days';
+
+            $type = $this->renewalTypes
+                ->firstWhere('id', $this->filters['renewal_type_id']);
+
+            if ($type) {
+                $headers[] = $type->name;           // AD Date
+                $headers[] = $type->name . ' Miti'; // BS Date
+                $headers[] = 'Expiry Days';
+            }
+
         } else {
-            // If no filter, include all active types
+
             foreach ($this->renewalTypes as $type) {
-                $baseHeaders[] = $type->name;
-                $baseHeaders[] = 'Expiry Days';
+                $headers[] = $type->name;           // AD
+                $headers[] = $type->name . ' Miti'; // BS
+                $headers[] = 'Expiry Days';
             }
         }
 
-        return $baseHeaders;
+        return $headers;
     }
 
     public function map($vehicle): array
     {
         $today = Carbon::today();
+
         $row = [
             $vehicle->registration_no,
             substr($vehicle->registration_no, -4),
-            $vehicle->owner?->first_name . ' ' . $vehicle->owner?->last_name ?? '-',
+            trim(($vehicle->owner?->first_name ?? '') . ' ' . ($vehicle->owner?->last_name ?? '')) ?: '-',
             $vehicle->owner?->phone ?? '-',
         ];
 
         if (!empty($this->filters['renewal_type_id'])) {
-            $type = $this->renewalTypes->firstWhere('id', $this->filters['renewal_type_id']);
-            $renewal = $vehicle->renewals->where('renewal_type_id', $type->id)->first();
+
+            $type = $this->renewalTypes
+                ->firstWhere('id', $this->filters['renewal_type_id']);
+
+            $renewal = $vehicle->renewals
+                ->where('renewal_type_id', $type?->id)
+                ->first();
 
             if ($renewal?->start_date_ad) {
+
                 $expiryDate = Carbon::parse($renewal->start_date_ad)->startOfDay();
                 $daysLeft = $today->diffInDays($expiryDate, false);
-                $row[] = $renewal->start_date_bs;
+
+                $row[] = $renewal->start_date_ad; // AD
+                $row[] = $renewal->start_date_bs; // BS
                 $row[] = $daysLeft;
+
             } else {
+
+                $row[] = '-';
                 $row[] = '-';
                 $row[] = '-';
             }
+
         } else {
+
             foreach ($this->renewalTypes as $type) {
-                $renewal = $vehicle->renewals->where('renewal_type_id', $type->id)->first();
+
+                $renewal = $vehicle->renewals
+                    ->where('renewal_type_id', $type->id)
+                    ->first();
 
                 if ($renewal?->start_date_ad) {
+
                     $expiryDate = Carbon::parse($renewal->start_date_ad)->startOfDay();
                     $daysLeft = $today->diffInDays($expiryDate, false);
-                    $row[] = $renewal->start_date_bs;
+
+                    $row[] = $renewal->start_date_ad; // AD
+                    $row[] = $renewal->start_date_bs; // BS
                     $row[] = $daysLeft;
+
                 } else {
+
+                    $row[] = '-';
                     $row[] = '-';
                     $row[] = '-';
                 }

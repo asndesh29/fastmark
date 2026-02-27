@@ -70,6 +70,7 @@ class BluebookService
 
     public function store(array $data)
     {
+        dd($data);
         DB::beginTransaction();
 
         try {
@@ -144,9 +145,8 @@ class BluebookService
             $renewalType = RenewalType::where('slug', $data['renewable_type'])
                 ->firstOrFail();
 
-            $vehicle = $bluebook->vehicle; // get related vehicle
+            $vehicle = $bluebook->vehicle;
 
-            // Calculate expiry using dynamic validity
             $expiryData = $this->calculateExpiryDate(
                 $data['expiry_date_bs'],
                 $renewalType,
@@ -155,10 +155,6 @@ class BluebookService
 
             // Update Bluebook
             $bluebook->update([
-                // 'expiry_date_bs' => $data['expiry_date_bs'],
-                // 'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
-                // 'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
-
                 'issue_date_bs' => $data['issue_date_bs'] ?? null,
                 'issue_date_ad' => $expiryData['start_ad'],
                 'expiry_date_bs' => $data['expiry_date_bs'],
@@ -169,19 +165,81 @@ class BluebookService
                 'remarks' => $data['remarks'] ?? null,
             ]);
 
-            // Create Renewal History Record
-            $bluebook->renewals()->update([
-                'vehicle_id' => $vehicle->id,
-                'renewal_type_id' => $renewalType->id,
-                'status' => 'renewed',
-                'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
-                'start_date_bs' => $expiryData['start_bs'],
-                'expiry_date_bs' => $expiryData['expiry_bs'],
-                'start_date_ad' => $expiryData['start_ad'],
-                'expiry_date_ad' => $expiryData['expiry_ad'],
-                'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+            // Update only latest renewal (IMPORTANT FIX)
+            $renewal = $bluebook->renewals()->latest()->first();
+
+            if ($renewal) {
+                $renewal->update([
+                    'vehicle_id' => $vehicle->id,
+                    'renewal_type_id' => $renewalType->id,
+                    'status' => 'renewed',
+                    'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                    'start_date_bs' => $expiryData['start_bs'],
+                    'expiry_date_bs' => $expiryData['expiry_bs'],
+                    'start_date_ad' => $expiryData['start_ad'],
+                    'expiry_date_ad' => $expiryData['expiry_ad'],
+                    'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                    'remarks' => $data['remarks'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+
+            return $bluebook->fresh();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update11(Bluebook $bluebook, array $data)
+    {
+        dd($data);
+        DB::beginTransaction();
+
+        try {
+
+            $renewalType = RenewalType::where('slug', $data['renewable_type'])
+                ->firstOrFail();
+
+            $vehicle = $bluebook->vehicle;
+
+            $expiryData = $this->calculateExpiryDate(
+                $data['expiry_date_bs'],
+                $renewalType,
+                $vehicle
+            );
+
+            // Update Bluebook
+            $bluebook->update([
+                'issue_date_bs' => $data['issue_date_bs'] ?? null,
+                'issue_date_ad' => $expiryData['start_ad'],
+                'expiry_date_bs' => $data['expiry_date_bs'],
+                'expiry_date_ad' => $expiryData['start_ad'],
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'payment_status' => $data['payment_status'],
                 'remarks' => $data['remarks'] ?? null,
             ]);
+
+            // Update only latest renewal (IMPORTANT FIX)
+            $renewal = $bluebook->renewals()->latest()->first();
+
+            if ($renewal) {
+                $renewal->update([
+                    'vehicle_id' => $vehicle->id,
+                    'renewal_type_id' => $renewalType->id,
+                    'status' => 'renewed',
+                    'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                    'start_date_bs' => $expiryData['start_bs'],
+                    'expiry_date_bs' => $expiryData['expiry_bs'],
+                    'start_date_ad' => $expiryData['start_ad'],
+                    'expiry_date_ad' => $expiryData['expiry_ad'],
+                    'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                    'remarks' => $data['remarks'] ?? null,
+                ]);
+            }
 
             DB::commit();
 

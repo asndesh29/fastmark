@@ -34,9 +34,21 @@
                                         <td>{{ $renewal->expiry_date }}</td> --}}
                                         <td>
                                             @if($renewal)
-                                                <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
-                                                    {{ ucfirst($renewal->status) }}
+                                                <span class="badge 
+                                                    bg-{{ 
+                                                        $renewal->display_status == 'expired' ? 'danger' :
+                                                        ($renewal->display_status == 'renewed' ? 'success' : 'secondary')
+                                                    }}">
+                                                    {{ ucfirst($renewal->display_status) }}
                                                 </span>
+
+                                                {{-- Show expiry days only if expired OR <= 7 days --}}
+                                                @if($renewal->days_remaining !== null && $renewal->days_remaining <= 7)
+                                                    <br>
+                                                    <span class="badge bg-warning">
+                                                        {{ $renewal->days_remaining }} days left
+                                                    </span>
+                                                @endif
                                             @endif
                                         </td>
 

@@ -48,6 +48,11 @@
                             @foreach($renewalTypes as $slug => $label)
                                 @if($slug == 'license') @continue @endif
 
+                                {{-- Hide Road Permit & Vehicle Pass if vehicle type is private --}}
+                                @if($vehicle?->vehicleCategory->slug === 'private' && in_array($slug, ['road-permit', 'vehicle-pass']))
+                                    @continue
+                                @endif
+
                                 <div class="col-md-6">
                                     <div class="card border card-border-light mb-3 p-3">
 
@@ -144,7 +149,6 @@
             ndpMonth: true,
             ndpYearCount: 10,
             readOnlyInput: true,
-            disableDaysAfter: 5
         });
 
     });

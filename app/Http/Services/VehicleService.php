@@ -16,26 +16,31 @@ class VehicleService
 {
     public function list(Request $request, $perPage = null)
     {
-        $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
 
         $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType'])
+            // Filter by customer name
             ->when($request->customer, function ($query, $customer) {
                 $query->whereHas('owner', function ($q) use ($customer) {
                     $q->where('first_name', 'like', "%{$customer}%")
                         ->orWhere('last_name', 'like', "%{$customer}%");
                 });
             })
+            // Filter by registration number
             ->when($request->registration_no, function ($query, $registration_no) {
                 $query->where('registration_no', 'like', "%{$registration_no}%");
             })
-            // ->when($request->status && $request->status !== 'all', function ($query, $status) {
-            //     if (in_array($status, ['active', 'inactive'])) {
-            //         $query->where('is_active', $status === 'active' ? 1 : 0);
-            //     }
-            // })
+            // Filter by status
             ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
                 $query->where('is_active', (int) $request->status);
+            })
+            // Filter by vehicle type
+            ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
+                $query->where('vehicle_type_id', $request->vehicle_type_id);
+            })
+            // Filter by vehicle category
+            ->when($request->filled('vehicle_category_id'), function ($query) use ($request) {
+                $query->where('vehicle_category_id', $request->vehicle_category_id);
             })
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);

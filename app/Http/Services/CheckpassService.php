@@ -28,7 +28,7 @@ class CheckpassService
         ])
 
             // Only Commercial Vehicles
-            ->whereHas('vehicleType', function ($q) {
+            ->whereHas('vehicleCategory', function ($q) {
                 $q->where('name', 'Commercial');
             })
 
@@ -146,6 +146,64 @@ class CheckpassService
     }
 
     public function update(VehiclePass $checkpass, array $data)
+    {
+        // dd($data);
+        DB::beginTransaction();
+
+        try {
+
+            $renewalType = RenewalType::where('slug', $data['renewable_type'])
+                ->firstOrFail();
+
+            $vehicle = $checkpass->vehicle;
+
+            $expiryData = $this->calculateExpiryDate(
+                $data['expiry_date_bs'],
+                $renewalType,
+                $vehicle
+            );
+
+            // Update Jach Pass
+            $checkpass->update([
+                'issue_date_bs' => $data['issue_date_bs'] ?? null,
+                'issue_date_ad' => $expiryData['start_ad'],
+                'expiry_date_bs' => $data['expiry_date_bs'],
+                'expiry_date_ad' => $expiryData['start_ad'],
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'payment_status' => $data['payment_status'],
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            // Update only latest renewal (IMPORTANT FIX)
+            $renewal = $checkpass->renewals()->latest()->first();
+
+            if ($renewal) {
+                $renewal->update([
+                    'vehicle_id' => $vehicle->id,
+                    'renewal_type_id' => $renewalType->id,
+                    'status' => 'renewed',
+                    'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                    'start_date_bs' => $expiryData['start_bs'],
+                    'expiry_date_bs' => $expiryData['expiry_bs'],
+                    'start_date_ad' => $expiryData['start_ad'],
+                    'expiry_date_ad' => $expiryData['expiry_ad'],
+                    'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                    'remarks' => $data['remarks'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+
+            return $checkpass->fresh();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update11(VehiclePass $checkpass, array $data)
     {
         // dd($data);
         DB::beginTransaction();
