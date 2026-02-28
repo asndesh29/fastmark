@@ -51,17 +51,6 @@ class VehicleTax extends Model
         return $this->belongsTo(Vehicle::class);
     }
 
-    public function scopeExpiringSoon($query, $days = 30)
-    {
-        return $query->where('expiry_date', '<=', now()->addDays($days))
-            ->where('expiry_date', '>=', now());
-    }
-
-    public function scopeExpired($query)
-    {
-        return $query->where('expiry_date', '<', now());
-    }
-
     public static function validateData($data)
     {
         $data['tax_amount'] = $data['tax_amount'] ?? 0;

@@ -24,19 +24,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if($vehicle->renewals->count())
-                                @foreach($vehicle->renewals as $key => $renewal)
+                            @if($renewals->count())
+                                @foreach($renewals as $key => $renewal)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $renewals->firstItem() + $loop->index }}</td>
                                         <td>{{ $renewal->renewalType->name ?? '—' }}</td>
                                         <td>{{ $renewal->renewable->expiry_date_bs ?? '-' }}</td>
                                         {{-- <td>{{ $renewal->start_date }}</td>
                                         <td>{{ $renewal->expiry_date }}</td> --}}
                                         <td>
                                             @if($renewal)
-                                                <span class="badge bg-{{ $renewal->status == 'renewed' ? 'success' : 'danger' }}">
-                                                    {{ ucfirst($renewal->status) }}
+                                                <span class="badge 
+                                                    bg-{{ 
+                                                        $renewal->display_status == 'expired' ? 'danger' :
+                                                        ($renewal->display_status == 'renewed' ? 'success' : 'secondary')
+                                                    }}">
+                                                    {{ ucfirst($renewal->display_status) }}
                                                 </span>
+
+                                                {{-- Show expiry days only if expired OR <= 7 days --}}
+                                                @if($renewal->days_remaining !== null && $renewal->days_remaining <= 7)
+                                                    <br>
+                                                    <span class="badge bg-warning">
+                                                        {{ $renewal->days_remaining }} days left
+                                                    </span>
+                                                @endif
                                             @endif
                                         </td>
 
@@ -60,6 +72,16 @@
                                 </div>
                             @endif
                         </tbody>
+
+                        @if ($renewals->hasPages())
+    <tr>
+        <td colspan="6">
+            <div class="d-flex justify-content-end">
+                {{ $renewals->links('pagination::bootstrap-5') }}
+            </div>
+        </td>
+    </tr>
+@endif
                     </table>
                 </div>
             </div>

@@ -41,6 +41,7 @@ class CustomerService
                 'vehicle_type_id' => $vehicleTypeId,
                 'vehicle_category_id' => $data['vehicle_categories'][$index],
                 'registration_no' => $data['registration_no'][$index],
+                'permit_no' => $data['permit_no'][$index] ?? null,
                 'chassis_no' => $data['chassis_no'][$index] ?? null,
                 'engine_no' => $data['engine_no'][$index] ?? null,
                 'engine_cc' => $data['engine_cc'][$index] ?? null,

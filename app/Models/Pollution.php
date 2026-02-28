@@ -88,4 +88,9 @@ class Pollution extends Model
 
         return Validator::make($data, $rules, $messages);
     }
+
+    public function latestRenewal()
+    {
+        return $this->morphOne(Renewal::class, 'renewable')->latestOfMany();
+    }
 }

@@ -86,5 +86,28 @@ class Renewal extends Model
     }
 
 
+    public function scopeExpired($query)
+    {
+        return $query->whereDate('start_date_ad', '<', now());
+    }
 
+    public function scopeExpiringSoon($query, $days = 30)
+    {
+        return $query->whereDate('start_date_ad', '<=', now()->addDays($days))
+            ->whereDate('start_date_ad', '>=', now());
+    }
+
+    public function getIsExpiredAttribute()
+    {
+        return $this->start_date_ad ? now()->gt(Carbon::parse($this->start_date_ad)) : false;
+    }
+
+    public function getDisplayStatusAttribute()
+    {
+        if ($this->is_expired) {
+            return 'expired';
+        }
+
+        return $this->status;
+    }
 }

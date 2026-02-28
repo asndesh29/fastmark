@@ -38,6 +38,10 @@ class VehicleController extends Controller
     {
         $perPage = $request->show_limit ?? config('default_pagination', 10);
 
+        $vehicle_types = VehicleType::where('is_active', true)->get();
+
+        $vehicle_categories = VehicleCategory::where('is_active', true)->get();
+
         $vehicles = $this->vehicleService->list($request, $perPage);
 
         // Handle AJAX filter requests
@@ -46,7 +50,7 @@ class VehicleController extends Controller
             return response()->json(['html' => $html]);
         }
 
-        return view('vehicle.index', compact('vehicles'));
+        return view('vehicle.index', compact('vehicles', 'vehicle_types', 'vehicle_categories'));
     }
 
     /**
@@ -79,8 +83,13 @@ class VehicleController extends Controller
     {
         $vehicle = Vehicle::with('renewals.renewalType', 'renewals.renewable')->findOrFail($vehicle->id);
 
-        // dd($vehicle); // optional: check the loaded data
-        return view('vehicle.show', compact('vehicle'));
+        $renewals = $vehicle->renewals()
+            ->with(['renewalType', 'renewable'])
+            ->latest()
+            ->paginate(10);
+
+        // dd($vehicle);
+        return view('vehicle.show', compact('renewals', 'vehicle'));
     }
 
     /**
@@ -286,6 +295,9 @@ class VehicleController extends Controller
 
         $customer = $vehicle?->owner;
 
+        // $vehicleCategory = $vehicle?->vehicleCategory;
+        // dd($vehicleCategory);
+
         return view('vehicle.renewal', compact(
             'vehicle',
             'customer',
@@ -297,6 +309,7 @@ class VehicleController extends Controller
 
     public function updateRenewal(UpdateVehicleRenewalRequest $request, Vehicle $vehicle)
     {
+        // dd($request->all());
         foreach ($request->renewals as $type) {
 
             $data = $request->input($type, []);

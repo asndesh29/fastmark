@@ -16,42 +16,6 @@ use Illuminate\Support\Facades\DB;
 
 class VehicleTaxService
 {
-    public function list1(Request $request, $perPage = null)
-    {
-        $keywords = explode(' ', $request->search ?? '');
-        $perPage = $perPage ?? config('default_pagination', 10);
-
-        $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType', 'vehicleTax.renewal'])
-            ->when($request->customer, function ($query, $customer) {
-                $query->whereHas('owner', function ($q) use ($customer) {
-                    $q->where('first_name', 'like', "%{$customer}%")
-                        ->orWhere('last_name', 'like', "%{$customer}%");
-                });
-            })
-            ->when($request->registration_no, function ($query, $registration_no) {
-                $query->where('registration_no', 'like', "%{$registration_no}%");
-            })
-            ->when($request->invoice, function ($query, $invoice) {
-                $query->whereHas('vehicleTax', function ($q) use ($invoice) {
-                    $q->where('invoice_no', 'like', "%{$invoice}%");
-                });
-            })
-            ->when($request->expiry_date_bs, function ($query, $date) {
-                $query->whereHas('vehicleTax', function ($q) use ($date) {
-                    $q->whereDate('expiry_date_bs', $date);
-                });
-            })
-            ->when($request->status && $request->status !== 'all', function ($query, $status) {
-                $query->whereHas('vehicleTax.renewal', function ($q) use ($status) {
-                    $q->where('status', strtolower($status));
-                });
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
-
-        return $vehicles;
-    }
-
     public function list(Request $request, $perPage = null)
     {
         // dd($request->all());
@@ -79,6 +43,11 @@ class VehicleTaxService
                 });
             })
 
+            // Filter by Vehicle Type
+            ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
+                $query->where('vehicle_type_id', $request->vehicle_type_id);
+            })
+
             // Filter by Expiry Date (BS)
             ->when($request->filled('expiry_date_bs'), function ($query) use ($request) {
                 $query->whereHas('vehicleTax', function ($q) use ($request) {
@@ -98,7 +67,6 @@ class VehicleTaxService
 
         return $vehicles;
     }
-
 
     public function store(array $data)
     {
@@ -169,6 +137,64 @@ class VehicleTaxService
     }
 
     public function update(VehicleTax $vehicleTax, array $data)
+    {
+        // dd($data);
+        DB::beginTransaction();
+
+        try {
+
+            $renewalType = RenewalType::where('slug', $data['renewable_type'])
+                ->firstOrFail();
+
+            $vehicle = $vehicleTax->vehicle;
+
+            $expiryData = $this->calculateExpiryDate(
+                $data['expiry_date_bs'],
+                $renewalType,
+                $vehicle
+            );
+
+            // Update Vehicle Tax
+            $vehicleTax->update([
+                'issue_date_bs' => $data['issue_date_bs'] ?? null,
+                'issue_date_ad' => $expiryData['start_ad'],
+                'expiry_date_bs' => $data['expiry_date_bs'],
+                'expiry_date_ad' => $expiryData['start_ad'],
+                'renewed_expiry_date_bs' => $expiryData['expiry_bs'],
+                'renewed_expiry_date_ad' => $expiryData['expiry_ad'],
+                'payment_status' => $data['payment_status'],
+                'remarks' => $data['remarks'] ?? null,
+            ]);
+
+            // Update only latest renewal (IMPORTANT FIX)
+            $renewal = $vehicleTax->renewals()->latest()->first();
+
+            if ($renewal) {
+                $renewal->update([
+                    'vehicle_id' => $vehicle->id,
+                    'renewal_type_id' => $renewalType->id,
+                    'status' => 'renewed',
+                    'is_paid' => $data['payment_status'] === 'paid' ? 1 : 0,
+                    'start_date_bs' => $expiryData['start_bs'],
+                    'expiry_date_bs' => $expiryData['expiry_bs'],
+                    'start_date_ad' => $expiryData['start_ad'],
+                    'expiry_date_ad' => $expiryData['expiry_ad'],
+                    'reminder_date' => Carbon::parse($expiryData['expiry_ad'])->subDays(7),
+                    'remarks' => $data['remarks'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+
+            return $vehicleTax->fresh();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update11(VehicleTax $vehicleTax, array $data)
     {
         // dd($data);
         DB::beginTransaction();

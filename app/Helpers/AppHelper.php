@@ -193,7 +193,7 @@ class AppHelper
         return "{$prefix}-{$year}-{$serialFormatted}";
     }
 
-    public static function generateInvoiceNumber($type)
+    public static function generateInvoiceNumber2($type)
     {
         // dd($type);
         // Prefix for each document type
@@ -242,6 +242,66 @@ class AppHelper
         }
 
         // Format serial to be 4 digits
+        $serialFormatted = str_pad($serial, 4, '0', STR_PAD_LEFT);
+
+        return "{$prefix}-{$year}-{$serialFormatted}";
+    }
+
+    public static function generateInvoiceNumber(string $type): string
+    {
+        $type = strtolower(str_replace('_', '-', $type));
+
+        switch ($type) {
+            case 'bluebook':
+                $prefix = 'BB';
+                $model = \App\Models\Bluebook::class;
+                break;
+
+            case 'vehicle-pass':
+                $prefix = 'JP';
+                $model = \App\Models\VehiclePass::class;
+                break;
+
+            case 'pollution':
+                $prefix = 'PL';
+                $model = \App\Models\Pollution::class;
+                break;
+
+            case 'insurance':
+                $prefix = 'IN';
+                $model = \App\Models\Insurance::class;
+                break;
+
+            case 'road-permit':
+                $prefix = 'RP';
+                $model = \App\Models\RoadPermit::class;
+                break;
+
+            case 'vehicle-tax':
+                $prefix = 'TX';
+                $model = \App\Models\VehicleTax::class;
+                break;
+
+            default:
+                throw new \Exception("Invalid document type '{$type}'");
+        }
+
+        $year = now()->format('Y');
+
+        /**
+         * Get last invoice of this type for current year only
+         */
+        $lastInvoice = $model::where('invoice_no', 'like', "{$prefix}-{$year}-%")
+            ->orderByDesc('id')
+            ->first();
+
+        if ($lastInvoice && $lastInvoice->invoice_no) {
+            $lastSerial = (int) substr($lastInvoice->invoice_no, -4);
+            $serial = $lastSerial + 1;
+        } else {
+            $serial = 1;
+        }
+
         $serialFormatted = str_pad($serial, 4, '0', STR_PAD_LEFT);
 
         return "{$prefix}-{$year}-{$serialFormatted}";

@@ -31,35 +31,50 @@
                         <div class="listjs-table" id="customerList">
                             <!-- Filters -->
                             <div class="row g-3">
-                                <div class="col-xxl-2 col-sm-12">
+                                <div class="col-xxl-3 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control" placeholder="Search for invoice">
+                                        <input type="text" class="form-control"
+                                               placeholder="Search for invoice">
                                         <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
 
                                 <div class="col-xxl-3 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control" placeholder="Search for customer">
+                                        <input type="text" class="form-control"
+                                               placeholder="Search for customer">
                                         <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
 
-                                <div class="col-xxl-2 col-sm-12">
+                                <div class="col-xxl-3 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control" placeholder="Search for registration no">
+                                        <input type="text" class="form-control"
+                                               placeholder="Search for registration no">
                                         <i class="ri-search-line search-icon"></i>
                                     </div>
                                 </div>
 
                                 {{-- <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control" placeholder="Last Expiry Date">
+                                        <input type="text" class="form-control"
+                                               placeholder="Last Expiry Date">
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
                                 </div> --}}
 
-                                <div class="col-xxl-2 col-sm-12">
+                                <div class="col-xxl-3 col-sm-4">
+                                    <select id="vehicle_type_id" name="vehicle_type_id" class="form-select">
+                                        <option value="">Select Vehicle Type</option>
+                                        @foreach($vehicle_types as $type)
+                                            <option value="{{ $type->id }}" {{ request('vehicle_type_id') == $type->id ? 'selected' : '' }}>
+                                                {{ $type->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-xxl-3 col-sm-12">
                                     <div class="search-box">
                                         <input type="text" id="expiry_date_bs" name="expiry_date_bs"
                                             class="form-control nepali-date" value="{{ request('expiry_date_bs') }}"
@@ -69,9 +84,9 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xxl-2 col-sm-4">
+                                <div class="col-xxl-3 col-sm-4">
                                     <select class="form-select" id="payment_status">
-                                        <option value="all" selected>All</option>
+                                        <option value="all" selected>Select Payment Status</option>
                                         <option value="unpaid">Unpaid</option>
                                         <option value="paid">Paid</option>
                                     </select>
@@ -184,33 +199,31 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             /* ================================
-               1. Initialize Nepali Date Picker
+               1. Initialize Filter Date (Outside Modal)
                ================================ */
-
-            // For normal page inputs (like filter field)
-            $('.nepali-date').each(function () {
-                if (!$(this).hasClass('ndp-initialized')) {
-                    $(this).nepaliDatePicker({
-                        ndpYear: true,
-                        ndpMonth: true,
-                        ndpYearCount: 20
-                    });
-                    $(this).addClass('ndp-initialized');
-                }
-            });
+            const filterInput = $('#expiry_date_bs');
+            if (!filterInput.hasClass('ndp-initialized')) {
+                filterInput.NepaliDatePicker({
+                    ndpYear: true,
+                    ndpMonth: true,
+                    ndpYearCount: 20
+                });
+                filterInput.addClass('ndp-initialized');
+            }
 
 
             /* ================================
-               2. Reinitialize inside Modal
+               2. Initialize Datepicker Inside Modal
                ================================ */
-
-            $('#vehicletaxModal').on('shown.bs.modal', function () {
+            const modal = $('#vehicletaxModal');
+            modal.on('shown.bs.modal', function () {
                 $(this).find('.nepali-date').each(function () {
                     if (!$(this).hasClass('ndp-initialized')) {
-                        $(this).nepaliDatePicker({
+                        $(this).NepaliDatePicker({
                             ndpYear: true,
                             ndpMonth: true,
-                            ndpYearCount: 20
+                            ndpYearCount: 20,
+                            container: '#vehicletaxModal'
                         });
                         $(this).addClass('ndp-initialized');
                     }
@@ -221,14 +234,11 @@
             /* ================================
                3. Modal Vehicle ID Setup
                ================================ */
-
-            const modal = document.getElementById('vehicletaxModal');
-            const vehicleInput = modal.querySelector('input[name="vehicle_id"]');
-
+            const vehicleInput = modal.find('input[name="vehicle_id"]');
             document.addEventListener('click', function (e) {
-                if (e.target.closest('.addBtn')) {
-                    const btn = e.target.closest('.addBtn');
-                    vehicleInput.value = btn.getAttribute('data-vehicle-id');
+                const btn = e.target.closest('.addBtn');
+                if (btn) {
+                    vehicleInput.val(btn.getAttribute('data-vehicle-id'));
                 }
             });
 
@@ -236,7 +246,6 @@
             /* ================================
                4. Form Validation
                ================================ */
-
             const form = document.getElementById('vehicletaxForm');
 
             form.addEventListener('submit', function (e) {
@@ -277,11 +286,15 @@
 
         });
 
-        // AJAX Filter + Pagination
+
+        /* ================================
+           5. AJAX Filter + Pagination
+           ================================ */
         function SearchData(page = 1) {
             const invoice = document.querySelector('input[placeholder="Search for invoice"]').value;
             const customer = document.querySelector('input[placeholder="Search for customer"]').value;
             const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
+            const vehicle_type_id = document.getElementById('vehicle_type_id') ? document.getElementById('vehicle_type_id').value : '';
             const expiry_date_bs = document.getElementById('expiry_date_bs').value;
             const status = document.getElementById('payment_status').value;
 
@@ -289,6 +302,7 @@
                 invoice,
                 customer,
                 registration_no,
+                vehicle_type_id,
                 expiry_date_bs,
                 status,
                 page
@@ -296,8 +310,8 @@
 
             const tbody = document.getElementById('renewalTableBody');
             tbody.innerHTML = `<tr>
-                    <td colspan="10" class="text-center p-4">Loading...</td>
-                </tr>`;
+                <td colspan="10" class="text-center p-4">Loading...</td>
+            </tr>`;
 
             fetch(`{{ route('admin.renewal.vehicle-tax.index') }}?${new URLSearchParams(params)}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -317,10 +331,10 @@
                 })
                 .catch(() => {
                     tbody.innerHTML = `<tr>
-                    <td colspan="10" class="text-center text-danger">
-                        Error loading data
-                    </td>
-                </tr>`;
+                <td colspan="10" class="text-center text-danger">
+                    Error loading data
+                </td>
+            </tr>`;
                 });
         }
     </script>

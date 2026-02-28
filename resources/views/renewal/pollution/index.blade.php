@@ -18,7 +18,7 @@
     </div>
     <!-- end page title -->
 
-    <!-- Bluebook Renewal List -->
+    <!-- Pollution Renewal List -->
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -31,7 +31,7 @@
                         <div class="listjs-table" id="customerList">
                             <!-- Filters -->
                             <div class="row g-3">
-                                <div class="col-xxl-2 col-sm-12">
+                                <div class="col-xxl-3 col-sm-12">
                                     <div class="search-box">
                                         <input type="text" class="form-control"
                                                placeholder="Search for invoice">
@@ -55,25 +55,38 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xxl-2 col-sm-12">
+                                {{-- <div class="col-xxl-2 col-sm-12">
                                     <div class="search-box">
                                         <input type="text" class="form-control"
                                                placeholder="Last Expiry Date">
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
+                                </div> --}}
+
+                                <div class="col-xxl-3 col-sm-4">
+                                    <select id="vehicle_type_id" name="vehicle_type_id" class="form-select">
+                                        <option value="">Select Vehicle Type</option>
+                                        @foreach($vehicle_types as $type)
+                                            <option value="{{ $type->id }}" {{ request('vehicle_type_id') == $type->id ? 'selected' : '' }}>
+                                                {{ $type->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
-                                <div class="col-xxl-2 col-sm-12">
+                                <div class="col-xxl-3 col-sm-12">
                                     <div class="search-box">
-                                        <input type="text" class="form-control"
-                                               placeholder="New Expiry Date">
+                                        <input type="text" id="expiry_date_bs" name="expiry_date_bs"
+                                            class="form-control nepali-date" value="{{ request('expiry_date_bs') }}"
+                                            placeholder="YYYY-MM-DD" autocomplete="off" autocorrect="off"
+                                            autocapitalize="off" spellcheck="false" />
                                         <i class="ri-calendar-line search-icon"></i>
                                     </div>
                                 </div>
 
-                                <div class="col-xxl-2 col-sm-4">
-                                    <select class="form-select" id="idStatus">
-                                        <option value="all" selected>All</option>
+                                <div class="col-xxl-3 col-sm-4">
+                                    <select class="form-select" id="payment_status">
+                                        <option value="all" selected>Select Payment Status</option>
                                         <option value="unpaid">Unpaid</option>
                                         <option value="paid">Paid</option>
                                     </select>
@@ -142,8 +155,12 @@
                         </div> --}}
                         <div class="mb-3">
                             <label>Expiry Date</label>
-                            <input type="text" class="form-control nepali-date" name="expiry_date_bs"
-                                    placeholder="Select Expiry Date" autocomplete="off"/>
+                            <input type="text" 
+                                class="form-control nepali-date" 
+                                name="expiry_date_bs"
+                                placeholder="Select Expiry Date" 
+                                autocomplete="off"
+                                readonly />
                         </div>
                         {{-- <div class="mb-3">
                             <label>Tax Amount</label>
@@ -181,116 +198,146 @@
 @endsection
 
 @push('script_2')
-<script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Dynamically set vehicle_id in modal
-        const modal = document.getElementById('pollutionModal');
-        const vehicleInput = modal.querySelector('input[name="vehicle_id"]');
 
-         // Prevent modal from closing if form validation fails
+        /* ================================
+            1. Initialize Filter Date (Outside Modal)
+            ================================ */
+        const filterInput = $('#expiry_date_bs');
+        if (!filterInput.hasClass('ndp-initialized')) {
+            filterInput.NepaliDatePicker({
+                ndpYear: true,
+                ndpMonth: true,
+                ndpYearCount: 20
+            });
+            filterInput.addClass('ndp-initialized');
+        }
+
+
+        /* ================================
+            2. Initialize Datepicker Inside Modal
+            ================================ */
+        const modal = $('#pollutionModal');
+        modal.on('shown.bs.modal', function () {
+            $(this).find('.nepali-date').each(function () {
+                if (!$(this).hasClass('ndp-initialized')) {
+                    $(this).NepaliDatePicker({
+                        ndpYear: true,
+                        ndpMonth: true,
+                        ndpYearCount: 20,
+                        container: '#pollutionModal'
+                    });
+                    $(this).addClass('ndp-initialized');
+                }
+            });
+        });
+
+
+        /* ================================
+            3. Modal Vehicle ID Setup
+            ================================ */
+        const vehicleInput = modal.find('input[name="vehicle_id"]');
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.addBtn');
+            if (btn) {
+                vehicleInput.val(btn.getAttribute('data-vehicle-id'));
+            }
+        });
+
+
+        /* ================================
+            4. Form Validation
+            ================================ */
         const form = document.getElementById('pollutionForm');
+
         form.addEventListener('submit', function (e) {
-            // Clear any previous error messages
             clearErrorMessages();
 
-            // Check if there are validation errors for required fields
-            // const issueDate = form.querySelector('input[name="issue_date"]');
             const expiryDate = form.querySelector('input[name="expiry_date_bs"]');
-
             let hasError = false;
 
-            // Validate Issue Date
-            // if (!issueDate.value) {
-            //     showError(issueDate, 'Issue Date is required.');
-            //     hasError = true;
-            // }
-
-            // Validate Last Expiry Date
             if (!expiryDate.value) {
                 showError(expiryDate, 'Expiry Date is required.');
                 hasError = true;
             }
 
-            // If there are errors, prevent form submission
             if (hasError) {
                 e.preventDefault();
             }
         });
 
-        // Show error message below the input field
         function showError(input, message) {
-            input.classList.add('is-invalid');  // Adds Bootstrap invalid styling
+            input.classList.add('is-invalid');
             const errorDiv = document.createElement('div');
             errorDiv.classList.add('invalid-feedback');
             errorDiv.textContent = message;
-            input.parentElement.appendChild(errorDiv);  // Add error message below the input
+            input.parentElement.appendChild(errorDiv);
         }
 
-        // Clear all error messages
         function clearErrorMessages() {
             const errorMessages = form.querySelectorAll('.invalid-feedback');
-            errorMessages.forEach(function(error) {
-                error.remove();  // Remove error message
+            errorMessages.forEach(function (error) {
+                error.remove();
             });
 
-            // Remove invalid class from all inputs
             const inputs = form.querySelectorAll('.form-control');
-            inputs.forEach(function(input) {
+            inputs.forEach(function (input) {
                 input.classList.remove('is-invalid');
             });
         }
 
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.addBtn')) {
-                const btn = e.target.closest('.addBtn');
-                vehicleInput.value = btn.getAttribute('data-vehicle-id');
-            }
-        });
-
-        // Initialize Nepali datepicker on page load
-        document.querySelectorAll('.nepali-date').forEach(function(input) {
-            if (!input.classList.contains('ndp-initialized')) {
-                $(input).NepaliDatePicker({
-                    container: '#pollutionModal'
-                }).addClass('ndp-initialized');
-            }
-        });
     });
 
-    // AJAX Filter + Pagination
+    /* ================================
+        5. AJAX Filter + Pagination
+        ================================ */
     function SearchData(page = 1) {
         const invoice = document.querySelector('input[placeholder="Search for invoice"]').value;
         const customer = document.querySelector('input[placeholder="Search for customer"]').value;
         const registration_no = document.querySelector('input[placeholder="Search for registration no"]').value;
-        const last_expiry_date = document.querySelector('input[placeholder="Last Expiry Date"]').value;
-        const new_expiry_date = document.querySelector('input[placeholder="New Expiry Date"]').value;
-        const status = document.getElementById('idStatus').value;
+        const vehicle_type_id = document.getElementById('vehicle_type_id') ? document.getElementById('vehicle_type_id').value : ''; 
+        const expiry_date_bs = document.getElementById('expiry_date_bs').value;
+        const status = document.getElementById('payment_status').value;
 
-        const params = { invoice, customer, registration_no, last_expiry_date, new_expiry_date, status, page };
+        const params = {
+            invoice,
+            customer,
+            registration_no,
+            expiry_date_bs,
+            vehicle_type_id,
+            status,
+            page
+        };
 
         const tbody = document.getElementById('renewalTableBody');
-        tbody.innerHTML = `<tr><td colspan="10" class="text-center p-4">Loading...</td></tr>`;
+        tbody.innerHTML = `<tr>
+            <td colspan="10" class="text-center p-4">Loading...</td>
+        </tr>`;
 
         fetch(`{{ route('admin.renewal.pollution.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
-        .then(res => res.json())
-        .then(data => {
-            tbody.innerHTML = data.html;
+            .then(res => res.json())
+            .then(data => {
+                tbody.innerHTML = data.html;
 
-            // Re-bind pagination links
-            document.querySelectorAll('.pagination a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = new URL(this.href).searchParams.get('page');
-                    SearchData(page);
+                // Re-bind pagination links
+                document.querySelectorAll('.pagination a').forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const page = new URL(this.href).searchParams.get('page');
+                        SearchData(page);
+                    });
                 });
+            })
+            .catch(() => {
+                tbody.innerHTML = `<tr>
+                    <td colspan="10" class="text-center text-danger">
+                        Error loading data
+                    </td>
+                </tr>`;
             });
-        })
-        .catch(() => {
-            tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Error loading data</td></tr>`;
-        });
     }
 </script>
 @endpush

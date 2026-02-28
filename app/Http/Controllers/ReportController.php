@@ -9,6 +9,7 @@ use App\Models\RenewalType;
 use App\Models\Vehicle;
 use App\Models\VehicleType;
 use App\Models\VehicleCategory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Exports\VehiclesExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -60,33 +61,69 @@ class ReportController extends Controller
     {
         $renewalTypes = RenewalType::where('is_active', true)->get();
 
-        $query = Renewal::with(['vehicle', 'renewalType']);
+        $vehicles = Vehicle::with(['renewals.renewalType', 'owner'])
+            // Search by registration_no
+            ->when($request->filled('registration_no'), function ($q) use ($request) {
+                $q->where('registration_no', 'like', '%' . $request->registration_no . '%');
+            })
 
-        // Filter by renewal type
-        if ($request->filled('renewal_type_id')) {
-            $query->where('renewal_type_id', $request->renewal_type_id);
-        }
+            // Filter by renewal type
+            ->when($request->filled('renewal_type_id'), function ($q) use ($request) {
+                $q->whereHas('renewals', function ($sub) use ($request) {
+                    $sub->where('renewal_type_id', $request->renewal_type_id);
 
-        // Filter by date range
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('expiry_date_bs', [
-                $request->from_date,
-                $request->to_date
-            ]);
-        }
+                    // Apply date range only when type selected
+                    if ($request->filled('from_date') && $request->filled('to_date')) {
+                        $sub->whereBetween('start_date_bs', [
+                            $request->from_date,
+                            $request->to_date
+                        ]);
+                    }
 
-        $renewals = $query->orderBy('expiry_date_bs', 'asc')->paginate(20);
+                });
+            })
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('report.renewal-expiry', compact(
-            'renewals',
-            'renewalTypes'
-        ));
+        // ✅ Calculate expiry days here
+        $vehicles->getCollection()->transform(function ($vehicle) {
+
+            foreach ($vehicle->renewals as $renewal) {
+
+                if ($renewal->start_date_ad) {
+                    $today = Carbon::today();
+                    $expiry = Carbon::parse($renewal->start_date_ad);
+
+                    $daysLeft = $today->diffInDays($expiry, false);
+
+                    $renewal->expiry_days = $daysLeft;
+
+                    if ($daysLeft < 0) {
+                        $renewal->expiry_status = 'expired';
+                    } elseif ($daysLeft <= 7) {
+                        $renewal->expiry_status = 'warning';
+                    } else {
+                        $renewal->expiry_status = 'valid';
+                    }
+                } else {
+                    $renewal->expiry_days = null;
+                    $renewal->expiry_status = null;
+                }
+            }
+
+            return $vehicle;
+        });
+
+
+        return view('report.renewal-expiry', compact('vehicles', 'renewalTypes'));
     }
 
     public function exportRenewalExpiry(Request $request)
     {
+        $filters = $request->only(['renewal_type_id', 'from_date', 'to_date']);
+
         return Excel::download(
-            new RenewalExpiryExport($request->all()),
+            new RenewalExpiryExport($filters),
             'renewal-expiry-report.xlsx'
         );
     }

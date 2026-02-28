@@ -25,7 +25,7 @@
             <form action="{{ route('admin.renewal.insurance.update', $renewal->id) }}" method="POST">
                 @csrf
                 <input type="hidden" name="vehicle_id" value="{{ $renewal->vehicle_id }}">
-                <input type="hidden" name="type" value="insurance">
+                <input type="hidden" name="renewable_type" value="insurance">
                 
                 <div class="card">
                     <div class="card-header align-items-center d-flex">
@@ -50,6 +50,33 @@
                                     </div>
                                </div>
 
+                               <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label>Insurance Type</label>
+                                        <select class="form-select" name="insurance_type">
+                                            <option value="general" {{ $renewal->insurance_type === 'general' ? 'selected' : '' }}>General</option>
+                                            <option value="third" {{ $renewal->insurance_type === 'third' ? 'selected' : '' }}>Third</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="policy_number" class="form-label">Policy Number</label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control @error('policy_number') is-invalid @enderror" 
+                                            id="policy_number" 
+                                            name="policy_number" 
+                                            value="{{ old('policy_number', $renewal->policy_number) }}" 
+                                            placeholder="Ex: 3000">
+                                        
+                                        @error('policy_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
                                 {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="policy_number" class="form-label">Policy Number</label>
@@ -63,11 +90,14 @@
 
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="issue_date" class="form-label">Issue Date</label>
-                                       <input type="text" class="form-control nepali-date @error('issue_date') is-invalid @enderror" name="issue_date"
-                                            value="{{ old('issue_date', $renewal->issue_date) }}" placeholder="Select Issue Date" autocomplete="off"/>
+                                        <label for="expiry_date_bs" class="form-label">Expiry Date</label>
+                                        <input type="text" class="form-control nepali-date @error('expiry_date_bs') is-invalid @enderror" 
+                                            name="expiry_date_bs"
+                                            value="{{ old('expiry_date_bs', $renewal->expiry_date_bs) }}" 
+                                            placeholder="Select Expiry Date" 
+                                           readonly />
 
-                                        @error('issue_date')
+                                        @error('expiry_date_bs')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -76,9 +106,15 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="amount" class="form-label">Amount</label>
-                                        <input type="text" class="form-control @error('amount') is-invalid @enderror" id="amount" name="amount" value="{{ old('amount', $renewal->amount) }}" placeholder="Ex: 3000">
+                                        <input 
+                                            type="integer" 
+                                            class="form-control @error('renewal_charge') is-invalid @enderror" 
+                                            id="renewal_charge" 
+                                            name="renewal_charge" 
+                                            value="{{ old('renewal_charge', $renewal->renewal_charge) }}" 
+                                            placeholder="Ex: 3000">
                                         
-                                        @error('amount')
+                                        @error('renewal_charge')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -87,9 +123,9 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label>Status</label>
-                                        <select class="form-select" name="status">
-                                            <option value="paid" {{ $renewal->status === 'paid' ? 'selected' : '' }}>Paid</option>
-                                            <option value="unpaid" {{ $renewal->status === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                                        <select class="form-select" name="payment_status">
+                                            <option value="paid" {{ $renewal->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
+                                            <option value="unpaid" {{ $renewal->payment_status === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
                                         </select>
                                     </div>
                                 </div>
@@ -105,12 +141,14 @@
 
                         <!-- button -->
                         <div class="hstack gap-2 justify-content-end d-print-none mt-4">
-                            <button type="button" class="btn btn-soft-danger waves-effect">
-                                <i class="ri-printer-line align-bottom me-1"></i> Reset
-                            </button>
+                            <a href="{{ route('admin.renewal.insurance.index') }}">
+                                <button type="button" class="btn btn-soft-danger waves-effect">
+                                    <i class="ri-close-line align-bottom me-1"></i> Reset
+                                </button>
+                            </a>
                             
                             <button type="submit" class="btn btn-soft-success btn-success">
-                                <i class="ri-printer-line align-bottom me-1"></i> Update
+                                <i class="ri-save-line align-bottom me-1"></i> Update
                             </button>
                         </div>
                         <!-- button -->

@@ -16,26 +16,31 @@ class VehicleService
 {
     public function list(Request $request, $perPage = null)
     {
-        $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
 
         $vehicles = Vehicle::with(['owner', 'vehicleCategory', 'vehicleType'])
+            // Filter by customer name
             ->when($request->customer, function ($query, $customer) {
                 $query->whereHas('owner', function ($q) use ($customer) {
                     $q->where('first_name', 'like', "%{$customer}%")
                         ->orWhere('last_name', 'like', "%{$customer}%");
                 });
             })
+            // Filter by registration number
             ->when($request->registration_no, function ($query, $registration_no) {
                 $query->where('registration_no', 'like', "%{$registration_no}%");
             })
-            // ->when($request->status && $request->status !== 'all', function ($query, $status) {
-            //     if (in_array($status, ['active', 'inactive'])) {
-            //         $query->where('is_active', $status === 'active' ? 1 : 0);
-            //     }
-            // })
+            // Filter by status
             ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
                 $query->where('is_active', (int) $request->status);
+            })
+            // Filter by vehicle type
+            ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
+                $query->where('vehicle_type_id', $request->vehicle_type_id);
+            })
+            // Filter by vehicle category
+            ->when($request->filled('vehicle_category_id'), function ($query) use ($request) {
+                $query->where('vehicle_category_id', $request->vehicle_category_id);
             })
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
@@ -291,6 +296,114 @@ class VehicleService
      * Update Renewal dynamically
      */
     public function updateRenewal(array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            $vehicle = $data['vehicle'];
+            $type = strtolower(str_replace('_', '-', $data['type']));
+
+            // Get Renewal Type
+            $renewalType = RenewalType::where('slug', $type)->firstOrFail();
+
+            // Resolve dynamic model (Bluebook, Insurance, etc.)
+            $modelClass = $this->resolveRenewableModel($renewalType);
+
+            // Calculate expiry dates
+            $expiryDates = $this->calculateExpiryDate(
+                $data['expiry_date_bs'] ?? null,
+                $renewalType,
+                $vehicle
+            );
+
+            /**
+             * ----------------------------------
+             * Step 1: Find or Restore Main Record
+             * ----------------------------------
+             */
+            $renewable = $modelClass::withTrashed()
+                ->where('vehicle_id', $vehicle->id)
+                ->latest('id')
+                ->first();
+
+            if ($renewable && method_exists($renewable, 'trashed') && $renewable->trashed()) {
+                $renewable->restore();
+            }
+
+            // Generate invoice only if new
+            $invoiceNumber = $renewable
+                ? $renewable->invoice_no
+                : AppHelper::generateInvoiceNumber($type);
+
+            // Prepare main table data
+            $renewableData = [
+                'vehicle_id' => $vehicle->id,
+                'invoice_no' => $invoiceNumber,
+                'issue_date_bs' => $data['issue_date_bs'] ?? null,
+                'issue_date_ad' => $expiryDates['start_ad'] ?? null,
+                'expiry_date_bs' => $data['expiry_date_bs'] ?? null,
+                'expiry_date_ad' => $expiryDates['expiry_ad'] ?? null,
+                'renewed_expiry_date_bs' => $expiryDates['expiry_bs'] ?? null,
+                'renewed_expiry_date_ad' => $expiryDates['expiry_ad'] ?? null,
+                'payment_status' => $data['payment_status'] ?? 'unpaid',
+                'remarks' => $data['remarks'] ?? null,
+            ];
+
+            foreach (['provider_id', 'policy_number', 'insurance_type'] as $field) {
+                if (array_key_exists($field, $data)) {
+                    $renewableData[$field] = $data[$field];
+                }
+            }
+
+            // Update or create main record
+            if ($renewable) {
+                $renewable->update($renewableData);
+            } else {
+                $renewable = $modelClass::create($renewableData);
+            }
+
+            /**
+             * ----------------------------------
+             * Step 2: Find existing Renewal record (single history)
+             * ----------------------------------
+             */
+            $renewal = $renewalType->renewals()
+                ->where('vehicle_id', $vehicle->id)
+                ->latest('id')
+                ->first();
+
+            $renewalData = [
+                'vehicle_id' => $vehicle->id,
+                'renewal_type_id' => $renewalType->id,
+                'renewable_type' => $modelClass,
+                'renewable_id' => $renewable->id,
+                'start_date_bs' => $expiryDates['start_bs'] ?? null,
+                'start_date_ad' => $expiryDates['start_ad'] ?? null,
+                'expiry_date_bs' => $expiryDates['expiry_bs'] ?? null,
+                'expiry_date_ad' => $expiryDates['expiry_ad'] ?? null,
+                'status' => 'renewed',
+                'is_paid' => ($data['payment_status'] ?? 'unpaid') === 'paid',
+                'remarks' => $data['remarks'] ?? null,
+            ];
+
+            // Update or create the single renewal history
+            if ($renewal) {
+                $renewal->update($renewalData);
+            } else {
+                $renewalType->renewals()->create($renewalData);
+            }
+
+            DB::commit();
+
+            return $renewable;
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function updateRenewal12(array $data)
     {
         DB::beginTransaction();
 
