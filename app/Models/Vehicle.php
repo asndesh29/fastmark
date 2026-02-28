@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class Vehicle extends Model
 {
@@ -93,27 +94,32 @@ class Vehicle extends Model
     public static function validateData($data, $id = null)
     {
         $rules = [
-            'registration_no' => ['required', 'string', 'max:255'],
-            'permit_no' => [
+            'registration_no.*' => ['required', 'string', 'max:255'],
+
+            'permit_no.*' => [
                 'nullable',
                 'string',
                 'max:255',
-                // Make permit_no required if vehicle_category_id is, for example, 1 (Commercial)
-                'required_if:vehicle_category_id,2'
+                Rule::requiredIf(function ($input, $item) {
+                    return isset($input['vehicle_category_id'][$item])
+                        && $input['vehicle_category_id'][$item] == 2;
+                }),
             ],
-            'chassis_no' => ['nullable', 'string', 'max:255'],
-            'engine_no' => ['nullable', 'string', 'max:255'],
-            'engine_cc' => ['nullable', 'string', 'max:255'],
-            'capacity' => ['nullable', 'integer'],
-            'vehicle_type_id' => ['required', 'exists:vehicle_types,id'],
-            'vehicle_category_id' => ['required', 'exists:vehicle_categories,id'],
+
+            'chassis_no.*' => ['nullable', 'string', 'max:255'],
+            'engine_no.*' => ['nullable', 'string', 'max:255'],
+            'engine_cc.*' => ['nullable', 'string', 'max:255'],
+            'capacity.*' => ['nullable', 'integer'],
+
+            'vehicle_type_id.*' => ['required', 'exists:vehicle_types,id'],
+            'vehicle_category_id.*' => ['required', 'exists:vehicle_categories,id'],
         ];
 
         $messages = [
-            'registration_no.required' => 'Registration No. is required.',
-            'permit_no.required_if' => 'Permit Number is required.',
-            'vehicle_type_id.required' => 'Vehicle Type is required.',
-            'vehicle_category_id.required' => 'Vehicle Category is required.',
+            'registration_no.*.required' => 'Registration No. is required.',
+            'permit_no.*.required_if' => 'Permit Number is required for Commercial vehicles.',
+            'vehicle_type_id.*.required' => 'Vehicle Type is required.',
+            'vehicle_category_id.*.required' => 'Vehicle Category is required.',
         ];
 
         return Validator::make($data, $rules, $messages);

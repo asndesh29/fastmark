@@ -172,14 +172,14 @@
                 <!-- Settings -->
 
                 <!-- Report -->
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('admin.report.index') }}" 
                         class="nav-link {{ Request::is('admin/report') ? 'active' : '' }}" 
                         data-key="t-analytics">
                         <i class="ri-honour-line"></i> 
                         <span data-key="t-widgets">Report</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <!-- Vehicles -->
                 <li class="nav-item">
@@ -189,9 +189,9 @@
                     </a>
                     <div class="collapse menu-dropdown {{ Route::is('admin.report.*') ? 'show' : '' }}" id="sidebarReport">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('admin.report.index') }}" class="nav-link {{ Request::is('admin/report') ? 'active' : '' }}" data-key="t-analytics"> Vehicle Report </a>
-                            </li>
+                            </li> --}}
 
                              <li class="nav-item">
                                 <a href="{{ route('admin.report.renewals.expiry') }}" 

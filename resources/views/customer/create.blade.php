@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
-    <!-- start page title -->
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -10,13 +8,11 @@
             </div>
         </div>
     </div>
-    <!-- end page title -->
 
     <div class="row">
         <div class="col-lg-12">
             <form action="{{ route('admin.customer.store') }}" method="POST">
                 @csrf
-
                 {{-- ================= CUSTOMER INFO ================= --}}
                 <div class="card">
                     <div class="card-header">
@@ -25,44 +21,31 @@
 
                     <div class="card-body">
                         <div class="row">
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="validationDefault01" class="form-label">First name</label>
-                                    <input type="text" class="form-control @error('first_name') is-invalid @enderror"
-                                        id="first_name" name="first_name" value="{{ old('first_name') }}"
-                                        placeholder="Ex: First Name">
-
-                                    @error('first_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">First name</label>
+                                <input type="text" name="first_name"
+                                    class="form-control @error('first_name') is-invalid @enderror"
+                                    value="{{ old('first_name') }}">
+                                @error('first_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="validationDefault02" class="form-label">Middle name</label>
-                                    <input type="text" class="form-control @error('middle_name') is-invalid @enderror"
-                                        id="middle_name" name="middle_name" value="{{ old('middle_name') }}"
-                                        placeholder="Ex: Middle Name">
-
-                                    @error('middle_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Middle name</label>
+                                <input type="text" name="middle_name"
+                                    class="form-control"
+                                    value="{{ old('middle_name') }}">
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="validationDefault02" class="form-label">Last name</label>
-                                    <input type="text" class="form-control @error('last_name') is-invalid @enderror"
-                                        id="last_name" name="last_name" value="{{ old('last_name') }}"
-                                        placeholder="Ex: Last Name">
-
-                                    @error('last_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Last name</label>
+                                <input type="text" name="last_name"
+                                    class="form-control @error('last_name') is-invalid @enderror"
+                                    value="{{ old('last_name') }}">
+                                @error('last_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-4">
@@ -92,7 +75,6 @@
                     </div>
                 </div>
 
-
                 {{-- ================= VEHICLE INFO ================= --}}
                 <div class="card mt-4">
                     <div class="card-header d-flex justify-content-between">
@@ -104,25 +86,23 @@
 
                     <div class="card-body">
                         <div id="vehicle-container">
-
                             @php
                                 $oldVehicleTypes = old('vehicle_types', [null]);
                             @endphp
 
                             @foreach ($oldVehicleTypes as $index => $oldVehicleType)
-
                                 <div class="vehicle-row border rounded p-3 mb-4" style="background:#f8f9fc">
-
                                     <div class="row">
-
                                         {{-- Vehicle Category --}}
                                         <div class="col-md-4">
                                             <label class="form-label">Vehicle Category</label>
                                             <select name="vehicle_categories[]"
-                                                class="form-select @error('vehicle_categories.' . $index) is-invalid @enderror"
-                                                required>
+                                                    class="form-select vehicle-category"
+                                                    required>
                                                 @foreach ($vehicle_categories as $vc)
-                                                    <option value="{{ $vc->id }}" {{ old('vehicle_categories.' . $index) == $vc->id ? 'selected' : '' }}>
+                                                    <option value="{{ $vc->id }}"
+                                                            data-type="{{ strtolower($vc->name) }}"
+                                                            {{ old('vehicle_categories.' . $index) == $vc->id ? 'selected' : '' }}>
                                                         {{ $vc->name }}
                                                     </option>
                                                 @endforeach
@@ -132,11 +112,10 @@
                                         {{-- Vehicle Type --}}
                                         <div class="col-md-4">
                                             <label class="form-label">Vehicle Type</label>
-                                            <select name="vehicle_types[]"
-                                                class="form-select @error('vehicle_types.' . $index) is-invalid @enderror"
-                                                required>
+                                            <select name="vehicle_types[]" class="form-select" required>
                                                 @foreach ($vehicle_types as $vt)
-                                                    <option value="{{ $vt->id }}" {{ $oldVehicleType == $vt->id ? 'selected' : '' }}>
+                                                    <option value="{{ $vt->id }}"
+                                                            {{ $oldVehicleType == $vt->id ? 'selected' : '' }}>
                                                         {{ $vt->name }}
                                                     </option>
                                                 @endforeach
@@ -156,15 +135,24 @@
                                         </div>
 
                                         {{-- Permit No --}}
-                                        <div class="col-md-4 mt-3">
+
+                                        <div class="col-md-4 permit-field">
                                             <label class="form-label">Permit No</label>
-                                            <input type="text" name="permit_no[]" value="{{ old('permit_no.' . $index) }}"
+                                            <input type="text" name="permit_no[]"
+                                                value="{{ old('permit_no.' . $index) }}"
                                                 class="form-control @error('permit_no.' . $index) is-invalid @enderror">
 
                                             @error('permit_no.' . $index)
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+
+                                        {{-- <div class="col-md-4 mt-3 permit-field">
+                                            <label class="form-label">Permit No</label>
+                                            <input type="text" name="permit_no[]"
+                                                value="{{ old('permit_no.' . $index) }}"
+                                                class="form-control">
+                                        </div> --}}
 
                                         {{-- Chassis --}}
                                         <div class="col-md-4 mt-3">
@@ -194,7 +182,7 @@
                                                 class="form-control">
                                         </div>
 
-                                        {{-- Remove Button --}}
+                                        {{-- Remove --}}
                                         <div class="col-12 text-end mt-3">
                                             <button type="button" class="btn btn-danger btn-sm remove-vehicle-btn">
                                                 Remove
@@ -203,9 +191,7 @@
 
                                     </div>
                                 </div>
-
                             @endforeach
-
                         </div>
 
                         <div class="text-end">
@@ -213,67 +199,84 @@
                                 Save Customer
                             </button>
                         </div>
-
                     </div>
                 </div>
             </form>
-
         </div>
-        <!-- end col -->
     </div>
-    <!-- customer -->
 @endsection
 
+
 @push('script_2')
+<script>
+    function updateRemoveButtons() {
+        let rows = document.querySelectorAll('.vehicle-row');
+        let buttons = document.querySelectorAll('.remove-vehicle-btn');
 
-    <script>
-        function updateRemoveButtons() {
-            let rows = document.querySelectorAll('.vehicle-row');
-            let buttons = document.querySelectorAll('.remove-vehicle-btn');
-
-            if (rows.length === 1) {
-                // hide the only remove button
-                buttons.forEach(btn => btn.style.display = 'none');
-            } else {
-                // show all remove buttons
-                buttons.forEach(btn => btn.style.display = 'inline-block');
-            }
+        if (rows.length === 1) {
+            buttons.forEach(btn => btn.style.display = 'none');
+        } else {
+            buttons.forEach(btn => btn.style.display = 'inline-block');
         }
+    }
 
-        document.getElementById('add-vehicle-btn').addEventListener('click', function () {
-            let container = document.getElementById('vehicle-container');
-            let newRow = container.querySelector('.vehicle-row').cloneNode(true);
+    function togglePermitField(row) {
+        let select = row.querySelector('.vehicle-category');
+        let selectedOption = select.options[select.selectedIndex];
+        let permitField = row.querySelector('.permit-field');
 
-            // clear input values in the new row
-            newRow.querySelectorAll('input').forEach(input => input.value = '');
-            newRow.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+        if (selectedOption.dataset.type === 'private') {
+            permitField.style.display = 'none';
+            permitField.querySelector('input').value = '';
+        } else {
+            permitField.style.display = 'block';
+        }
+    }
 
-            // re-attach remove button event
-            newRow.querySelector('.remove-vehicle-btn').addEventListener('click', function () {
-                newRow.remove();
-                updateRemoveButtons();
-            });
+    function attachCategoryChangeEvent(row) {
+        let select = row.querySelector('.vehicle-category');
 
-            container.appendChild(newRow);
+        select.addEventListener('change', function () {
+            togglePermitField(row);
+        });
+
+        togglePermitField(row); // run on load
+    }
+
+    // ADD VEHICLE
+    document.getElementById('add-vehicle-btn').addEventListener('click', function () {
+
+        let container = document.getElementById('vehicle-container');
+        let newRow = container.querySelector('.vehicle-row').cloneNode(true);
+
+        newRow.querySelectorAll('input').forEach(input => input.value = '');
+        newRow.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+
+        newRow.querySelector('.remove-vehicle-btn').addEventListener('click', function () {
+            newRow.remove();
             updateRemoveButtons();
         });
 
-        // attach remove event for the first row
-        document.querySelectorAll('.remove-vehicle-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                btn.closest('.vehicle-row').remove();
-                updateRemoveButtons();
-            });
-        });
+        attachCategoryChangeEvent(newRow);
 
-        // initial check
+        container.appendChild(newRow);
         updateRemoveButtons();
+    });
 
+    // REMOVE BUTTON
+    document.querySelectorAll('.remove-vehicle-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            btn.closest('.vehicle-row').remove();
+            updateRemoveButtons();
+        });
+    });
 
+    // INIT
+    document.querySelectorAll('.vehicle-row').forEach(row => {
+        attachCategoryChangeEvent(row);
+    });
 
-        window.onload = function () {
-            var mainInput = document.getElementById("nepali-datepicker");
-            mainInput.NepaliDatePicker();
-        };
-    </script>
+    updateRemoveButtons();
+
+</script>
 @endpush
