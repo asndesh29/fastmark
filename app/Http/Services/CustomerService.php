@@ -13,18 +13,50 @@ use Illuminate\Http\Request;
 
 class CustomerService
 {
+    // public function list(Request $request, $perPage = null)
+    // {
+    //     $keywords = explode(' ', $request->search ?? '');
+    //     $perPage = $perPage ?? config('default_pagination', 10);
+
+    //     return Customer::when($request->search, function ($query) use ($keywords) {
+    //         foreach ($keywords as $word) {
+    //             $query->orWhere('name', 'like', "%{$word}%");
+    //         }
+    //     })->orderBy('created_at', 'desc')->paginate($perPage);
+    // }
+
     public function list(Request $request, $perPage = null)
     {
-        $keywords = explode(' ', $request->search ?? '');
         $perPage = $perPage ?? config('default_pagination', 10);
 
-        return Customer::when($request->search, function ($query) use ($keywords) {
-            foreach ($keywords as $word) {
-                $query->orWhere('name', 'like', "%{$word}%");
-            }
-        })->orderBy('created_at', 'desc')->paginate($perPage);
-    }
+        $query = Customer::query();
 
+        // Customer name search
+        if ($request->customer) {
+            $query->where(function ($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->customer . '%')
+                    ->orWhere('middle_name', 'like', '%' . $request->customer . '%')
+                    ->orWhere('last_name', 'like', '%' . $request->customer . '%');
+            });
+        }
+
+        // Email filter
+        if ($request->email) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        // Phone filter
+        if ($request->phone) {
+            $query->where('phone', 'like', '%' . $request->phone . '%');
+        }
+
+        // Status filter
+        if ($request->status != 'all' && $request->status !== null) {
+            $query->where('is_active', $request->status);
+        }
+
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
     public function store($data)
     {
         // dd($data);

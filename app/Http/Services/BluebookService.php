@@ -70,7 +70,7 @@ class BluebookService
 
     public function store(array $data)
     {
-        dd($data);
+        // dd($data);
         DB::beginTransaction();
 
         try {

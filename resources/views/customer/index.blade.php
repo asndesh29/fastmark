@@ -32,85 +32,61 @@
 
                 <div class="card-body">
                     <div class="live-preview">
-                        <div class="table-responsive mt-4 mt-xl-0">
-                            <table class="table table-hover table-striped align-middle table-nowrap mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>S.No.</th>
-                                        <th>Customer Name</th>
-                                        <th>Email</th>
-                                        <th>Phone Number</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($customers) > 0)
-                                        @foreach ($customers as $key => $customer)
-                                            <tr>
-                                            <td class="fw-medium">{{ $key+$customers->firstItem() }}</td>
-                                                <td>{{ $customer->first_name }} {{ $customer->last_name }}</td>
-                                                <td>{{ $customer->email }}</td>
-                                                <td>{{ $customer->phone }}</td>
-                                                <td>
-                                                    <div class="status">
-                                                        <div class="form-check form-switch form-switch-mdform-switch form-switch-md">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                class="form-check-input code-switcher toggle-switch-input status_change_alert"
-                                                                data-url="{{ route('admin.customer.status', [$customer->id, $customer->is_active ? 0 : 1]) }}"
-                                                                data-message="{{ $customer->is_active ? 'you want to deactivate this customer' : 'you want to activate this customer' }}"
-                                                                id="status_{{ $customer->id }}"
-                                                                {{ $customer->is_active ? 'checked' : '' }}
-                                                            >
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <ul class="list-inline hstack gap-2 mb-0">
-                                                        <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                            <a href="{{ route('admin.customer.edit', $customer->id) }}">
-                                                                <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
-                                                                    <i class="ri-edit-fill"></i>
-                                                                </button>
-                                                            </a>
-                                                        </li>
+                         <div class="listjs-table" id="customerList">
+                            <!-- Filters -->
+                            <div class="row g-3">
+                                <div class="col-xxl-3 col-sm-12">
+                                    <label>Customer Name</label>
+                                    <div class="search-box">
+                                        <input type="text" id="customer_name"  class="form-control" placeholder="Search for customer">
+                                        <i class="ri-search-line search-icon"></i>
+                                    </div>
+                                </div>
 
-                                                        <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
-                                                            <a href="{{ route('admin.customer.show', $customer->id) }}">
-                                                                <button type="button" class="btn btn-outline-warning btn-sm btn-icon waves-effect waves-light">
-                                                                    <i class="ri-eye-fill"></i>
-                                                                </button>
-                                                            </a>
-                                                        </li>
+                                <div class="col-xxl-3 col-sm-12">
+                                    <label>Email</label>
+                                    <div class="search-box">
+                                        <input type="text" id="email"  class="form-control" placeholder="Search for email">
+                                        <i class="ri-search-line search-icon"></i>
+                                    </div>
+                                </div>
 
-                                                        <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
-                                                            <a href="">
-                                                                <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light">
-                                                                    <i class="ri-delete-bin-5-line"></i>
-                                                                </button>
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <!-- No result found message -->
+                                <div class="col-xxl-3 col-sm-12">
+                                    <label>Phone Number</label>
+                                    <div class="search-box">
+                                        <input type="text" id="phone"  class="form-control" placeholder="Search for phone number">
+                                        <i class="ri-search-line search-icon"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xxl-2 col-sm-4">
+                                    <label>Status</label>
+                                    <select class="form-select" id="idStatus">
+                                        <option value="all" selected>All</option>
+                                        <option value="1">Active</option>
+                                        <option value="0">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Table -->
+                            <div class="table-responsive table-card mt-3 mb-1">
+                                <table class="table align-middle">
+                                    <thead class="table-light text-muted">
                                         <tr>
-                                            <td colspan="6" class="text-center">
-                                                <div class="noresult text-center">
-                                                    <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
-                                                                colors="primary:#121331,secondary:#08a88a"
-                                                                style="width:75px;height:75px"></lord-icon>
-                                                    <h5 class="mt-2">Sorry! No Result Found</h5>
-                                                    <p class="text-muted mb-0">No matching records found.</p>
-                                                </div>
-                                            </td>
+                                            <th>S.No.</th>
+                                            <th>Customer Name</th>
+                                            <th>Email Address</th>
+                                            <th>Phone Number</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
                                         </tr>
-                                    @endif
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody id="customerTableBody">
+                                        @include('customer.partials.table', ['customers' => $customers])
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -124,5 +100,48 @@
 
 
 @push('script_2')
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
+
+    <script>
+        // Function to fetch filtered data
+        function SearchData(page = 1) {
+            // Grab all filter values
+            const customer = document.getElementById('customer_name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const status = document.getElementById('idStatus').value;
+
+            const params = { customer, email, phone, status, page };
+
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>`;
+
+            fetch(`{{ route('admin.customer.index') }}?${new URLSearchParams(params)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = data.html;
+
+                    // Re-bind pagination links
+                    document.querySelectorAll('.pagination a').forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const page = new URL(this.href).searchParams.get('page');
+                            SearchData(page);
+                        });
+                    });
+                })
+                .catch(() => {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error loading data</td></tr>`;
+                });
+        }
+
+        // Optionally, trigger on input change (for instant search)
+        document.querySelectorAll('#customer_name,#email,#phone').forEach(el=>{
+            el.addEventListener('input', () => SearchData());
+        });
+
+        document.getElementById('idStatus').addEventListener('change', () => SearchData());
+    </script>
 @endpush

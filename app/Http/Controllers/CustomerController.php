@@ -27,6 +27,14 @@ class CustomerController extends Controller
 
         $customers = $this->customerService->list($request, $perPage);
 
+        if ($request->ajax()) {
+            $html = view('customer.partials.table', compact('customers'))->render();
+
+            return response()->json([
+                'html' => $html
+            ]);
+        }
+
         return view('customer.index', compact('customers'));
     }
 
@@ -93,6 +101,8 @@ class CustomerController extends Controller
 
         $this->customerService->update($customer, $request->all());
 
+        AppHelper::success('Customer updated successfully;');
+
         return redirect()->route('admin.customer.index')->with('success', 'Customer record updated successfully.');
     }
 
@@ -113,8 +123,18 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        $this->customerService->delete($customer->id);
+        // $this->customerService->delete($customer->id);
 
-        return redirect()->route('admin.customer.index')->with('success', 'Customer record deleted successfully.');
+        // return redirect()->route('admin.customer.index')->with('success', 'Customer record deleted successfully.');
+
+        $customer = Customer::findOrFail($customer->id);
+
+        if (!$customer) {
+            return false;
+        }
+
+        $customer->delete();
+
+        return back();
     }
 }

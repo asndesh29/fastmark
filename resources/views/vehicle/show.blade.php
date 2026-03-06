@@ -21,6 +21,7 @@
                                 <th>Renewal Status</th>
                                 <th>Payment Status</th>
                                 <th>Remarks</th>
+                                <th>Permit Number</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,6 +61,7 @@
                                             @endif
                                         </td>
                                         <td>{{ $renewal->remarks ?? '—' }}</td>
+                                        <td></td>
                                     </tr>
                                 @endforeach
                             @else

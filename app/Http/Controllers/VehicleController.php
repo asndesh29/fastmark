@@ -161,9 +161,12 @@ class VehicleController extends Controller
      */
     public function destroy(Vehicle $vehicle)
     {
-        $this->vehicleService->delete($vehicle->id);
+        // dd($vehicle);
+        $this->vehicleService->destroy($vehicle->id);
 
-        return redirect()->route('admin.vehicle.index')->with('success', 'Vehicle deleted successfully.');
+        AppHelper::success('Vehicle deleted successfully.');
+
+        return redirect()->route('admin.customer.index');
     }
 
     /**

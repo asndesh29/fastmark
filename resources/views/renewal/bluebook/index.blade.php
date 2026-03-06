@@ -305,7 +305,7 @@
             <td colspan="10" class="text-center p-4">Loading...</td>
         </tr>`;
 
-        fetch(`{{ route('admin.renewal.checkpass.index') }}?${new URLSearchParams(params)}`, {
+        fetch(`{{ route('admin.renewal.bluebook.index') }}?${new URLSearchParams(params)}`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
             .then(res => res.json())

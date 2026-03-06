@@ -76,7 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/update/{vehicle}', [VehicleController::class, 'update'])->name('update');
             Route::get('show/{vehicle}', [VehicleController::class, 'show'])->name('show');
             Route::get('{vehicle}/renewal', [VehicleController::class, 'renewal'])->name('renewal');
-            Route::delete('/renewal/{id}', [VehicleController::class, 'destroy'])->name('destroy');
+            Route::delete('/{vehicle}', [VehicleController::class, 'destroy'])->name('destroy');
             Route::get('status/{vehicle}/{status}', [VehicleController::class, 'status'])->name('status');
             Route::put('{vehicle}/renewal-update', [VehicleController::class, 'updateRenewal'])->name('update-renewal');
         });

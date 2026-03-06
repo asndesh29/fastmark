@@ -108,11 +108,28 @@
                                                 <div class="d-flex gap-2">
                                                     <ul class="list-inline hstack gap-2 mb-0">
                                                         <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
-                                                            <a href="{{ route('admin.settings.renewal-type.edit', $cv->id) }}">
+                                                            <a href="{{ route('admin.vehicle.edit', $cv->id) }}">
                                                                 <button type="button" class="btn btn-outline-primary btn-sm btn-icon waves-effect waves-light">
                                                                     <i class="ri-edit-fill"></i>
                                                                 </button>
                                                             </a>
+                                                        </li>
+
+                                                        <!-- Delete button -->
+                                                        <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top"
+                                                            title="Remove">
+
+                                                            <button type="button" class="btn btn-outline-danger btn-sm btn-icon waves-effect waves-light delete-btn"
+                                                                data-id="{{ $cv->id }}" data-name="{{ $cv->name ?? '' }}">
+                                                                <!-- Optional: display name in alert -->
+                                                                <i class="ri-delete-bin-5-fill fs-16"></i>
+                                                            </button>
+
+                                                            <!-- Delete form -->
+                                                            <form action="{{ route('admin.vehicle.destroy', [$cv->id]) }}" method="post"
+                                                                id="renew-{{ $cv->id }}" style="display: none;">
+                                                                @csrf @method('delete')
+                                                            </form>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -121,6 +138,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            
                             <div class="noresult" style="display: none">
                                 <div class="text-center">
                                     <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
@@ -130,20 +148,20 @@
                             </div>
                         </div>
                         
-                        <div class="d-flex justify-content-end">
+                        {{-- <div class="d-flex justify-content-end">
                             <div class="pagination-wrap hstack gap-2" style="display: flex;">
                                 <a class="page-item pagination-prev disabled" href="javascript:void(0);">
-                                Previous
+                                    Previous
                                 </a>
                                 <ul class="pagination listjs-pagination mb-0">
                                     <li class="active"><a class="page" href="#" data-i="1" data-page="8">1</a></li>
                                     <li><a class="page" href="#" data-i="2" data-page="8">2</a></li>
                                 </ul>
                                 <a class="page-item pagination-next" href="javascript:void(0);">
-                                Next
+                                    Next
                                 </a>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -153,4 +171,8 @@
     <!-- end row -->
 </script>
 @endsection
+
+@push('script_2')
+    <script src="{{ dynamicAsset('assets/js/custom.js') }}"></script>
+@endpush
 
