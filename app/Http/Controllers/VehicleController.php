@@ -110,8 +110,7 @@ class VehicleController extends Controller
     {
         $vehicle = $this->vehicleService->getById($vehicle->id);
 
-        // Validate request
-        $validator = Vehicle::validateData($request->all(), $vehicle->id);
+        $validator = Vehicle::validateUpdate($request->all(), $vehicle->id);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -119,7 +118,6 @@ class VehicleController extends Controller
 
         $validated = $validator->validated();
 
-        // Update vehicle
         $this->vehicleService->update($vehicle, $validated);
 
         AppHelper::success('Vehicle updated successfully.');

@@ -46,10 +46,14 @@
                         <div class="row mt-3 pt-3" style="border-top: 1px solid var(--vz-border-color);">
 
                             @foreach($renewalTypes as $slug => $label)
-                                @if($slug == 'license') @continue @endif
+                            
 
                                 {{-- Hide Road Permit & Vehicle Pass if vehicle type is private --}}
-                                @if($vehicle?->vehicleCategory->slug === 'private' && in_array($slug, ['road-permit', 'vehicle-pass']))
+                                @if($vehicle?->vehicleCategory->slug === 'private' && in_array($slug, ['road-permit', 'vehicle-pass', 'pollution']))
+                                    @continue
+                                @endif
+
+                                @if($slug === 'pollution' && $vehicle?->vehicleType?->slug === 'motorcycle')
                                     @continue
                                 @endif
 

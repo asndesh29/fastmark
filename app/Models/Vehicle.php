@@ -125,6 +125,32 @@ class Vehicle extends Model
         return Validator::make($data, $rules, $messages);
     }
 
+    public static function validateUpdate($data, $id = null)
+    {
+        $rules = [
+            'registration_no' => ['required', 'string', 'max:255'],
+
+            'permit_no' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::requiredIf(function () use ($data) {
+                    return isset($data['vehicle_category_id']) && $data['vehicle_category_id'] == 2;
+                }),
+            ],
+
+            'chassis_no' => ['nullable', 'string', 'max:255'],
+            'engine_no' => ['nullable', 'string', 'max:255'],
+            'engine_cc' => ['nullable', 'string', 'max:255'],
+            'capacity' => ['nullable', 'integer'],
+
+            'vehicle_type_id' => ['required', 'exists:vehicle_types,id'],
+            'vehicle_category_id' => ['required', 'exists:vehicle_categories,id'],
+        ];
+
+        return Validator::make($data, $rules);
+    }
+
     public function isCommercial(): bool
     {
         return optional($this->vehicleCategory)->slug === 'commercial';

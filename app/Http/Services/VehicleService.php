@@ -539,7 +539,7 @@ class VehicleService
                     'name' => 'insurance_type',
                     'label' => 'Insurance Type',
                     'type' => 'select',
-                    'options' => ['general' => 'General', 'third' => 'Third', 'partial' => 'Partial']
+                    'options' => ['general' => 'General', 'third' => 'Third']
                 ];
                 // $fields[$slug][] = [
                 //     'name' => 'issue_date_bs',

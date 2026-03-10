@@ -112,7 +112,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($vehicles as $vehicle)
+                            @forelse($vehicles as $key => $vehicle)
 
                                 @php
                                     // Check if any renewal of this vehicle is expired
@@ -131,7 +131,7 @@
                                 @endphp
 
                                 <tr class="{{ $isRowExpired ? 'table-danger' : '' }}">
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $key + $vehicles->firstItem() }}</td>
                                     <td>{{ $vehicle->registration_no }}</td>
                                     <td>{{ substr($vehicle->registration_no, -4) }}</td>
                                     <td>{{ $vehicle->owner?->first_name }} {{ $vehicle->owner?->last_name }}</td>
